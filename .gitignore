@@ -1,0 +1,6 @@
+/src/IdentityServer.Api/obj
+/src/IdentityServer.Api/bin
+/src/IdentityServer.Core/obj
+/src/IdentityServer.Core/bin
+/src/IdentityServer.Infrastructure/bin
+/src/IdentityServer.Infrastructure/obj
