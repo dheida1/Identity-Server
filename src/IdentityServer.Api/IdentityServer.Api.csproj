@@ -5,6 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Saml2\SAML2Core\SAML2Core.csproj" />
+    <ProjectReference Include="..\IdentityServer.Core\IdentityServer.Core.csproj" />
+    <ProjectReference Include="..\IdentityServer.Infrastructure\IdentityServer.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Metadata\" />
   </ItemGroup>
 
 </Project>
