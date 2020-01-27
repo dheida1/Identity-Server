@@ -4,9 +4,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using SamlCore.AspNetCore.Authentication.Saml2.Metadata;
 using System;
+using System.IO;
+using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
@@ -77,20 +82,24 @@ namespace IdentityServer.Api
                  // (REQUIRED IF) signing AuthnRequest with Sp certificate to Idp. The value here is the certifcate serial number.
                  //if the certificate is in the project. make sure the path to ti is correct. 
                  //password value is needed to access private keys for signature and decryption.
-                 //options.ServiceProvider.X509Certificate2 = new X509Certificate2(@"democert.pfx", "1234");
-
-                 //if you want to search in cert store - can be used for production
-                 options.ServiceProvider.X509Certificate2 = new Cryptography.X509Certificates.Extension.X509Certificate2(
-                     Configuration["AppConfiguration:ServiceProvider:CertificateSerialNumber"],
-                     StoreName.My,
-                     StoreLocation.LocalMachine,
-                     X509FindType.FindBySerialNumber);
+                 if (Environment.IsDevelopment())
+                 {
+                     options.ServiceProvider.X509Certificate2 = new X509Certificate2(Configuration["AppConfiguration:ServiceProvider:Certificate"]);
+                 }
+                 else
+                 {
+                     //if you want to search in cert store - can be used for production
+                     options.ServiceProvider.X509Certificate2 = new Cryptography.X509Certificates.Extension.X509Certificate2(
+                         Configuration["AppConfiguration:ServiceProvider:CertificateSerialNumber"],
+                         StoreName.My,
+                         StoreLocation.LocalMachine,
+                         X509FindType.FindBySerialNumber);
+                 }
 
                  // Force Authentication (optional) - Is authentication required?
                  options.ForceAuthn = true;
-
-                 options.WantAssertionsSigned = false;
-                 options.RequireMessageSigned = true;
+                 options.WantAssertionsSigned = true;
+                 options.RequireMessageSigned = false;
 
                  // Service Provider Properties (optional) - These set the appropriate tags in the metadata.xml file
                  options.ServiceProvider.ServiceName = "My Test Site";
@@ -112,18 +121,18 @@ namespace IdentityServer.Api
                    return Task.FromResult(0);
                };
                  options.Events.OnTicketReceived = context =>
-                 {  //if you need to add custom claims here
-
+                 {
+                     //if you need to add custom claims here
                      //example:
-                     //var identity = context.Principal.Identity as ClaimsIdentity;
-                     //var claims = context.Principal.Claims;                 
-                     //if (claims.Any(c => c.Type == "userID"))
-                     //{
-                     //    var userId = claims.FirstOrDefault(c => c.Type == "userID").Value;
-                     //    var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
-                     //    identity.TryRemoveClaim(name);
-                     //    identity.AddClaim(new Claim(ClaimTypes.Name, userId));
-                     //}
+                     var identity = context.Principal.Identity as ClaimsIdentity;
+                     var claims = context.Principal.Claims;
+                     if (claims.Any(c => c.Type == ClaimTypes.Email))
+                     {
+                         var userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+                         var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+                         identity.TryRemoveClaim(name);
+                         identity.AddClaim(new Claim(ClaimTypes.Name, userId));
+                     }
                      return Task.FromResult(0);
                  };
              })
@@ -134,7 +143,6 @@ namespace IdentityServer.Api
                 opt.LogoutPath = new PathString("/Account/Logout");
                 opt.LoginPath = new PathString("/");
                 opt.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-                //opt.Cookie.Expiration = TimeSpan.FromMinutes(30);
             });
         }
 
@@ -144,12 +152,27 @@ namespace IdentityServer.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                IdentityModelEventSource.ShowPII = true; //To show detail of error and see the problem
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
             }
 
             app.UseHttpsRedirection();
 
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "Metadata")),
+                RequestPath = ""
+            });
+
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

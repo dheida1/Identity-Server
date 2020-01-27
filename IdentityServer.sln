@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.Tests", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.Admin", "src\IdentityServer.Admin\IdentityServer.Admin.csproj", "{1A8B9E59-E7A4-4649-90FB-219828D190E8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SAML2Core", "..\Saml2\SAML2Core\SAML2Core.csproj", "{C4008B54-743D-41F3-AF7C-5168102D44C6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcClient.Web", "samples\MvcClient.Web\MvcClient.Web.csproj", "{652D2EBA-E36E-47CC-AA36-5AADF84FF0D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{1A8B9E59-E7A4-4649-90FB-219828D190E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A8B9E59-E7A4-4649-90FB-219828D190E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A8B9E59-E7A4-4649-90FB-219828D190E8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4008B54-743D-41F3-AF7C-5168102D44C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4008B54-743D-41F3-AF7C-5168102D44C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4008B54-743D-41F3-AF7C-5168102D44C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4008B54-743D-41F3-AF7C-5168102D44C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{652D2EBA-E36E-47CC-AA36-5AADF84FF0D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{652D2EBA-E36E-47CC-AA36-5AADF84FF0D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{652D2EBA-E36E-47CC-AA36-5AADF84FF0D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{652D2EBA-E36E-47CC-AA36-5AADF84FF0D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

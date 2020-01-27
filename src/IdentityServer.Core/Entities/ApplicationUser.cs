@@ -1,6 +1,8 @@
-﻿namespace IdentityServer.Core.Entities
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace IdentityServer.Core.Entities
 {
-    public class ApplicationUser
+    public class ApplicationUser : IdentityUser
     {
     }
 }
