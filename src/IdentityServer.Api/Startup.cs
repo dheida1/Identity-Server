@@ -84,13 +84,14 @@ namespace IdentityServer.Api
                  //password value is needed to access private keys for signature and decryption.
                  if (Environment.IsDevelopment())
                  {
-                     options.ServiceProvider.X509Certificate2 = new X509Certificate2(Configuration["AppConfiguration:ServiceProvider:Certificate"]);
+                     options.ServiceProvider.X509Certificate2 = new X509Certificate2(@"Certificates/IdentityServer.pfx",
+                         "1234", X509KeyStorageFlags.Exportable);
                  }
                  else
                  {
                      //if you want to search in cert store - can be used for production
                      options.ServiceProvider.X509Certificate2 = new Cryptography.X509Certificates.Extension.X509Certificate2(
-                         Configuration["AppConfiguration:ServiceProvider:CertificateSerialNumber"],
+                         Configuration["AppConfiguration:ServiceProvider:Certificate"],
                          StoreName.My,
                          StoreLocation.LocalMachine,
                          X509FindType.FindBySerialNumber);
