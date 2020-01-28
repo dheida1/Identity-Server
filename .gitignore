@@ -4,3 +4,4 @@
 /src/IdentityServer.Core/bin
 /src/IdentityServer.Infrastructure/bin
 /src/IdentityServer.Infrastructure/obj
+/.vs

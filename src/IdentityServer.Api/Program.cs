@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
+using System.Linq;
 
 namespace IdentityServer.Api
 {
@@ -11,6 +14,9 @@ namespace IdentityServer.Api
     {
         public static int Main(string[] args)
         {
+            Console.Title = "IdentityServer4.EntityFramework";
+
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -22,7 +28,21 @@ namespace IdentityServer.Api
 
             try
             {
+                var seed = args.Contains("/seed");
+
+                if (seed)
+                {
+                    args = args.Except(new[] { "/seed" }).ToArray();
+                }
                 var host = CreateHostBuilder(args).Build();
+
+                if (seed)
+                {
+                    var config = host.Services.GetRequiredService<IConfiguration>();
+                    var connectionString = config.GetConnectionString("DefaultConnection");
+                    SeedData.EnsureSeedData(connectionString);
+                    return 0;
+                }
 
                 Log.Information("Starting host...");
                 host.Run();

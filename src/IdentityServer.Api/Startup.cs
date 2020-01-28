@@ -1,7 +1,12 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+using IdentityServer.Api.IdentityServer.Api;
+using IdentityServer.Infrastructure.Data;
+using IdentityServer.Infrastructure.Dto;
+using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -32,7 +37,6 @@ namespace IdentityServer.Api
         {
             services.AddControllers();
 
-
             // configures IIS out-of-proc settings (see https://github.com/aspnet/AspNetCore/issues/14882)
             services.Configure<IISOptions>(iis =>
                 {
@@ -47,11 +51,18 @@ namespace IdentityServer.Api
                 iis.AutomaticAuthentication = false;
             });
 
-            services.AddAuthentication(sharedOptions =>
-            {
-                sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            var migrationsAssembly = "IdentityServer.Infrastructure";
+            //typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+
+            services.AddDbContext<ApplicationDbContext>(builder =>
+             builder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+            services.AddAuthentication()
               .AddSamlCore("adfs", options =>
               {
 
@@ -136,20 +147,57 @@ namespace IdentityServer.Api
                      }
                      return Task.FromResult(0);
                  };
-              })
-            .AddCookie(opt =>
+              });
+
+            var identityServer = services.AddIdentityServer(options =>
             {
-                opt.AccessDeniedPath = new PathString("/Account/AccessDenied");
-                opt.SlidingExpiration = true;
-                opt.LogoutPath = new PathString("/Account/Logout");
-                opt.LoginPath = new PathString("/");
-                opt.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-            });
+                options.MutualTls.Enabled = true;
+                options.MutualTls.ClientCertificateAuthenticationScheme = "x509";
+            })
+                 //.AddTestUsers(TestUsers.Users)
+                 // this adds the config data from DB (clients, resources, CORS)
+                 .AddConfigurationStore(options =>
+                 {
+                     options.ConfigureDbContext = builder =>
+                             builder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                             sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly));
+                 })
+                 // this adds the operational data from DB (codes, tokens, consents)
+                 .AddOperationalStore(options =>
+                 {
+                     options.ConfigureDbContext = builder =>
+                              builder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                              sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly));
+
+                     // this enables automatic token cleanup. this is optional.
+                     options.EnableTokenCleanup = true;
+                 });
+
+            identityServer.AddMutualTlsSecretValidators();
+
+            //services.AddCors(o => o.AddPolicy("ComeOnIn", builder =>
+            //{
+            //    builder.AllowAnyOrigin()
+            //           .AllowAnyMethod()
+            //           .AllowAnyHeader();
+            //}));
+
+            if (Environment.IsDevelopment())
+            {
+                identityServer.AddDeveloperSigningCredential();
+            }
+            else
+            {
+                throw new Exception("need to configure key material");
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // this will do the initial DB population
+            InitializeDatabase(app);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -180,6 +228,43 @@ namespace IdentityServer.Api
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private void InitializeDatabase(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
+
+                var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+                context.Database.Migrate();
+                if (!context.Clients.Any())
+                {
+                    foreach (var client in Config.GetClients())
+                    {
+                        context.Clients.Add(client.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
+
+                if (!context.IdentityResources.Any())
+                {
+                    foreach (var resource in Config.GetIdentityResources())
+                    {
+                        context.IdentityResources.Add(resource.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
+
+                if (!context.ApiResources.Any())
+                {
+                    foreach (var resource in Config.GetApis())
+                    {
+                        context.ApiResources.Add(resource.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
+            }
         }
     }
 }
