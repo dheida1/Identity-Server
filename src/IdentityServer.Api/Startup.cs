@@ -1,6 +1,6 @@
 using IdentityServer.Api.IdentityServer.Api;
+using IdentityServer.Core.Entities;
 using IdentityServer.Infrastructure.Data;
-using IdentityServer.Infrastructure.Dto;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
@@ -53,14 +53,12 @@ namespace IdentityServer.Api
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             var migrationsAssembly = "IdentityServer.Infrastructure";
-            //typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
             services.AddDbContext<ApplicationDbContext>(builder =>
              builder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-
 
             services.AddAuthentication()
               .AddSamlCore("adfs", options =>
@@ -154,7 +152,8 @@ namespace IdentityServer.Api
                 options.MutualTls.Enabled = true;
                 options.MutualTls.ClientCertificateAuthenticationScheme = "x509";
             })
-                 //.AddTestUsers(TestUsers.Users)
+                 //.AddTestUsers(TestUsers.Users)               
+                 .AddAspNetIdentity<ApplicationUser>()
                  // this adds the config data from DB (clients, resources, CORS)
                  .AddConfigurationStore(options =>
                  {
@@ -238,32 +237,53 @@ namespace IdentityServer.Api
 
                 var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
                 context.Database.Migrate();
+
                 if (!context.Clients.Any())
                 {
+                    Console.WriteLine("Clients being populated");
                     foreach (var client in Config.GetClients())
                     {
                         context.Clients.Add(client.ToEntity());
                     }
                     context.SaveChanges();
                 }
+                else
+                {
+                    Console.WriteLine("Clients populated");
+                }
 
                 if (!context.IdentityResources.Any())
                 {
+                    Console.WriteLine("IdentityResources being populated");
                     foreach (var resource in Config.GetIdentityResources())
                     {
                         context.IdentityResources.Add(resource.ToEntity());
                     }
                     context.SaveChanges();
                 }
+                else
+                {
+                    Console.WriteLine("IdentityResources already populated");
+                }
 
                 if (!context.ApiResources.Any())
                 {
+                    Console.WriteLine("ApiResources being populated");
                     foreach (var resource in Config.GetApis())
                     {
                         context.ApiResources.Add(resource.ToEntity());
                     }
                     context.SaveChanges();
                 }
+                else
+                {
+                    Console.WriteLine("ApiResources already populated");
+                }
+
+                Console.WriteLine("Done seeding database.");
+                Console.WriteLine();
+
+                serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
             }
         }
     }
