@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MvcClient.Web.Models;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace MvcClient.Web.Controllers
 {
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -18,13 +18,18 @@ namespace MvcClient.Web.Controllers
             _logger = logger;
         }
 
+
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        [Authorize]
+        public async Task<IActionResult> Privacy()
         {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var idToken = await HttpContext.GetTokenAsync("id_token");
+            var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
             return View();
         }
 

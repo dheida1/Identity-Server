@@ -13,7 +13,7 @@ namespace IdentityServer.Infrastructure
         }
         public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
         {
-            return new GenericRepository<TEntity>(context);
+            return new Repository<TEntity>(context);
         }
 
         public void Commit()

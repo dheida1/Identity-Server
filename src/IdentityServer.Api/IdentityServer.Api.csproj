@@ -18,8 +18,4 @@
     <ProjectReference Include="..\IdentityServer.Infrastructure\IdentityServer.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Metadata\" />
-  </ItemGroup>
-
 </Project>

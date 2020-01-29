@@ -5,15 +5,15 @@ using System.Linq;
 
 namespace IdentityServer.Infrastructure.Repositories
 {
-    public class GenericRepository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class
     {
         private readonly IUnitOfWork<DbContext> unitOfWork;
         private readonly IMapper mapper;
 
-        public GenericRepository(DbContext context)
+        public Repository(DbContext context)
         {
-            UnitOfWork uow = new UnitOfWork(context);
-            this.unitOfWork = uow;
+            //UnitOfWork<DbContext> uow = new UnitOfWork(context);
+            //this.unitOfWork = uow;
         }
 
         public IQueryable<T> Get()
