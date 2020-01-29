@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MvcClient.Web.Models;
+using MvcClient.Web.Requests;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -11,11 +12,14 @@ namespace MvcClient.Web.Controllers
 
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<HomeController> logger;
+        private readonly IMediator mediator;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,
+             IMediator mediator)
         {
-            _logger = logger;
+            this.logger = logger;
+            this.mediator = mediator;
         }
 
         public IActionResult Index()
@@ -24,11 +28,15 @@ namespace MvcClient.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Secure()
+        public IActionResult Secure()
         {
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
-            var idToken = await HttpContext.GetTokenAsync("id_token");
-            var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Api()
+        {
+            var apiRequest = await mediator.Send(new Api1Request());
             return View();
         }
 

@@ -63,8 +63,8 @@ namespace Api1
             //app.UseCors(policy =>
             //{
             //    policy.WithOrigins(
-            //        "https://localhost:5002",
-            //        "https://localhost:5000");
+            //        "https://localhost:4300",
+            //        "https://localhost:5001");
 
             //    policy.AllowAnyHeader();
             //    policy.AllowAnyMethod();

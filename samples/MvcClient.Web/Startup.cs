@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MvcClient.Web
@@ -24,6 +26,7 @@ namespace MvcClient.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
 
             JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
@@ -88,13 +91,6 @@ namespace MvcClient.Web
                     {
                         return Task.CompletedTask;
                     };
-
-                    //options.Events.OnRedirectToIdentityProvider = async context =>
-                    //{
-                    //    var config = await context.Options.ConfigurationManager.GetConfigurationAsync(default);
-                    //    //override existing token endpoint with to get the mtls token
-                    //    config.TokenEndpoint = Configuration["IdentityServer:MtlsTokenEndpoint"];
-                    //};
                 });
         }
 

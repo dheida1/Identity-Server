@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Api1.Controllers
 {
@@ -10,16 +12,19 @@ namespace Api1.Controllers
     [Route("api/[controller]")]
     public class ApiSecureController : ControllerBase
     {
-        private readonly ILogger<ApiSecureController> _logger;
+        private readonly ILogger<ApiSecureController> logger;
 
         public ApiSecureController(ILogger<ApiSecureController> logger)
         {
-            _logger = logger;
+            this.logger = logger;
         }
 
         [HttpGet]
-        public ActionResult Get()
+        public async Task<ActionResult> Get()
         {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var idToken = await HttpContext.GetTokenAsync("id_token");
+            var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
             return Ok(new JsonResult(from c in User.Claims select new { c.Type, c.Value }));
         }
     }

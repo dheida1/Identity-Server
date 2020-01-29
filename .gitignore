@@ -5,3 +5,12 @@
 /src/IdentityServer.Infrastructure/bin
 /src/IdentityServer.Infrastructure/obj
 /.vs
+/samples/Api1/obj/Api1.csproj.nuget.dgspec.json
+/samples/Api1/obj/Api1.csproj.nuget.g.props
+/samples/Api1/obj/Api1.csproj.nuget.g.targets
+/samples/Api1/obj/Debug/netcoreapp3.1/Api1.AssemblyInfo.cs
+/samples/Api1/obj/Debug/netcoreapp3.1/Api1.AssemblyInfoInputs.cache
+/samples/Api1/obj/Debug/netcoreapp3.1/Api1.assets.cache
+/samples/Api1/obj/Debug/netcoreapp3.1/Api1.csproj.FileListAbsolute.txt
+/samples/Api1/obj/Debug/netcoreapp3.1/Api1.csprojAssemblyReference.cache
+/samples/Api1/obj/project.assets.json

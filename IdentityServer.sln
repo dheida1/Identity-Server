@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.Tests", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.Admin", "src\IdentityServer.Admin\IdentityServer.Admin.csproj", "{1A8B9E59-E7A4-4649-90FB-219828D190E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcClient.Web", "samples\MvcClient.Web\MvcClient.Web.csproj", "{652D2EBA-E36E-47CC-AA36-5AADF84FF0D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcClient.Web", "samples\MvcClient.Web\MvcClient.Web.csproj", "{652D2EBA-E36E-47CC-AA36-5AADF84FF0D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api1", "samples\Api1\Api1.csproj", "{3E636DB0-995F-4675-A2DE-8390490CB063}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{652D2EBA-E36E-47CC-AA36-5AADF84FF0D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{652D2EBA-E36E-47CC-AA36-5AADF84FF0D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{652D2EBA-E36E-47CC-AA36-5AADF84FF0D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E636DB0-995F-4675-A2DE-8390490CB063}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E636DB0-995F-4675-A2DE-8390490CB063}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E636DB0-995F-4675-A2DE-8390490CB063}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E636DB0-995F-4675-A2DE-8390490CB063}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
