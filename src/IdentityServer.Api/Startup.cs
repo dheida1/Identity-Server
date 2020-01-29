@@ -33,6 +33,8 @@ namespace IdentityServer.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //TODO: Add DistributedCache
+
             //services.AddControllers();
             services.AddControllersWithViews();
 
@@ -56,7 +58,10 @@ namespace IdentityServer.Api
             services.AddDbContext<ApplicationDbContext>(builder =>
              builder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+                {
+                    options.SignIn.RequireConfirmedEmail = true;
+                })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddAuthentication()
@@ -122,10 +127,14 @@ namespace IdentityServer.Api
 
             var identityServer = services.AddIdentityServer(options =>
             {
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+
                 options.MutualTls.Enabled = true;
                 options.MutualTls.ClientCertificateAuthenticationScheme = "x509";
             })
-
                  .AddAspNetIdentity<ApplicationUser>()
                  // this adds the config data from DB (clients, resources, CORS)
                  .AddConfigurationStore(options =>
@@ -160,6 +169,7 @@ namespace IdentityServer.Api
             }
             else
             {
+                //identityServer.AddSigningCredential();
                 throw new Exception("need to configure key material");
             }
         }

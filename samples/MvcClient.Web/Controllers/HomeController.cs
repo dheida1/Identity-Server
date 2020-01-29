@@ -18,14 +18,13 @@ namespace MvcClient.Web.Controllers
             _logger = logger;
         }
 
-
         public IActionResult Index()
         {
             return View();
         }
 
         [Authorize]
-        public async Task<IActionResult> Privacy()
+        public async Task<IActionResult> Secure()
         {
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var idToken = await HttpContext.GetTokenAsync("id_token");
