@@ -36,7 +36,7 @@ namespace MvcClient.Web.Configurations
                   })
                 .AddOpenIdConnect(options =>
                 {
-                    options.Authority = "https://localhost:4300";
+                    options.Authority = configuration["IdentityServer:Authority"]; //e.g https://localhost:4300"
                     options.RequireHttpsMetadata = true;
                     options.ClientId = "mvc";
                     options.ClientSecret = "secret";
