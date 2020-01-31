@@ -1,9 +1,13 @@
+using IdentityModel;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
+using System.Linq;
+using System.Security.Authentication;
 
 namespace IdentityServer.Api
 {
@@ -17,28 +21,16 @@ namespace IdentityServer.Api
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("System", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication",
+                                LogEventLevel.Information)
                 .Enrich.FromLogContext()
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate)
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+                                theme: AnsiConsoleTheme.Literate)
                 .CreateLogger();
 
             try
             {
-                //var seed = args.Contains("/seed");
-
-                //if (seed)
-                //{
-                //    args = args.Except(new[] { "/seed" }).ToArray();
-                //}
                 var host = CreateHostBuilder(args).Build();
-
-                //if (seed)
-                //{
-                //    var config = host.Services.GetRequiredService<IConfiguration>();
-                //    var connectionString = config.GetConnectionString("DefaultConnection");
-                //    SeedData.EnsureSeedData(connectionString);
-                //    return 0;
-                //}
 
                 Log.Information("Starting host...");
                 host.Run();
@@ -61,7 +53,16 @@ namespace IdentityServer.Api
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseSerilog();
-                    webBuilder.ConfigureKestrel(options => options.AllowSynchronousIO = true);
+                    webBuilder.ConfigureKestrel(options =>
+                    {
+                        options.AllowSynchronousIO = true;
+                        options.ConfigureHttpsDefaults(httpsOptions =>
+                            {
+                                httpsOptions.ServerCertificate = X509.LocalMachine.My.Thumbprint.Find("3BC996BE4AC586047AB08D01A9A6AB6276CF5837", false).Single();
+                                httpsOptions.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
+                                httpsOptions.SslProtocols = SslProtocols.Tls12;
+                            });
+                    });
                 });
     }
 }

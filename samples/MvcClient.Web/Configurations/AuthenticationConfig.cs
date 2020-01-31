@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MvcClient.Web.DelegatingHandlers;
 using System;
 using System.Threading.Tasks;
 
@@ -22,7 +23,7 @@ namespace MvcClient.Web.Configurations
             })
                 .AddCookie(options =>
                   {
-                      options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                      options.ExpireTimeSpan = TimeSpan.FromMinutes(60); //this is diffferent than the access_token expiration
                       options.SlidingExpiration = true;
                       options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
                       options.Events.OnValidatePrincipal = context =>
@@ -36,13 +37,15 @@ namespace MvcClient.Web.Configurations
                   })
                 .AddOpenIdConnect(options =>
                 {
-                    options.Authority = configuration["IdentityServer:Authority"]; //e.g https://localhost:4300"
+                    options.Authority = configuration["IdentityServer:Authority"];
                     options.RequireHttpsMetadata = true;
-                    options.ClientId = "mvc";
-                    options.ClientSecret = "secret";
+                    options.ClientId = configuration["Client:Id"];
+                    //options.ClientSecret = "secret";
                     options.ResponseType = "code";
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
+                    //options.Backchannel = new IdentityServerClient(new )
+                    options.BackchannelHttpHandler = new MtlsHandler(configuration, environment);
                     options.Scope.Clear();
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");

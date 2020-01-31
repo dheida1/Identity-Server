@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using IdentityModel.Client;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MvcClient.Web.DelegatingHandlers;
 using MvcClient.Web.Interfaces;
@@ -13,13 +14,27 @@ namespace MvcClient.Web.Configurations
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddHttpClient<IApi1Service, Api1Service>(client =>
+            services.AddHttpClient<IIdentityServerClient, IdentityServerClient>(client =>
+            {
+                client.BaseAddress = new Uri(configuration["IdentityServer:Authority"]);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            })
+            .AddHttpMessageHandler<MtlsHandler>();
+
+            services.AddHttpClient<IApi1ServiceClient, Api1ServiceClient>(client =>
             {
                 client.BaseAddress = new Uri(configuration["Api1:BaseUrl"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             })
-            .AddHttpMessageHandler<BearerTokenHandler>() //order is imporatant here
+            .AddHttpMessageHandler<BearerTokenHandler>() //order is important here
             .AddHttpMessageHandler<MtlsHandler>();
+
+            services.AddSingleton(new ClientCredentialsTokenRequest
+            {
+                Address = "http://localhost:5000/connect/token",
+                ClientId = configuration["Client:Id"]
+            });
+
 
             return services;
         }

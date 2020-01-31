@@ -1,6 +1,5 @@
 ﻿using IdentityModel.Client;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
+using MvcClient.Web.Interfaces;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,17 +8,17 @@ namespace MvcClient.Web.DelegatingHandlers
 {
     public class BearerTokenHandler : DelegatingHandler
     {
-        private readonly IHttpContextAccessor context;
+        private readonly IIdentityServerClient identityServerClient;
 
-        public BearerTokenHandler(IHttpContextAccessor context)
+        public BearerTokenHandler(IIdentityServerClient identityServerClient)
         {
-            this.context = context;
+            this.identityServerClient = identityServerClient;
         }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var access_token = context.HttpContext.GetTokenAsync("access_token");
-            request.SetBearerToken(access_token.Result);
+            var accessToken = identityServerClient.RequestClientCredentialsTokenAsync();
+            request.SetBearerToken(accessToken.Result);
             return base.SendAsync(request, cancellationToken);
         }
     }

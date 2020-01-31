@@ -37,13 +37,6 @@ namespace IdentityServer.Api
                     DisplayName = "EA CA IAM",
                     Description = "Enterprise Architecture CA IAM",
                 },
-                new IdentityResource
-                {
-                    Name = "rogue_adfs",
-                    DisplayName = "LA OTS ADFS",
-                    Description = "LA OTS ADFS",
-                },
-
                   new IdentityResource("roles", new[] { JwtClaimTypes.Role  })
                 };
             }
@@ -99,75 +92,45 @@ namespace IdentityServer.Api
                                 IdentityServerConstants.StandardScopes.Profile,
                                 "api1"
                             },
+                            //Allow requesting refresh tokens for long lived API access
                             AllowAccessTokensViaBrowser = true,
                             AllowOfflineAccess = true
-                        },
-                    // client credentials flow client
-                    new Client
-                        {
-                            ClientId = "client",
-                            ClientName = "Client Credentials Client",
-
-                            AllowedGrantTypes = GrantTypes.ClientCredentials,
-                            ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
-                            AllowedScopes = { "api1" }
-                        },
-
+                        },  
                          // MVC client using hybrid flow
                     new Client
                         {
                             ClientId = "mvcCert",
                             ClientName = "MVC Client",
-                            AllowedGrantTypes = GrantTypes.Code,
-                   
-                    
-                            //ClientSecrets =  { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
-                            AccessTokenType = AccessTokenType.Jwt,
                             ClientSecrets = {
-                            //new Secret(@"CN=mtls.test, OU=ROO\ballen@roo, O=mkcert development certificate", "mtls.test")
-                            //{
-                            //    Type = SecretTypes.X509CertificateName
-                            //},
-                                 // or:
-                                 new Secret("01E6592143E1413907469C3669D6F4EC6E582C05", "MvcClient.cert")
-                                 {// serial number is 1E0000428DD2559EBA25D96B8600000000428D
+                                 new Secret("2767798A6DC7691C8EF41414BF7C9D59DB9DA31A", "MvcClient.Web")
+                                 {
                                      Type = SecretTypes.X509CertificateThumbprint
                                  },
-                                 //new Secret
-                                 //   {
-                                 //       // Type must be "X509CertificateBase64"
-                                 //       Type = IdentityServerConstants.SecretTypes.X509CertificateBase64,
-
-                                 //       // base64 value of the public key      
-                                 //      Value = Convert.ToBase64String(new X509Certificate2(new Cryptography.X509Certificates.Extension.X509Certificate2(
-                                 //          "1E0000428DD2559EBA25D96B8600000000428D",
-                                 //          StoreName.My, StoreLocation.LocalMachine, X509FindType.FindBySerialNumber
-                                 //      )).GetRawCertData())
-                                 //   }
                              },
                             EnableLocalLogin = false,
-                            IdentityProviderRestrictions = new List<string>(){"rogue_adfs"},
-                            RequireConsent = false,
+                            IdentityProviderRestrictions = new List<string>(){"adfs"},
 
-                            RedirectUris = { "https://localhost:5002/signin-oidc" },
-                            //FrontChannelLogoutUri = "http://localhost:5002/signout-oidc",
-                            PostLogoutRedirectUris = { "https://localhost:5002/" },
-                            //PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
-                            AllowedCorsOrigins = { "https://localhost:5002" },
-                            //AlwaysSendClientClaims= true,
+                            AllowedGrantTypes = GrantTypes.Code,
+                            AccessTokenType = AccessTokenType.Jwt,
+                            RequireConsent = false,
+                            RequirePkce = false,    //https://www.scottbrady91.com/OpenID-Connect/ASPNET-Core-using-Proof-Key-for-Code-Exchange-PKCE
+                            AllowedCorsOrigins = { "https://localhost:5001" },
                             AlwaysIncludeUserClaimsInIdToken= true,
                             AlwaysSendClientClaims= true,
                             ClientClaimsPrefix = "",
-                            RequirePkce = false,//https://www.scottbrady91.com/OpenID-Connect/ASPNET-Core-using-Proof-Key-for-Code-Exchange-PKCE
-                            AllowPlainTextPkce = false,
+
+                             // where to redirect to after login
+                            RedirectUris = { "https://localhost:5001/signin-oidc" },
+                            
+                             // where to redirect to after logout
+                            PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
+
                             AllowedScopes = new List<string>
                             {
                                 IdentityServerConstants.StandardScopes.OpenId,
                                 IdentityServerConstants.StandardScopes.Profile,
-                                ClaimTypes.Role,
-                                "test_api",
-                                "roles"
-                            },
+                                "api1"
+                            },                          
                   
                             //Allow requesting refresh tokens for long lived API access
                             AllowAccessTokensViaBrowser = true,

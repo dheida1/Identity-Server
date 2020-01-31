@@ -1,8 +1,10 @@
+using IdentityModel;
 using IdentityServer.Api.IdentityServer.Api;
 using IdentityServer.Core.Entities;
 using IdentityServer.Infrastructure.Data;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
+using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -52,6 +54,21 @@ namespace IdentityServer.Api
                 iis.AutomaticAuthentication = false;
             });
 
+            services.AddCertificateForwarding(options =>
+            {
+                options.CertificateHeader = "X-ARR-ClientCert";
+                options.HeaderConverter = (headerValue) =>
+                {
+                    X509Certificate2 clientCertificate = null;
+                    if (!string.IsNullOrWhiteSpace(headerValue))
+                    {
+                        byte[] bytes = Convert.FromBase64String(headerValue);
+                        clientCertificate = new X509Certificate2(bytes);
+                    }
+                    return clientCertificate;
+                };
+            });
+
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             var migrationsAssembly = "IdentityServer.Infrastructure";
 
@@ -65,6 +82,28 @@ namespace IdentityServer.Api
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddAuthentication()
+            .AddCertificate("x509", options =>
+            {
+                options.RevocationMode = (Environment.IsDevelopment() ? X509RevocationMode.NoCheck : X509RevocationMode.Online);
+                options.AllowedCertificateTypes = (Environment.IsDevelopment() ? CertificateTypes.SelfSigned : CertificateTypes.Chained);
+                options.ValidateCertificateUse = (Environment.IsDevelopment() ? false : true);
+                options.ValidateValidityPeriod = (Environment.IsDevelopment() ? false : true);
+
+                options.Events = new CertificateAuthenticationEvents
+                {
+
+                    OnCertificateValidated = context =>
+                    {
+                        context.Principal = Principal.CreateFromCertificate(context.ClientCertificate, includeAllClaims: true);
+                        context.Success();
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = context =>
+                    {
+                        return Task.CompletedTask;
+                    }
+                };
+            })
             .AddSamlCore("adfs", options =>
               {
                   options.SignInScheme = IdentityConstants.ExternalScheme;
@@ -195,6 +234,7 @@ namespace IdentityServer.Api
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseCertificateForwarding();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseIdentityServer();

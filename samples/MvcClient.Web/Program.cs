@@ -4,6 +4,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
+using System.Security.Authentication;
 
 namespace MvcClient.Web
 {
@@ -47,7 +48,16 @@ namespace MvcClient.Web
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseSerilog();
-                    webBuilder.ConfigureKestrel(options => options.AllowSynchronousIO = true);
+                    webBuilder.ConfigureKestrel(options =>
+                    {
+                        options.AllowSynchronousIO = true;
+                        options.ConfigureHttpsDefaults(httpsOptions =>
+                        {
+                            //    httpsOptions.ServerCertificate = X509.LocalMachine.My.Thumbprint.Find("2767798A6DC7691C8EF41414BF7C9D59DB9DA31A", false).Single();
+                            //    httpsOptions.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
+                            httpsOptions.SslProtocols = SslProtocols.Tls12;
+                        });
+                    });
                 });
     }
 }

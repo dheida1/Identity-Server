@@ -25,7 +25,7 @@ namespace MvcClient.Web.DelegatingHandlers
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var certificate = X509.LocalMachine.My.SerialNumber.Find(configuration["CertificateSerialNumbers:My"]).Single();
+            var certificate = X509.LocalMachine.My.Thumbprint.Find(configuration["Certificates:Personal"], false).Single();
             if (base.InnerHandler == null)
             {
                 base.InnerHandler = new HttpClientHandler()

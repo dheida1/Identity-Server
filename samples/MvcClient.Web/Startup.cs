@@ -27,20 +27,6 @@ namespace MvcClient.Web
             services.AddControllersWithViews();
             services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
 
-            //services.AddSingleton(new ClientCredentialsTokenRequest
-            //{
-            //    Address = "http://localhost:4300/connect/token",
-            //    ClientId = "client-app",
-            //    ClientSecret = "secret",
-            //    Scope = "read:entity"
-            //});
-
-            //services.AddHttpClient<IIdentityServerClient, IdentityServerClient>(client =>
-            //{
-            //    client.BaseAddress = new Uri("http://localhost:4300");
-            //    client.DefaultRequestHeaders.Add("Accept", "application/json");
-            //});
-
             services
                .AddDelegates()
                .AddDataServices(Configuration)
