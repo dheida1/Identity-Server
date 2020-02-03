@@ -91,7 +91,6 @@ namespace IdentityServer.Api
 
                 options.Events = new CertificateAuthenticationEvents
                 {
-
                     OnCertificateValidated = context =>
                     {
                         context.Principal = Principal.CreateFromCertificate(context.ClientCertificate, includeAllClaims: true);

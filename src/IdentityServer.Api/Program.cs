@@ -1,4 +1,3 @@
-using IdentityModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Hosting;
@@ -6,7 +5,6 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
-using System.Linq;
 using System.Security.Authentication;
 
 namespace IdentityServer.Api
@@ -58,7 +56,7 @@ namespace IdentityServer.Api
                         options.AllowSynchronousIO = true;
                         options.ConfigureHttpsDefaults(httpsOptions =>
                             {
-                                httpsOptions.ServerCertificate = X509.LocalMachine.My.Thumbprint.Find("3BC996BE4AC586047AB08D01A9A6AB6276CF5837", false).Single();
+                                httpsOptions.CheckCertificateRevocation = false;
                                 httpsOptions.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
                                 httpsOptions.SslProtocols = SslProtocols.Tls12;
                             });

@@ -38,17 +38,21 @@ namespace MvcClient.Web.Configurations
                 .AddOpenIdConnect(options =>
                 {
                     options.Authority = configuration["IdentityServer:Authority"];
-                    options.RequireHttpsMetadata = true;
+                    options.RequireHttpsMetadata = false;
                     options.ClientId = configuration["Client:Id"];
-                    //options.ClientSecret = "secret";
                     options.ResponseType = "code";
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
-                    //options.Backchannel = new IdentityServerClient(new )
                     options.BackchannelHttpHandler = new MtlsHandler(configuration, environment);
                     options.Scope.Clear();
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
+                    options.Events.OnRedirectToIdentityProvider = async context =>
+                    {
+                        var config = await context.Options.ConfigurationManager.GetConfigurationAsync(default);
+                        //override existing token endpoint with to get the mtls token
+                        config.TokenEndpoint = configuration["IdentityServer:MtlsTokenEndpoint"];
+                    };
                 });
 
             return services;

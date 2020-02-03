@@ -14,6 +14,20 @@ namespace MvcClient.Web.Configurations
             this IServiceCollection services,
             IConfiguration configuration)
         {
+
+            //    services.AddSingleton<IDiscoveryCache>(provider =>
+            //    {
+            //        var factory = provider.GetRequiredService<IHttpClientFactory>();
+            //        return new DiscoveryCache(configuration["IdentityServer:Authority"], () => factory.CreateClient());
+            //    });
+
+
+            services.AddSingleton(new ClientCredentialsTokenRequest
+            {
+                Address = "http://localhost:5000/connect/token",
+                ClientId = configuration["Client:Id"]
+            });
+
             services.AddHttpClient<IIdentityServerClient, IdentityServerClient>(client =>
             {
                 client.BaseAddress = new Uri(configuration["IdentityServer:Authority"]);
@@ -28,13 +42,6 @@ namespace MvcClient.Web.Configurations
             })
             .AddHttpMessageHandler<BearerTokenHandler>() //order is important here
             .AddHttpMessageHandler<MtlsHandler>();
-
-            services.AddSingleton(new ClientCredentialsTokenRequest
-            {
-                Address = "http://localhost:5000/connect/token",
-                ClientId = configuration["Client:Id"]
-            });
-
 
             return services;
         }

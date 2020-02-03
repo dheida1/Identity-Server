@@ -23,6 +23,7 @@ namespace MvcClient.Web.Services
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+
         public async Task<string> RequestClientCredentialsTokenAsync()
         {
             // request the access token token

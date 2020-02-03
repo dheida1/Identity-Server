@@ -30,13 +30,12 @@ namespace MvcClient.Web
             services
                .AddDelegates()
                .AddDataServices(Configuration)
-               .AddOtsAuthentication(Environment, Configuration);
+               .AddOtsAuthentication(Environment, Configuration)
+               .AddAuthorization();
 
             services.AddHttpContextAccessor();
 
             JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
