@@ -23,7 +23,6 @@ namespace MvcClient.Web.Services
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-
         public async Task<string> RequestClientCredentialsTokenAsync()
         {
             // request the access token token
@@ -35,17 +34,5 @@ namespace MvcClient.Web.Services
             }
             return tokenResponse.AccessToken;
         }
-
-        //public async Task<string> RequestRefreshTokenAsync()
-        //{
-        //    // request the access token token
-        //    var tokenResponse = await httpClient.RequestRefreshTokenAsync();
-        //    if (tokenResponse.IsError)
-        //    {
-        //        logger.LogError(tokenResponse.Error);
-        //        throw new HttpRequestException("Something went wrong while requesting the access token");
-        //    }
-        //    return tokenResponse.AccessToken;
-        //}
     }
 }

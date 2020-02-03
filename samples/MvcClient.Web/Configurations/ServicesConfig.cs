@@ -5,6 +5,7 @@ using MvcClient.Web.DelegatingHandlers;
 using MvcClient.Web.Interfaces;
 using MvcClient.Web.Services;
 using System;
+using System.Net.Http;
 
 namespace MvcClient.Web.Configurations
 {
@@ -14,17 +15,15 @@ namespace MvcClient.Web.Configurations
             this IServiceCollection services,
             IConfiguration configuration)
         {
-
-            //    services.AddSingleton<IDiscoveryCache>(provider =>
-            //    {
-            //        var factory = provider.GetRequiredService<IHttpClientFactory>();
-            //        return new DiscoveryCache(configuration["IdentityServer:Authority"], () => factory.CreateClient());
-            //    });
-
+            services.AddSingleton<IDiscoveryCache>(provider =>
+            {
+                var factory = provider.GetRequiredService<IHttpClientFactory>();
+                return new DiscoveryCache(configuration["IdentityServer:Authority"], () => factory.CreateClient());
+            });
 
             services.AddSingleton(new ClientCredentialsTokenRequest
             {
-                Address = "http://localhost:5000/connect/token",
+                Address = configuration["IdentityServer:MtlsTokenEndpoint"],
                 ClientId = configuration["Client:Id"]
             });
 

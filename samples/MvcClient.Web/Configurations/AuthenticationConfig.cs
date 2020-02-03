@@ -38,6 +38,7 @@ namespace MvcClient.Web.Configurations
                 .AddOpenIdConnect(options =>
                 {
                     options.Authority = configuration["IdentityServer:Authority"];
+
                     options.RequireHttpsMetadata = false;
                     options.ClientId = configuration["Client:Id"];
                     options.ResponseType = "code";
