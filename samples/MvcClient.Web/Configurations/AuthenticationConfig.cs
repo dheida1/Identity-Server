@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MvcClient.Web.DelegatingHandlers;
 using System;
 using System.Threading.Tasks;
@@ -38,8 +39,7 @@ namespace MvcClient.Web.Configurations
                 .AddOpenIdConnect(options =>
                 {
                     options.Authority = configuration["IdentityServer:Authority"];
-
-                    options.RequireHttpsMetadata = false;
+                    options.RequireHttpsMetadata = environment.IsDevelopment() ? false : true;
                     options.ClientId = configuration["Client:Id"];
                     options.ResponseType = "code";
                     options.SaveTokens = true;

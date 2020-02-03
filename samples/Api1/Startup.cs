@@ -1,9 +1,11 @@
+using Api1.DelegatingHandlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace Api1
@@ -22,14 +24,26 @@ namespace Api1
         {
             services.AddControllers();
 
+            //to add the certicate to the http client header
+            services.AddTransient<MtlsHandler>();
+
+            //add bearer token to the http client header
+            services.AddTransient<BearerTokenHandler>();
+
+            services.AddHttpClient<IIdentityServerClient, IdentityServerClient>(client =>
+            {
+                client.BaseAddress = new Uri(Configuration["IdentityServer:Authority"]);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            })
+           .AddHttpMessageHandler<MtlsHandler>();
+
             services.AddAuthentication()
                  .AddIdentityServerAuthentication(options =>
                  {
                      options.Authority = "https://localhost:4300";
-                     options.RequireHttpsMetadata = true;
+                     options.RequireHttpsMetadata = Environment.IsDevelopment() ? false : true;
                      options.ApiName = "test_api";
-                     options.ApiSecret = "secret";
-                     //options.RoleClaimType = "role";
+                     options.JwtBackChannelHandler = new MtlsHandler(Configuration, Environment);
                      options.JwtBearerEvents.OnMessageReceived = context =>
                      {
                          return Task.FromResult(0);

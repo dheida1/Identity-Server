@@ -15,18 +15,6 @@ namespace MvcClient.Web.Services
             this.client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
-        //public Api1ServiceClient(HttpClient httpClient,
-        //    //[FromServices] IHttpContextAccessor context,
-        //    [FromServices] IConfiguration configuration
-        //    //[FromServices] IJwes jwes
-        //    )
-        //{
-        //    string apiEncryptingCertificateSerialNumber = configuration["JWT:Api1EncryptingCertificateSerialNumber"];
-        //    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, jwes.GetJWES(context.HttpContext.User.Claims, apiEncryptingCertificateSerialNumber));
-        //    this.httpClient = httpClient;
-        //}
-
-
         public async Task<string> Get()
         {
             // No more getting access_tokens code!
