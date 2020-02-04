@@ -12,7 +12,7 @@ namespace MvcClient.Web.Configurations
             services.AddTransient<MtlsHandler>();
 
             //add bearer token to the http client header
-            services.AddTransient<BearerTokenHandler>();
+            // services.AddTransient<BearerTokenHandler>();
 
             return services;
         }

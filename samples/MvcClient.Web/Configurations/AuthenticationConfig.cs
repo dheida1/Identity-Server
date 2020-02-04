@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using MvcClient.Web.DelegatingHandlers;
 using System;
 using System.Threading.Tasks;
@@ -25,15 +27,16 @@ namespace MvcClient.Web.Configurations
                 .AddCookie(options =>
                   {
                       options.ExpireTimeSpan = TimeSpan.FromMinutes(60); //this is diffferent than the access_token expiration
-                      options.SlidingExpiration = true;
+                      options.SlidingExpiration = false;
                       options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
-                      options.Events.OnValidatePrincipal = context =>
-                      {
-                          return Task.CompletedTask;
-                      };
                       options.Events.OnRedirectToAccessDenied = context =>
                       {
                           return Task.CompletedTask;
+                      };
+                      options.Events.OnSigningOut = async e =>
+                      {
+                          // automatically revoke refresh token at signout time
+                          await e.HttpContext.RevokeUserRefreshTokenAsync();
                       };
                   })
                 .AddOpenIdConnect(options =>
@@ -48,6 +51,13 @@ namespace MvcClient.Web.Configurations
                     options.Scope.Clear();
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
+                    options.Scope.Add("offline_access"); //need this to get back .refreshToken
+                    options.Scope.Add("api1");
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        NameClaimType = "name",
+                        RoleClaimType = "role"
+                    };
                     options.Events.OnRedirectToIdentityProvider = async context =>
                     {
                         var config = await context.Options.ConfigurationManager.GetConfigurationAsync(default);

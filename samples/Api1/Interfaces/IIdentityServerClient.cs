@@ -2,8 +2,8 @@
 
 namespace Api1.Interfaces
 {
-    public class IIdentityServerClient
+    public interface IIdentityServerClient
     {
-        Task<string> RequestClientCredentialsTokenAsync()
+        Task<string> RequestClientCredentialsTokenAsync();
     }
 }

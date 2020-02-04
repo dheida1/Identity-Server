@@ -11,7 +11,7 @@ namespace MvcClient.Web
     {
         public static int Main(string[] args)
         {
-            Console.Title = "IdentityServer4.EntityFramework";
+            Console.Title = "MvcClient.Web";
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()

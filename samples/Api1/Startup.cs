@@ -1,4 +1,7 @@
 using Api1.DelegatingHandlers;
+using Api1.Interfaces;
+using Api1.Services;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -37,7 +40,10 @@ namespace Api1
             })
            .AddHttpMessageHandler<MtlsHandler>();
 
-            services.AddAuthentication()
+            services.AddAuthentication(options =>
+            {
+                options.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+            })
                  .AddIdentityServerAuthentication(options =>
                  {
                      options.Authority = "https://localhost:4300";

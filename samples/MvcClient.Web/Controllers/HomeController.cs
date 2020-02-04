@@ -34,7 +34,7 @@ namespace MvcClient.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Api()
+        public async Task<IActionResult> Api1()
         {
             var apiRequest = await mediator.Send(new Api1Request());
             return View();

@@ -18,7 +18,7 @@ namespace MvcClient.Web.Services
         public async Task<string> Get()
         {
             // No more getting access_tokens code!
-            var response = await client.GetAsync("/ApiSecure");
+            var response = await client.GetAsync("/api/ApiSecure");
 
             if (!response.IsSuccessStatusCode)
             {

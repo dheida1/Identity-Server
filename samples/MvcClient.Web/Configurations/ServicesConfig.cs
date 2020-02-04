@@ -5,7 +5,6 @@ using MvcClient.Web.DelegatingHandlers;
 using MvcClient.Web.Interfaces;
 using MvcClient.Web.Services;
 using System;
-using System.Net.Http;
 
 namespace MvcClient.Web.Configurations
 {
@@ -15,31 +14,56 @@ namespace MvcClient.Web.Configurations
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddSingleton<IDiscoveryCache>(provider =>
-            {
-                var factory = provider.GetRequiredService<IHttpClientFactory>();
-                return new DiscoveryCache(configuration["IdentityServer:Authority"], () => factory.CreateClient());
-            });
+            //services.AddSingleton<IDiscoveryCache>(provider =>
+            //{
+            //    var factory = provider.GetRequiredService<IHttpClientFactory>();
+            //    return new DiscoveryCache(configuration["IdentityServer:Authority"], () => factory.CreateClient());
+            //});
 
-            services.AddSingleton(new ClientCredentialsTokenRequest
-            {
-                Address = configuration["IdentityServer:MtlsTokenEndpoint"],
-                ClientId = configuration["Client:Id"]
-            });
+            //services.AddSingleton(new IdentityModel.Client.TokenRequest
+            //{
+            //    Address = configuration["IdentityServer:MtlsTokenEndpoint"],
+            //    ClientId = configuration["Client:Id"],
+            //    GrantType = GrantTypes.AuthorizationCode
+            //});
 
-            services.AddHttpClient<IIdentityServerClient, IdentityServerClient>(client =>
+            //services.AddSingleton(new ClientCredentialsTokenRequest
+            //{
+            //    Address = configuration["IdentityServer:MtlsTokenEndpoint"],
+            //    ClientId = configuration["Client:Id"]
+            //});
+
+            //services.AddHttpClient<IIdentityServerClient, IdentityServerClient>(client =>
+            //{
+            //    client.BaseAddress = new Uri(configuration["IdentityServer:Authority"]);
+            //    client.DefaultRequestHeaders.Add("Accept", "application/json");
+            //})
+            //.AddHttpMessageHandler<MtlsHandler>();
+
+            // add HTTP client to call protected API
+            //services.AddUserAccessTokenClient("client", client =>
+            //{
+            //    client.BaseAddress = new Uri(Constants.SampleApi);
+            //});
+
+            // add automatic token management
+            services.AddAccessTokenManagement(o =>
             {
-                client.BaseAddress = new Uri(configuration["IdentityServer:Authority"]);
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
-            })
-            .AddHttpMessageHandler<MtlsHandler>();
+                o.Client.Clients.Add("mvcCert", new ClientCredentialsTokenRequest()
+                {
+                    Address = configuration["IdentityServer:MtlsTokenEndpoint"],
+                    ClientId = configuration["Client:Id"],
+                    Scope = "offline_access"
+                });
+            });
 
             services.AddHttpClient<IApi1ServiceClient, Api1ServiceClient>(client =>
             {
                 client.BaseAddress = new Uri(configuration["Api1:BaseUrl"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             })
-            .AddHttpMessageHandler<BearerTokenHandler>() //order is important here
+            //.AddHttpMessageHandler<BearerTokenHandler>() //order is important here
+            .AddUserAccessTokenHandler()
             .AddHttpMessageHandler<MtlsHandler>();
 
             return services;

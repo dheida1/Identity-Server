@@ -40,8 +40,6 @@ namespace MvcClient.Web.DelegatingHandlers
             var certBytes = certificate.RawData;
             var certString = Convert.ToBase64String(certBytes);
             request.Headers.Add("X-ARR-ClientCert", certString);
-
-
             return base.SendAsync(request, cancellationToken);
         }
     }

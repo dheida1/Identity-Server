@@ -1,4 +1,5 @@
-﻿using IdentityModel.Client;
+﻿using Api1.Interfaces;
+using IdentityModel.Client;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;

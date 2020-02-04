@@ -1,4 +1,5 @@
-﻿using IdentityModel.Client;
+﻿using Api1.Interfaces;
+using IdentityModel.Client;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
