@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿//using System.Threading.Tasks;
 
-namespace Api1.Interfaces
-{
-    public interface IIdentityServerClient
-    {
-        Task<string> RequestClientCredentialsTokenAsync();
-    }
-}
+//namespace Api1.Interfaces
+//{
+//    public interface IIdentityServerClient
+//    {
+//        Task<string> RequestClientCredentialsTokenAsync();
+//    }
+//}

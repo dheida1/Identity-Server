@@ -1,4 +1,3 @@
-using Api1.DelegatingHandlers;
 using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication.Certificate;
@@ -50,7 +49,7 @@ namespace Api1
                      options.Authority = "https://localhost:4300";
                      options.RequireHttpsMetadata = Environment.IsDevelopment() ? false : true;
                      options.ApiName = "api1";
-                     options.JwtBackChannelHandler = new MtlsHandler(Configuration, Environment);
+                     //options.JwtBackChannelHandler = new MtlsHandler(Configuration, Environment);
                      options.JwtBearerEvents.OnMessageReceived = context =>
                      {
                          return Task.FromResult(0);

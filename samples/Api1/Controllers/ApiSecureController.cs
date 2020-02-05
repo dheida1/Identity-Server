@@ -23,7 +23,7 @@ namespace Api1.Controllers
         public async Task<ActionResult> Get()
         {
             var accessToken = await HttpContext.GetTokenAsync("access_token");
-            var idToken = await HttpContext.GetTokenAsync("id_token");
+            var idToken = await HttpContext.GetTokenAsync("id_token"); //must be null
             var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
             return Ok(new JsonResult(from c in User.Claims select new { c.Type, c.Value }));
         }
