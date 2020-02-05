@@ -110,7 +110,8 @@ namespace IdentityServer.Api
                             EnableLocalLogin = false,
                             IdentityProviderRestrictions = new List<string>(){"adfs"},
 
-                            AllowedGrantTypes = GrantTypes.Code,
+                            AllowedGrantTypes = GrantTypes.ClientCredentials,
+                            //GrantTypes.Code,
                             AccessTokenType = AccessTokenType.Jwt,
                             RequireConsent = false,
                             RequirePkce = false,    //https://www.scottbrady91.com/OpenID-Connect/ASPNET-Core-using-Proof-Key-for-Code-Exchange-PKCE
@@ -118,7 +119,7 @@ namespace IdentityServer.Api
                             AlwaysIncludeUserClaimsInIdToken= true,
                             AlwaysSendClientClaims= true,
                             ClientClaimsPrefix = "",
-
+                            //UpdateAccessTokenClaimsOnRefresh = true,
                              // where to redirect to after login
                             RedirectUris = { "https://localhost:5001/signin-oidc" },
                             

@@ -53,6 +53,7 @@ namespace MvcClient.Web.Configurations
                     options.Scope.Add("profile");
                     options.Scope.Add("offline_access"); //need this to get back .refreshToken
                     options.Scope.Add("api1");
+
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = "name",

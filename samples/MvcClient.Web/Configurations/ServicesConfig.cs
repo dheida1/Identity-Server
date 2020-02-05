@@ -1,4 +1,5 @@
-﻿using IdentityModel.Client;
+﻿using IdentityModel.AspNetCore.AccessTokenManagement;
+using IdentityModel.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MvcClient.Web.DelegatingHandlers;
@@ -46,6 +47,8 @@ namespace MvcClient.Web.Configurations
             //    client.BaseAddress = new Uri(Constants.SampleApi);
             //});
 
+            services.AddHttpClient<ITokenEndpointService, TokenEndpointService>();
+
             // add automatic token management
             services.AddAccessTokenManagement(o =>
             {
@@ -53,17 +56,22 @@ namespace MvcClient.Web.Configurations
                 {
                     Address = configuration["IdentityServer:MtlsTokenEndpoint"],
                     ClientId = configuration["Client:Id"],
-                    Scope = "offline_access"
+                    //Scope = "offline_access api1 openid",
+                    //GrantType = GrantTypes.AuthorizationCode
                 });
-            });
+            }).ConfigureBackchannelHttpClient(client =>
+                {
+                    client.Timeout = TimeSpan.FromSeconds(30);
+
+                }).AddHttpMessageHandler<MtlsHandler>();
 
             services.AddHttpClient<IApi1ServiceClient, Api1ServiceClient>(client =>
             {
                 client.BaseAddress = new Uri(configuration["Api1:BaseUrl"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             })
-            //.AddHttpMessageHandler<BearerTokenHandler>() //order is important here
-            .AddUserAccessTokenHandler()
+            //.AddHttpMessageHandler<BearerTokenHandler>() //order is important here          
+            .AddClientAccessTokenHandler()
             .AddHttpMessageHandler<MtlsHandler>();
 
             return services;
