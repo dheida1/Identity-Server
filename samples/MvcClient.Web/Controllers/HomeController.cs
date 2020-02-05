@@ -40,6 +40,13 @@ namespace MvcClient.Web.Controllers
             return Ok(apiResult);
         }
 
+        [Authorize]
+        public async Task<IActionResult> Api2()
+        {
+            var apiResult = await mediator.Send(new Api2Request());
+            return Ok(apiResult);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

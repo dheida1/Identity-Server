@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace MvcClient.Web.Services
 {
-    public class Api1ServiceClient : IApi1ServiceClient
+    public class Api2ServiceClient : IApi2ServiceClient
     {
         private readonly HttpClient client;
 
-        public Api1ServiceClient(
+        public Api2ServiceClient(
             HttpClient client)
         {
             this.client = client ?? throw new ArgumentNullException(nameof(client));
@@ -18,7 +18,7 @@ namespace MvcClient.Web.Services
         public async Task<string> Get()
         {
             // No more getting access_tokens code!
-            var response = await client.GetAsync("/api1/ApiSecure");
+            var response = await client.GetAsync("/api2/ApiSecure");
 
             if (!response.IsSuccessStatusCode)
             {

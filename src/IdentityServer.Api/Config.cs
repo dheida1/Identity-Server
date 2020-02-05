@@ -47,7 +47,7 @@ namespace IdentityServer.Api
                 {
                     new ApiResource("api1", "My API #1"),
 
-                    new ApiResource("test_api", "My Test API")
+                    new ApiResource("api2",  "My API #2")
                     {
                       ApiSecrets = { new Secret("secret".Sha256()) },
                       UserClaims =  { ClaimTypes.Name, ClaimTypes.Email}
@@ -110,8 +110,7 @@ namespace IdentityServer.Api
                             EnableLocalLogin = false,
                             IdentityProviderRestrictions = new List<string>(){"adfs"},
 
-                            AllowedGrantTypes = GrantTypes.ClientCredentials,
-                            //GrantTypes.Code,
+                            AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                             AccessTokenType = AccessTokenType.Jwt,
                             RequireConsent = false,
                             RequirePkce = false,    //https://www.scottbrady91.com/OpenID-Connect/ASPNET-Core-using-Proof-Key-for-Code-Exchange-PKCE
@@ -119,8 +118,8 @@ namespace IdentityServer.Api
                             AlwaysIncludeUserClaimsInIdToken= true,
                             AlwaysSendClientClaims= true,
                             ClientClaimsPrefix = "",
-                            //UpdateAccessTokenClaimsOnRefresh = true,
-                             // where to redirect to after login
+                            UpdateAccessTokenClaimsOnRefresh = true,
+                            // where to redirect to after login
                             RedirectUris = { "https://localhost:5001/signin-oidc" },
                             
                              // where to redirect to after logout
@@ -130,7 +129,8 @@ namespace IdentityServer.Api
                             {
                                 IdentityServerConstants.StandardScopes.OpenId,
                                 IdentityServerConstants.StandardScopes.Profile,
-                                "api1"
+                                "api1",
+                                "api2"
                             },                          
                   
                             //Allow requesting refresh tokens for long lived API access

@@ -11,9 +11,6 @@ namespace MvcClient.Web.Configurations
             //to add the certicate to the http client header
             services.AddTransient<MtlsHandler>();
 
-            //add bearer token to the http client header
-            // services.AddTransient<BearerTokenHandler>();
-
             return services;
         }
     }

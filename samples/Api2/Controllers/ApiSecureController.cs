@@ -5,11 +5,11 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api1.Controllers
+namespace Api2.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api1/[controller]")]
+    [Route("api2/[controller]")]
     public class ApiSecureController : ControllerBase
     {
         private readonly ILogger<ApiSecureController> logger;
