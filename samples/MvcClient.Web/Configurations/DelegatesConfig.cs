@@ -11,6 +11,8 @@ namespace MvcClient.Web.Configurations
             //to add the certicate to the http client header
             services.AddTransient<MtlsHandler>();
 
+            //services.AddTransient<MtlsSocketsHttpHandler>();
+
             return services;
         }
     }
