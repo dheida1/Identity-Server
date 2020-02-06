@@ -28,7 +28,7 @@ namespace IdentityServer.Api
             var principal = await claimsFactory.CreateAsync(user);
 
             var claims = principal.Claims.ToList();
-            //claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();            
+            claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
 
             //Add custom claims in token here based on user properties or any other source
             //claims.Add(new Claim("employee_id", user.EmployeeId ?? string.Empty));
