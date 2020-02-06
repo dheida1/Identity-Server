@@ -14,22 +14,6 @@ namespace MvcClient.Web.Configurations
             this IServiceCollection services,
             IConfiguration configuration)
         {
-
-            //services.AddTransient(serviceProvider =>
-            //{
-            //    var handler = new SocketsHttpHandler();
-            //    handler.SslOptions.ClientCertificates =
-            //        new X509CertificateCollection { X509.LocalMachine.My.Thumbprint.Find(configuration["Certificates:Personal"], false).Single() };
-            //    return handler;
-            //});
-
-            //services.AddSingleton<IDiscoveryCache>(provider =>
-            //    {
-            //        var factory = provider.GetRequiredService<IHttpClientFactory>();
-            //        return new DiscoveryCache(configuration["IdentityServer:Authority"], () => factory.CreateClient().);
-            //    });
-
-
             // add automatic token management
             // this will refresh the mvc client access_token and use it along with the mtls cert
             // when calling an api
@@ -42,7 +26,7 @@ namespace MvcClient.Web.Configurations
                 {
                     Address = configuration["IdentityServer:MtlsTokenEndpoint"],
                     ClientId = configuration["Client:Id"],
-                    Scope = "api1",
+                    Scope = "api1"
                 });
                 o.Client.Clients.Add("api2", new ClientCredentialsTokenRequest()
                 {
@@ -51,31 +35,11 @@ namespace MvcClient.Web.Configurations
                     Scope = "api2"
                 });
             })
-        .ConfigureBackchannelHttpClient(client =>
-        {
-            client.Timeout = TimeSpan.FromSeconds(30);
-        })
-        .AddHttpMessageHandler<MtlsHandler>();
-
-            //    new X509CertificateCol = lection { X509.LocalMachine.My.Thumbprint.Find(configuration["Certificates:Personal"], false).Single() };
-            //.AddHttpMessageHandler<MtlsHandler>();
-
-            //.ConfigureHttpMessageHandlerBuilder((c) =>
-            //{
-            //    var handler = new SocketsHttpHandler();
-            //    handler.SslOptions.ClientCertificates =
-            //        new X509CertificateCollection { X509.LocalMachine.My.Thumbprint.Find(configuration["Certificates:Personal"], false).Single() };
-            //});
-            //.ConfigurePrimaryHttpMessageHandler(() =>
-            // {
-            //     var handler = new SocketsHttpHandler();
-            //handler.SslOptions.ClientCertificates =
-            //    new X509CertificateCollection { X509.LocalMachine.My.Thumbprint.Find(configuration["Certificates:Personal"], false).Single() };
-            //return handler;
-            //});
-            //.ConfigurePrimaryHttpMessageHandler(sp => sp.GetRequiredService<SocketsHttpHandler>());
-
-
+            .ConfigureBackchannelHttpClient(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(30);
+            })
+            .AddHttpMessageHandler<MtlsHandler>();
 
             //create an api1 service to call the api
             services.AddHttpClient<IApi1ServiceClient, Api1ServiceClient>(client =>

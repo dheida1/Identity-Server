@@ -18,6 +18,7 @@ namespace IdentityServer.Api
                 {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
+                new IdentityResources.Email(),
                 new IdentityResource
                 {
                     Name = "google",
@@ -30,6 +31,13 @@ namespace IdentityServer.Api
                     Name = "adfs",
                     DisplayName = "LA State ADFS",
                     Description = "LA State ADFS",
+                    UserClaims = new[]{ ClaimTypes.Name,
+                        ClaimTypes.Email,
+                        ClaimTypes.GivenName,
+                        ClaimTypes.Surname,
+                        ClaimTypes.NameIdentifier,
+                        ClaimTypes.Sid,
+                        ClaimTypes.Role}
                 },
                 new IdentityResource
                 {
@@ -50,7 +58,50 @@ namespace IdentityServer.Api
                     new ApiResource("api2",  "My API #2")
                     {
                       ApiSecrets = { new Secret("secret".Sha256()) },
-                      UserClaims =  { ClaimTypes.Name, ClaimTypes.Email}
+                      UserClaims = new [] { ClaimTypes.Name,
+                          ClaimTypes.Email,
+                          JwtClaimTypes.Name,
+                          JwtClaimTypes.Email,
+                          JwtClaimTypes.Role,
+                          ClaimTypes.Role
+                      },
+                      Scopes = new[]
+                          {
+                           new Scope
+                              {
+                                    Name = "api2",
+                                    DisplayName = "Full access to Api2",
+                                    UserClaims = new[] { JwtClaimTypes.Role,
+                                        ClaimTypes.Role,
+                                        ClaimTypes.Name,
+                                        ClaimTypes.Email,
+                                        JwtClaimTypes.Name,
+                                        JwtClaimTypes.Email
+                                    },
+                              },
+                              new Scope
+                              {
+                                    Name = "api2.full_access",
+                                    DisplayName = "Full access to Api2",
+                                    UserClaims = new[] { JwtClaimTypes.Role,
+                                        ClaimTypes.Role,
+                                        ClaimTypes.Name,
+                                        ClaimTypes.Email,
+                                        JwtClaimTypes.Name,
+                                        JwtClaimTypes.Email
+                                    },
+                              },
+                               new Scope
+                              {
+                                    Name = "api2.read_only",
+                                    DisplayName = "Read only access to Api2",
+                                    UserClaims = new[] { JwtClaimTypes.Role,
+                                        ClaimTypes.Role,  ClaimTypes.Name,
+                                        ClaimTypes.Email, JwtClaimTypes.Name,
+                                        JwtClaimTypes.Email
+                                    },
+                              }
+                          }
                     },
                     new ApiResource("my_account_user", "My Account User API")
                     {
@@ -118,7 +169,7 @@ namespace IdentityServer.Api
                             AlwaysIncludeUserClaimsInIdToken= true,
                             AlwaysSendClientClaims= true,
                             ClientClaimsPrefix = "",
-                            UpdateAccessTokenClaimsOnRefresh = true,
+                            UpdateAccessTokenClaimsOnRefresh = true,                           
                             // where to redirect to after login
                             RedirectUris = { "https://localhost:5001/signin-oidc" },
                             
@@ -129,6 +180,7 @@ namespace IdentityServer.Api
                             {
                                 IdentityServerConstants.StandardScopes.OpenId,
                                 IdentityServerConstants.StandardScopes.Profile,
+                                IdentityServerConstants.StandardScopes.Email,
                                 "api1",
                                 "api2"
                             },                          

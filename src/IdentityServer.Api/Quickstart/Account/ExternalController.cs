@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace IdentityServer4.Quickstart.UI
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IEventService _events;
+        private readonly IConfiguration _configuration;
         private readonly ILogger<ExternalController> _logger;
 
         public ExternalController(
@@ -35,6 +37,7 @@ namespace IdentityServer4.Quickstart.UI
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IEventService events,
+            IConfiguration configuration,
             ILogger<ExternalController> logger)
         {
             _userManager = userManager;
@@ -42,6 +45,7 @@ namespace IdentityServer4.Quickstart.UI
             _interaction = interaction;
             _clientStore = clientStore;
             _events = events;
+            _configuration = configuration;
             _logger = logger;
         }
 
@@ -227,6 +231,7 @@ namespace IdentityServer4.Quickstart.UI
         {
             // create a list of claims that we want to transfer into our store
             var filtered = new List<Claim>();
+            var user = new ApplicationUser();
 
             // user's display name
             var name = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value ??
@@ -244,14 +249,18 @@ namespace IdentityServer4.Quickstart.UI
                 if (first != null && last != null)
                 {
                     filtered.Add(new Claim(JwtClaimTypes.Name, first + " " + last));
+                    user.FirstName = first;
+                    user.LastName = first;
                 }
                 else if (first != null)
                 {
-                    filtered.Add(new Claim(JwtClaimTypes.Name, first));
+                    filtered.Add(new Claim(JwtClaimTypes.GivenName, first));
+                    user.FirstName = first;
                 }
                 else if (last != null)
                 {
-                    filtered.Add(new Claim(JwtClaimTypes.Name, last));
+                    filtered.Add(new Claim(JwtClaimTypes.FamilyName, last));
+                    user.LastName = first;
                 }
             }
 
@@ -261,12 +270,22 @@ namespace IdentityServer4.Quickstart.UI
             if (email != null)
             {
                 filtered.Add(new Claim(JwtClaimTypes.Email, email));
+                user.Email = email;
             }
 
-            var user = new ApplicationUser
+            //username
+            var username = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.PreferredUserName)?.Value ??
+                //this is specific to la.gov adfs
+                claims.FirstOrDefault(x => x.Type == _configuration["IdentityProvider:Preferred_Username"])?.Value;
+            if (username != null)
             {
-                UserName = Guid.NewGuid().ToString(),
-            };
+                user.UserName = username;
+            }
+            else
+            {
+                user.UserName = Guid.NewGuid().ToString();
+            }
+
             var identityResult = await _userManager.CreateAsync(user);
             if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
 
@@ -307,6 +326,20 @@ namespace IdentityServer4.Quickstart.UI
 
         private void ProcessLoginCallbackForSaml2p(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
         {
+            // if the external system sent a session id claim, copy it over
+            // so we can use it for single sign-out
+            var sid = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == "http://samlCore.aspNetCore.authentication.saml2/session_index");
+            if (sid != null)
+            {
+                localClaims.Add(new Claim(ClaimTypes.Sid, sid.Value));
+            }
+
+            // if the external provider issued an id_token, we'll keep it for signout
+            var id_token = externalResult.Properties.GetTokenValue("id_token");
+            if (id_token != null)
+            {
+                localSignInProps.StoreTokens(new[] { new AuthenticationToken { Name = "id_token", Value = id_token } });
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using MvcClient.Web.DelegatingHandlers;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MvcClient.Web.Configurations
@@ -51,14 +52,21 @@ namespace MvcClient.Web.Configurations
                     options.Scope.Clear();
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
-                    options.Scope.Add("offline_access"); //need this to get back .refreshToken
-                    options.Scope.Add("api1");
+                    options.Scope.Add("offline_access"); //need this to get back '.refreshToken' to use when calling api's   
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        NameClaimType = "name",
-                        RoleClaimType = "role"
+                        //NameClaimType = JwtClaimTypes.Name,
+                        //RoleClaimType = JwtClaimTypes.Role
+                        NameClaimType = ClaimTypes.Name,
+                        RoleClaimType = ClaimTypes.Role
                     };
+
+                    //options.TokenValidationParameters = new TokenValidationParameters
+                    //{
+                    //    NameClaimType = "name",
+                    //    RoleClaimType = "role"
+                    //};
                     options.Events.OnRedirectToIdentityProvider = async context =>
                     {
                         var config = await context.Options.ConfigurationManager.GetConfigurationAsync(default);
@@ -66,7 +74,6 @@ namespace MvcClient.Web.Configurations
                         config.TokenEndpoint = configuration["IdentityServer:MtlsTokenEndpoint"];
                     };
                 });
-
             return services;
         }
     }

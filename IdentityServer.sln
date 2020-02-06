@@ -17,7 +17,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcClient.Web", "samples\Mv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api1", "samples\Api1\Api1.csproj", "{3E636DB0-995F-4675-A2DE-8390490CB063}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api2", "samples\Api2\Api2.csproj", "{54C86088-F5CC-4D48-A890-FE03413C4F38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api2", "samples\Api2\Api2.csproj", "{54C86088-F5CC-4D48-A890-FE03413C4F38}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3597CB9C-95D6-4270-A3BE-12A6D3AB86CF}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

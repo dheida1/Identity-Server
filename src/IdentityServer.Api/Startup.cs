@@ -4,6 +4,7 @@ using IdentityServer.Core.Entities;
 using IdentityServer.Infrastructure.Data;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -36,9 +37,11 @@ namespace IdentityServer.Api
         public void ConfigureServices(IServiceCollection services)
         {
             //TODO: Add DistributedCache
+            //TODO: switch this to api with no views or possibly ng views
 
             //services.AddControllers();
             services.AddControllersWithViews();
+            services.AddTransient<IProfileService, ProfileService>();
 
             // configures IIS out-of-proc settings (see https://github.com/aspnet/AspNetCore/issues/14882)
             services.Configure<IISOptions>(iis =>
@@ -152,13 +155,8 @@ namespace IdentityServer.Api
                   {
                       var identity = context.Principal.Identity as ClaimsIdentity;
                       var claims = context.Principal.Claims;
-                      if (claims.Any(c => c.Type == ClaimTypes.Email))
-                      {
-                          var userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
-                          var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
-                          identity.TryRemoveClaim(name);
-                          identity.AddClaim(new Claim(ClaimTypes.Name, userId));
-                      }
+                      var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
+                      identity.AddClaim(new Claim(ClaimTypes.Email, name));
                       return Task.FromResult(0);
                   };
               });
@@ -174,6 +172,7 @@ namespace IdentityServer.Api
                 options.MutualTls.ClientCertificateAuthenticationScheme = "x509";
             })
                  .AddAspNetIdentity<ApplicationUser>()
+                 .AddProfileService<ProfileService>()
                  // this adds the config data from DB (clients, resources, CORS)
                  .AddConfigurationStore(options =>
                  {
