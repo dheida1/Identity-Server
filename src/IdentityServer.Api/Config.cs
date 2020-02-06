@@ -60,10 +60,11 @@ namespace IdentityServer.Api
                       ApiSecrets = { new Secret("secret".Sha256()) },
                       UserClaims = new [] { ClaimTypes.Name,
                           ClaimTypes.Email,
+                          ClaimTypes.Name,
+                          ClaimTypes.Role,
                           JwtClaimTypes.Name,
                           JwtClaimTypes.Email,
                           JwtClaimTypes.Role,
-                          ClaimTypes.Role
                       },
                       Scopes = new[]
                           {
@@ -181,6 +182,12 @@ namespace IdentityServer.Api
                                 IdentityServerConstants.StandardScopes.OpenId,
                                 IdentityServerConstants.StandardScopes.Profile,
                                 IdentityServerConstants.StandardScopes.Email,
+                                ClaimTypes.Email,
+                                ClaimTypes.Name,
+                                JwtClaimTypes.Name,
+                                JwtClaimTypes.Email,
+                                JwtClaimTypes.Role,
+                                ClaimTypes.Role,
                                 "api1",
                                 "api2"
                             },                          

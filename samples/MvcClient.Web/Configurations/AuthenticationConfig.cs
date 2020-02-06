@@ -58,6 +58,7 @@ namespace MvcClient.Web.Configurations
                     {
                         //NameClaimType = JwtClaimTypes.Name,
                         //RoleClaimType = JwtClaimTypes.Role
+
                         NameClaimType = ClaimTypes.Name,
                         RoleClaimType = ClaimTypes.Role
                     };
