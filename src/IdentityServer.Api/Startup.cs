@@ -173,6 +173,8 @@ namespace IdentityServer.Api
             })
                  .AddAspNetIdentity<ApplicationUser>()
                  .AddProfileService<ProfileService>()
+                 .AddJwtBearerClientAuthentication() //to accept clients via jwts
+
                  // this adds the config data from DB (clients, resources, CORS)
                  .AddConfigurationStore(options =>
                  {

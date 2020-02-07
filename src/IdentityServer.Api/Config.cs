@@ -1,8 +1,10 @@
 ﻿using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using static IdentityServer4.IdentityServerConstants;
 
 namespace IdentityServer.Api
@@ -162,7 +164,7 @@ namespace IdentityServer.Api
                             EnableLocalLogin = false,
                             IdentityProviderRestrictions = new List<string>(){"adfs"},
 
-                            AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                            AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
                             AccessTokenType = AccessTokenType.Jwt,
                             RequireConsent = false,
                             RequirePkce = false,    //https://www.scottbrady91.com/OpenID-Connect/ASPNET-Core-using-Proof-Key-for-Code-Exchange-PKCE
@@ -173,7 +175,7 @@ namespace IdentityServer.Api
                             UpdateAccessTokenClaimsOnRefresh = true,                           
                             // where to redirect to after login
                             RedirectUris = { "https://localhost:5001/signin-oidc" },
-                            
+                          
                              // where to redirect to after logout
                             PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
 
@@ -195,7 +197,38 @@ namespace IdentityServer.Api
                             //Allow requesting refresh tokens for long lived API access
                             AllowAccessTokensViaBrowser = true,
                             AllowOfflineAccess = true
-                        },   
+                        },
+
+                        new Client
+                        {
+                            ClientId = "MvcJwtClient",
+                            ClientName = "Client App using JWT Bearer Token for Client Authentication",
+                            EnableLocalLogin = false,
+                            IdentityProviderRestrictions = new List<string>(){"adfs"},
+                            RequireConsent = false,
+                            //quirePkce = false,
+                            //waysIncludeUserClaimsInIdToken= true,
+                            AlwaysSendClientClaims= true,
+                            //ClientClaimsPrefix = "",
+
+                            ClientSecrets =
+                            {
+                                new Secret
+                                {
+                                    // Type must be "X509CertificateBase64"
+                                    Type = IdentityServerConstants.SecretTypes.X509CertificateBase64,
+
+                                    // base64 value of the client cert public key      
+                                    Value = Convert.ToBase64String(new X509Certificate2("Certificates/MvcJwtClient.Web.cer").GetRawCertData())
+                                }
+                            },
+
+                            AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
+                            RedirectUris = {"https://localhost:5001/signin-oidc"},
+                             // where to redirect to after logout
+                            PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
+                            AllowedScopes = {"openid", "profile", "api1", "api2" }
+                        },
 
                     // SPA client using implicit flow
                     new Client

@@ -1,12 +1,12 @@
-﻿using IdentityModel.Client;
+﻿using IdentityModel;
+using IdentityModel.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MvcClient.Web.DelegatingHandlers;
-using MvcClient.Web.Interfaces;
-using MvcClient.Web.Services;
+using MvcJwtClient.Web.Interfaces;
+using MvcJwtClient.Web.Services;
 using System;
 
-namespace MvcClient.Web.Configurations
+namespace MvcJwtClient.Web.Configurations
 {
     public static class ServicesConfig
     {
@@ -24,22 +24,26 @@ namespace MvcClient.Web.Configurations
                 //this cannot be used for any other api's...it protects the other api's
                 o.Client.Clients.Add("api1", new ClientCredentialsTokenRequest()
                 {
-                    Address = configuration["IdentityServer:MtlsTokenEndpoint"],
+
                     ClientId = configuration["Client:Id"],
                     Scope = "api1",
                 });
                 o.Client.Clients.Add("api2", new ClientCredentialsTokenRequest()
                 {
-                    Address = configuration["IdentityServer:MtlsTokenEndpoint"],
+                    Address = configuration["IdentityServer:TokenEndpoint"],
                     ClientId = configuration["Client:Id"],
-                    Scope = "api2"
+                    Scope = "api2",
+                    ClientAssertion = new ClientAssertion
+                    {
+                        Type = OidcConstants.ClientAssertionTypes.JwtBearer,
+                        Value = TokenGenerator.CreateClientAuthJwt()
+                    },
                 });
             })
             .ConfigureBackchannelHttpClient(client =>
             {
                 client.Timeout = TimeSpan.FromSeconds(30);
-            })
-            .AddHttpMessageHandler<MtlsHandler>();
+            });
 
             //create an api1 service to call the api
             services.AddHttpClient<IApi1ServiceClient, Api1ServiceClient>(client =>
@@ -47,10 +51,8 @@ namespace MvcClient.Web.Configurations
                  client.BaseAddress = new Uri(configuration["Api1:BaseUrl"]);
                  client.DefaultRequestHeaders.Add("Accept", "application/json");
              })
-             //order below is very important here 
-             //make sure you want the correct api1 since it'll ask ids to get the access_token with that specific scope(s)
-             .AddClientAccessTokenHandler("api1");     //order is important here            
-            //.AddHttpMessageHandler<MtlsHandler>();
+
+             .AddClientAccessTokenHandler("api1");
 
             //create an api2 service to call the api2
             services.AddHttpClient<IApi2ServiceClient, Api2ServiceClient>(client =>
@@ -58,8 +60,8 @@ namespace MvcClient.Web.Configurations
                         client.BaseAddress = new Uri(configuration["Api2:BaseUrl"]);
                         client.DefaultRequestHeaders.Add("Accept", "application/json");
                     })
-                    .AddClientAccessTokenHandler("api2"); //order is important here       
-            //.AddHttpMessageHandler<MtlsHandler>();
+                    .AddClientAccessTokenHandler("api2");
+
             return services;
         }
     }

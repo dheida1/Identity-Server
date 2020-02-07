@@ -30,6 +30,8 @@ namespace IdentityServer.Api
             var claims = principal.Claims.ToList();
             claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
 
+            //context.IssuedClaims = claims.ToList();
+
             //Add custom claims in token here based on user properties or any other source
             //claims.Add(new Claim("employee_id", user.EmployeeId ?? string.Empty));
             context.IssuedClaims = claims;
