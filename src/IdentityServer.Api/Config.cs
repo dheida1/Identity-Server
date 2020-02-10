@@ -199,36 +199,55 @@ namespace IdentityServer.Api
                             AllowOfflineAccess = true
                         },
 
-                        new Client
+                    new Client
+                    {
+                        ClientId = "MvcJwtClient",
+                        ClientName = "Client App using JWT Bearer Token for Client Authentication",
+                        EnableLocalLogin = false,
+                        IdentityProviderRestrictions = new List<string>(){"adfs"},
+                        RequireConsent = false,
+                        //quirePkce = false,
+                        //waysIncludeUserClaimsInIdToken= true,
+                        AlwaysSendClientClaims= true,
+                        //ClientClaimsPrefix = "",
+
+                        ClientSecrets =
                         {
-                            ClientId = "MvcJwtClient",
-                            ClientName = "Client App using JWT Bearer Token for Client Authentication",
-                            EnableLocalLogin = false,
-                            IdentityProviderRestrictions = new List<string>(){"adfs"},
-                            RequireConsent = false,
-                            //quirePkce = false,
-                            //waysIncludeUserClaimsInIdToken= true,
-                            AlwaysSendClientClaims= true,
-                            //ClientClaimsPrefix = "",
-
-                            ClientSecrets =
+                            new Secret
                             {
-                                new Secret
-                                {
-                                    // Type must be "X509CertificateBase64"
-                                    Type = IdentityServerConstants.SecretTypes.X509CertificateBase64,
+                                // Type must be "X509CertificateBase64"
+                                Type = IdentityServerConstants.SecretTypes.X509CertificateBase64,
 
-                                    // base64 value of the client cert public key      
-                                    Value = Convert.ToBase64String(new X509Certificate2("Certificates/MvcJwtClient.Web.cer").GetRawCertData())
-                                }
-                            },
-
-                            AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
-                            RedirectUris = {"https://localhost:5001/signin-oidc"},
-                             // where to redirect to after logout
-                            PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
-                            AllowedScopes = {"openid", "profile", "api1", "api2" }
+                                // base64 value of the client cert public key      
+                                Value = Convert.ToBase64String(new X509Certificate2("Certificates/MvcJwtClient.Web.cer").GetRawCertData())
+                            }
                         },
+
+                        AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
+                        RedirectUris = {"https://localhost:5001/signin-oidc"},
+                            // where to redirect to after logout
+                        PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
+                        AllowedScopes = {"openid", "profile", "api1", "api2" }
+                    },
+
+                    ///////////////////////////////////////////
+                    // Console Client Credentials Flow with client JWT assertion
+                    //////////////////////////////////////////
+                    new Client
+                    {
+                        ClientId = "client.jwt",
+                        ClientSecrets =
+                        {
+                            new Secret
+                            {
+                                Type = IdentityServerConstants.SecretTypes.X509CertificateBase64,
+                                Value = Convert.ToBase64String(new X509Certificate2("Certificates/MvcJwtClient.Web.cer").GetRawCertData())
+                            }
+                        },
+
+                        AllowedGrantTypes = GrantTypes.ClientCredentials,
+                        AllowedScopes = { "api1", "api2" }
+                    },
 
                     // SPA client using implicit flow
                     new Client

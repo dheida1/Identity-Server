@@ -5,9 +5,9 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace ConsoleJwtClient
@@ -19,7 +19,7 @@ namespace ConsoleJwtClient
             Console.Title = "Console Client Credentials Flow with JWT Assertion";
 
             var response = await RequestTokenAsync();
-            response.Show();
+            Console.WriteLine(response.Json);
 
             Console.ReadLine();
             await CallServiceAsync(response.AccessToken);
@@ -29,7 +29,11 @@ namespace ConsoleJwtClient
         {
             var client = new HttpClient();
 
-            var disco = await client.GetDiscoveryDocumentAsync("https://localhost:4300");
+            var disco = await client.GetDiscoveryDocumentAsync//("https://localhost:4300");
+
+           (new DiscoveryDocumentRequest()
+           { Address = "https://localhost:4300", Policy = new DiscoveryPolicy() { RequireHttps = false, Authority = "https://localhost:4300" } });
+
             if (disco.IsError) throw new Exception(disco.Error);
 
             var clientToken = CreateClientToken("client.jwt", disco.TokenEndpoint);
@@ -38,7 +42,7 @@ namespace ConsoleJwtClient
             {
                 Address = disco.TokenEndpoint,
                 ClientId = "client.jwt",
-                Scope = "api1",
+                Scope = "api2",
 
                 ClientAssertion =
                 {
@@ -61,15 +65,13 @@ namespace ConsoleJwtClient
             };
 
             client.SetBearerToken(token);
-            var response = await client.GetStringAsync("identity");
-
-            "\n\nService claims:".ConsoleGreen();
+            var response = await client.GetStringAsync("api2/ApiSecure");
             Console.WriteLine(JArray.Parse(response));
         }
 
         private static string CreateClientToken(string clientId, string audience)
         {
-            var certificate = new X509Certificate2("client.pfx");
+            var certificate = X509.LocalMachine.My.Thumbprint.Find("2767798A6DC7691C8EF41414BF7C9D59DB9DA31A", false).Single();
             var now = DateTime.UtcNow;
 
             var token = new JwtSecurityToken(
