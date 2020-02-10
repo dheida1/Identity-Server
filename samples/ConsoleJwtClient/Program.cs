@@ -5,9 +5,9 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace ConsoleJwtClient
@@ -71,7 +71,14 @@ namespace ConsoleJwtClient
 
         private static string CreateClientToken(string clientId, string audience)
         {
-            var certificate = X509.LocalMachine.My.Thumbprint.Find("2767798A6DC7691C8EF41414BF7C9D59DB9DA31A", false).Single();
+            //uncomment and correct to absolute filepath if searching for cert from folder.
+            //var filePath = @"C:\Users\dinah\source\repos\IdentityServer\samples\ConsoleJwtClient\Certificates\ClientJwt.pfx";
+            //var certificate = new X509Certificate2(filePath, "1234", X509KeyStorageFlags.Exportable);
+
+            //if searching for cert from 'Local Machine' Personal Store 
+            var certificate = new Cryptography.X509Certificates.Extension.X509Certificate2("2767798A6DC7691C8EF41414BF7C9D59DB9DA31A",
+                StoreName.My, StoreLocation.LocalMachine, X509FindType.FindByThumbprint, false);
+
             var now = DateTime.UtcNow;
 
             var token = new JwtSecurityToken(
