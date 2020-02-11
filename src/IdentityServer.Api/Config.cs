@@ -108,6 +108,7 @@ namespace IdentityServer.Api
             {
                 return new[]
                 {
+                    // MVC client using hybrid flow
                     new Client
                         {
                             ClientId = "mvcClient",
@@ -116,7 +117,7 @@ namespace IdentityServer.Api
                             ClientSecrets = { new Secret("secret".Sha256()) },
                             EnableLocalLogin = false,
                             IdentityProviderRestrictions = new List<string>(){"adfs"},
-                            AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
+                            AllowedGrantTypes = GrantTypes.Hybrid, //response type is "code id_token"
                             AccessTokenType = AccessTokenType.Jwt,
                             RequireConsent = false,
                             RequirePkce = false,
@@ -144,8 +145,7 @@ namespace IdentityServer.Api
                             //Allow requesting refresh tokens for long lived API access
                             //AllowAccessTokensViaBrowser = true,
                             AllowOfflineAccess = true
-                        },  
-                         // MVC client using hybrid flow
+                        },
                     new Client
                         {
                             ClientId = "mvcClient.mtls",
@@ -160,7 +160,7 @@ namespace IdentityServer.Api
                             EnableLocalLogin = false,
                             IdentityProviderRestrictions = new List<string>(){"adfs"},
 
-                            AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
+                            AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                             AccessTokenType = AccessTokenType.Jwt,
                             RequireConsent = false,
                             RequirePkce = false,    //https://www.scottbrady91.com/OpenID-Connect/ASPNET-Core-using-Proof-Key-for-Code-Exchange-PKCE
@@ -208,9 +208,10 @@ namespace IdentityServer.Api
                             }
                         },
 
-                        AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
+                        AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                         RedirectUris = {"https://localhost:5001/signin-oidc"},
-                            // where to redirect to after logout
+                     
+                        // where to redirect to after logout
                         PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
                         AllowedScopes = {"openid", "profile", "api1", "api2" },
                         AllowOfflineAccess = true

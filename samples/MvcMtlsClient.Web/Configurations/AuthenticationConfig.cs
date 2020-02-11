@@ -43,7 +43,7 @@ namespace MvcMtlsClient.Web.Configurations
                     options.Authority = configuration["IdentityServer:Authority"];
                     options.RequireHttpsMetadata = environment.IsDevelopment() ? false : true;
                     options.ClientId = configuration["Client:Id"];
-                    options.ResponseType = "code id_token";
+                    options.ResponseType = "code";
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
                     options.BackchannelHttpHandler = new MtlsHandler(configuration, environment);

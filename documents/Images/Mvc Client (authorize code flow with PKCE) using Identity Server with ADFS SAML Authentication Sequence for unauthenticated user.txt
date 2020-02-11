@@ -1,0 +1,19 @@
+title Mvc Client (authorize code flow with PKCE) using Identity Server with ADFS SAML Authentication Sequence for unauthenticated user
+
+Browser -> Client : Access protected url
+Client -> Client : Generate code verification + code challenge
+Client -> IdentityServer4: Authorization code request + code challenge to authorize
+IdentityServer4 --> Browser : Redirect to SAML IDP with auth request in query string
+Browser -> SAML IDP : Here is my auth request that IdentityServer4 gave me
+SAML IDP --> Browser : Login page
+Browser -> SAML IDP : Credentials
+SAML IDP --> Browser : Redirect to Application with auth result encoded in POST data
+Browser -> IdentityServer4 : Here's my signed auth result from the IDP
+IdentityServer4 --> Client : Authorization Code
+Client -> IdentityServer4 : Authorize Code + code verifier to /connect/token
+IdentityServer4 -> IdentityServer4  : Validate code verifier and challenge
+IdentityServer4 --> Client :Id token and access token
+Client --> Browser : Authenticaion cookie
+Browser->Client: Click on something to get some Api data
+Client-> Api: Call Api with access token
+Api-->Client: Respond with some data
