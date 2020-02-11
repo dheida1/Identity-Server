@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using IdentityModel;
+using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -21,10 +22,10 @@ namespace MvcJwtClient.Web
                 audience: "https://localhost:4300/connect/token",
                 // sub must be the client_id of our application
                 subject: new ClaimsIdentity(
-                  new List<Claim> { new Claim("sub", "mvcClient.jwt") }),
+                  new List<Claim> { new Claim(JwtClaimTypes.Subject, "mvcClient.jwt") }),
                 // sign with the private key (using RS256 for IdentityServer)
                 signingCredentials: new SigningCredentials(
-                  new X509SecurityKey(new X509Certificate2("Certificates/MvcClient.Web.pfx", "1234")), "RS256")
+                  new X509SecurityKey(new X509Certificate2("Certificates/MvcClient.Web.pfx", "1234")), SecurityAlgorithms.RsaSha256)
             );
             return tokenHandler.WriteToken(securityToken);
         }
