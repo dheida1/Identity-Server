@@ -8,7 +8,7 @@ namespace MvcJwtClient.Web
 {
     public static class TokenGenerator
     {
-
+        //public static string CreateClientAuthJwt(string clientId, X509Certificate2 certificate)
         public static string CreateClientAuthJwt()
         {
             // set exp to 5 minutes
@@ -16,12 +16,12 @@ namespace MvcJwtClient.Web
 
             var securityToken = tokenHandler.CreateJwtSecurityToken(
                 // iss must be the client_id of our application
-                issuer: "MvcJwtClient",
+                issuer: "mvcClient.jwt",
                 // aud must be the identity provider (token endpoint)
                 audience: "https://localhost:4300/connect/token",
                 // sub must be the client_id of our application
                 subject: new ClaimsIdentity(
-                  new List<Claim> { new Claim("sub", "MvcJwtClient") }),
+                  new List<Claim> { new Claim("sub", "mvcClient.jwt") }),
                 // sign with the private key (using RS256 for IdentityServer)
                 signingCredentials: new SigningCredentials(
                   new X509SecurityKey(new X509Certificate2("Certificates/MvcClient.Web.pfx", "1234")), "RS256")

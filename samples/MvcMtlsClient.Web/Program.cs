@@ -5,13 +5,13 @@ using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
 
-namespace MvcJwtClient.Web
+namespace MvcMtlsClient.Web
 {
     public class Program
     {
         public static int Main(string[] args)
         {
-            Console.Title = "MvcJwtClient.Web";
+            Console.Title = "MvcMtlsClient.Web";
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -50,12 +50,6 @@ namespace MvcJwtClient.Web
                     webBuilder.ConfigureKestrel(options =>
                     {
                         options.AllowSynchronousIO = true;
-                        //options.ConfigureHttpsDefaults(httpsOptions =>
-                        //{
-                        //    httpsOptions.CheckCertificateRevocation = false;
-                        //    httpsOptions.SslProtocols = SslProtocols.Tls12;
-                        //    httpsOptions.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
-                        //});
                     });
                 });
     }

@@ -45,9 +45,10 @@ namespace IdentityServer.Api
                 {
                     Name = "ca",
                     DisplayName = "EA CA IAM",
-                    Description = "Enterprise Architecture CA IAM",
+                    Description = "Enterprise Architecture CA IAM"
                 },
-                  new IdentityResource("roles", new[] { JwtClaimTypes.Role  })
+                new IdentityResource("roles", new[] { JwtClaimTypes.Role  })
+
                 };
             }
 
@@ -66,7 +67,7 @@ namespace IdentityServer.Api
                           ClaimTypes.Role,
                           JwtClaimTypes.Name,
                           JwtClaimTypes.Email,
-                          JwtClaimTypes.Role,
+                          JwtClaimTypes.Role
                       },
                       Scopes = new[]
                           {
@@ -74,13 +75,7 @@ namespace IdentityServer.Api
                               {
                                     Name = "api2",
                                     DisplayName = "Full access to Api2",
-                                    UserClaims = new[] { JwtClaimTypes.Role,
-                                        ClaimTypes.Role,
-                                        ClaimTypes.Name,
-                                        ClaimTypes.Email,
-                                        JwtClaimTypes.Name,
-                                        JwtClaimTypes.Email
-                                    },
+                                    UserClaims = new[] {"emails" }
                               },
                               new Scope
                               {
@@ -105,10 +100,6 @@ namespace IdentityServer.Api
                                     },
                               }
                           }
-                    },
-                    new ApiResource("my_account_user", "My Account User API")
-                    {
-                        ApiSecrets = { new Secret("secret".Sha256()) },
                     }
                 };
             }
@@ -119,21 +110,21 @@ namespace IdentityServer.Api
                 {
                     new Client
                         {
-                            ClientId = "mvc",
-                            ClientName = "MVC Web Client",
+                            ClientId = "mvcClient",
+                            ClientName = "MVC Client",
+                            Description = "Client App using client_id and client_secret for Client Authentication",
                             ClientSecrets = { new Secret("secret".Sha256()) },
                             EnableLocalLogin = false,
                             IdentityProviderRestrictions = new List<string>(){"adfs"},
-
-                            AllowedGrantTypes = GrantTypes.Code,
+                            AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
                             AccessTokenType = AccessTokenType.Jwt,
                             RequireConsent = false,
                             RequirePkce = false,
                             AllowedCorsOrigins = { "https://localhost:5001" },
                             AlwaysIncludeUserClaimsInIdToken= true,
                             AlwaysSendClientClaims= true,
-                            ClientClaimsPrefix = "",
-                
+                            UpdateAccessTokenClaimsOnRefresh = true,                         
+                                            
                             // where to redirect to after login
                             RedirectUris = { "https://localhost:5001/signin-oidc" },
 
@@ -142,19 +133,24 @@ namespace IdentityServer.Api
 
                             AllowedScopes = new List<string>
                             {
-                                IdentityServerConstants.StandardScopes.OpenId,
-                                IdentityServerConstants.StandardScopes.Profile,
-                                "api1"
+                                StandardScopes.OpenId,
+                                StandardScopes.Profile,
+                                StandardScopes.Email,
+                                "api1",
+                                "api2",
+                                "roles",
+                                "emails"
                             },
                             //Allow requesting refresh tokens for long lived API access
-                            AllowAccessTokensViaBrowser = true,
+                            //AllowAccessTokensViaBrowser = true,
                             AllowOfflineAccess = true
                         },  
                          // MVC client using hybrid flow
                     new Client
                         {
-                            ClientId = "mvcCert",
-                            ClientName = "MVC Client",
+                            ClientId = "mvcClient.mtls",
+                            ClientName = "MVC Mtls Client",
+                            Description = "Client App using Mtls or Client Authentication",
                             ClientSecrets = {
                                  new Secret("2767798A6DC7691C8EF41414BF7C9D59DB9DA31A", "MvcClient.Web")
                                  {
@@ -170,8 +166,6 @@ namespace IdentityServer.Api
                             RequirePkce = false,    //https://www.scottbrady91.com/OpenID-Connect/ASPNET-Core-using-Proof-Key-for-Code-Exchange-PKCE
                             AllowedCorsOrigins = { "https://localhost:5001" },
                             AlwaysIncludeUserClaimsInIdToken= true,
-                            AlwaysSendClientClaims= true,
-                            ClientClaimsPrefix = "",
                             UpdateAccessTokenClaimsOnRefresh = true,                           
                             // where to redirect to after login
                             RedirectUris = { "https://localhost:5001/signin-oidc" },
@@ -181,15 +175,9 @@ namespace IdentityServer.Api
 
                             AllowedScopes = new List<string>
                             {
-                                IdentityServerConstants.StandardScopes.OpenId,
-                                IdentityServerConstants.StandardScopes.Profile,
-                                IdentityServerConstants.StandardScopes.Email,
-                                ClaimTypes.Email,
-                                ClaimTypes.Name,
-                                JwtClaimTypes.Name,
-                                JwtClaimTypes.Email,
-                                JwtClaimTypes.Role,
-                                ClaimTypes.Role,
+                                StandardScopes.OpenId,
+                                StandardScopes.Profile,
+                                StandardScopes.Email,
                                 "api1",
                                 "api2"
                             },                          
@@ -201,16 +189,13 @@ namespace IdentityServer.Api
 
                     new Client
                     {
-                        ClientId = "MvcJwtClient",
-                        ClientName = "Client App using JWT Bearer Token for Client Authentication",
+                        ClientId = "mvcClient.jwt",
+                        ClientName = "Mvc Jwt Client",
+                        Description = "Client App using JWT Bearer Token for Client Authentication",
                         EnableLocalLogin = false,
                         IdentityProviderRestrictions = new List<string>(){"adfs"},
                         RequireConsent = false,
-                        //quirePkce = false,
-                        //waysIncludeUserClaimsInIdToken= true,
-                        AlwaysSendClientClaims= true,
-                        //ClientClaimsPrefix = "",
-
+                        AlwaysIncludeUserClaimsInIdToken= true,
                         ClientSecrets =
                         {
                             new Secret
@@ -227,7 +212,8 @@ namespace IdentityServer.Api
                         RedirectUris = {"https://localhost:5001/signin-oidc"},
                             // where to redirect to after logout
                         PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
-                        AllowedScopes = {"openid", "profile", "api1", "api2" }
+                        AllowedScopes = {"openid", "profile", "api1", "api2" },
+                        AllowOfflineAccess = true
                     },
 
                     ///////////////////////////////////////////
@@ -236,6 +222,8 @@ namespace IdentityServer.Api
                     new Client
                     {
                         ClientId = "client.jwt",
+                        ClientName = "Console Jwt Client",
+                        Description = "Console app using JWT Bearer Token for Client Authentication",
                         ClientSecrets =
                         {
                             new Secret

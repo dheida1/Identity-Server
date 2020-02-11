@@ -1,13 +1,11 @@
-using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
-using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
-using System.Security.Cryptography.X509Certificates;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Api2
@@ -26,19 +24,6 @@ namespace Api2
         {
             services.AddControllers();
 
-            // //to add the certicate to the http client header
-            // services.AddTransient<MtlsHandler>();
-
-            // //add bearer token to the http client header
-            // services.AddTransient<BearerTokenHandler>();
-
-            // services.AddHttpClient<IIdentityServerClient, IdentityServerClient>(client =>
-            // {
-            //     client.BaseAddress = new Uri(Configuration["IdentityServer:Authority"]);
-            //     client.DefaultRequestHeaders.Add("Accept", "application/json");
-            // })
-            //.AddHttpMessageHandler<MtlsHandler>();
-
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
@@ -49,8 +34,8 @@ namespace Api2
                      options.Authority = "https://localhost:4300";
                      options.RequireHttpsMetadata = Environment.IsDevelopment() ? false : true;
                      options.ApiName = "api2";
-
-                     //options.JwtBackChannelHandler = new MtlsHandler(Configuration, Environment);
+                     options.ApiSecret = "secret";
+                     options.SaveToken = true;
                      options.JwtBearerEvents.OnMessageReceived = context =>
                      {
                          return Task.FromResult(0);
@@ -63,28 +48,17 @@ namespace Api2
                      {
                          return Task.FromResult(0);
                      };
-                 })
-                .AddCertificate("x509", options =>
-                {
-                    options.RevocationMode = (Environment.IsDevelopment() ? X509RevocationMode.NoCheck : X509RevocationMode.Online);
-                    options.AllowedCertificateTypes = (Environment.IsDevelopment() ? CertificateTypes.SelfSigned : CertificateTypes.Chained);
-                    options.ValidateCertificateUse = (Environment.IsDevelopment() ? false : true);
-                    options.ValidateValidityPeriod = (Environment.IsDevelopment() ? false : true);
+                 });
 
-                    options.Events = new CertificateAuthenticationEvents
-                    {
-                        OnCertificateValidated = context =>
-                        {
-                            context.Principal = Principal.CreateFromCertificate(context.ClientCertificate, includeAllClaims: true);
-                            context.Success();
-                            return Task.CompletedTask;
-                        },
-                        OnAuthenticationFailed = context =>
-                        {
-                            return Task.CompletedTask;
-                        }
-                    };
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("newpolicy", policy =>
+                {
+                    policy.RequireClaim("name");
+                    policy.RequireClaim(claimType: ClaimTypes.Name);
+                    policy.RequireClaim(claimType: ClaimTypes.Email);
                 });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

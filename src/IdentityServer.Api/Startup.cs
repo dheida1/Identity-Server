@@ -41,7 +41,7 @@ namespace IdentityServer.Api
 
             //services.AddControllers();
             services.AddControllersWithViews();
-            services.AddTransient<IProfileService, ProfileService>();
+            services.AddScoped<IProfileService, ProfileService>();
 
             // configures IIS out-of-proc settings (see https://github.com/aspnet/AspNetCore/issues/14882)
             services.Configure<IISOptions>(iis =>
@@ -172,7 +172,6 @@ namespace IdentityServer.Api
                 options.MutualTls.ClientCertificateAuthenticationScheme = "x509";
             })
                  .AddAspNetIdentity<ApplicationUser>()
-                 .AddProfileService<ProfileService>()
                  .AddJwtBearerClientAuthentication() //to accept clients via jwts
 
                  // this adds the config data from DB (clients, resources, CORS)
@@ -191,7 +190,7 @@ namespace IdentityServer.Api
 
                      // this enables automatic token cleanup. this is optional.
                      options.EnableTokenCleanup = true;
-                 });
+                 }).AddProfileService<ProfileService>();
 
             identityServer.AddMutualTlsSecretValidators();
 

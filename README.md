@@ -4,7 +4,6 @@ To get this started...
 # 1- Add-Migrations (via Package Manager)
 
 ### Important- Please make sure:
-* That the startup project is set to "IdentityServer.Api" 
 * That the Package Manager default project is set to "IdentityServer.Infrastructure".
 * Run these commands: 
 

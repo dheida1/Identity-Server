@@ -1,5 +1,4 @@
-﻿using IdentityModel;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
@@ -7,10 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System;
+using MvcMtlsClient.Web.DelegatingHandlers;
 using System.Threading.Tasks;
 
-namespace MvcJwtClient.Web.Configurations
+namespace MvcMtlsClient.Web.Configurations
 {
     public static class AuthenticationConfig
     {
@@ -26,7 +25,7 @@ namespace MvcJwtClient.Web.Configurations
             })
                 .AddCookie(options =>
                   {
-                      options.ExpireTimeSpan = TimeSpan.FromMinutes(60); //this is diffferent than the access_token expiration
+                      //options.ExpireTimeSpan = TimeSpan.FromMinutes(60); //this is diffferent than the access_token expiration
                       options.SlidingExpiration = false;
                       options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
                       options.Events.OnRedirectToAccessDenied = context =>
@@ -47,25 +46,24 @@ namespace MvcJwtClient.Web.Configurations
                     options.ResponseType = "code id_token";
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
+                    options.BackchannelHttpHandler = new MtlsHandler(configuration, environment);
                     options.Scope.Clear();
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
-                    options.Scope.Add("api1");
                     options.Scope.Add("api2");
                     options.Scope.Add("offline_access"); //need this to get back '.refreshToken' to use when calling api's   
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        NameClaimType = JwtClaimTypes.Name,
-                        RoleClaimType = JwtClaimTypes.Role
+                        NameClaimType = "name",
+                        RoleClaimType = "role"
                     };
-                    options.Events.OnAuthorizationCodeReceived = context =>
-                    {
-                        context.TokenEndpointRequest.ClientAssertionType = OidcConstants.ClientAssertionTypes.JwtBearer;
-                        //context.TokenEndpointRequest.ClientAssertion = TokenGenerator.CreateClientAuthJwt(configuration["Client:Id"], );
-                        context.TokenEndpointRequest.ClientAssertion = TokenGenerator.CreateClientAuthJwt();
 
-                        return Task.CompletedTask;
+                    options.Events.OnRedirectToIdentityProvider = async context =>
+                    {
+                        var config = await context.Options.ConfigurationManager.GetConfigurationAsync(default);
+                        //override existing token endpoint with to get the mtls token
+                        config.TokenEndpoint = configuration["IdentityServer:MtlsTokenEndpoint"];
                     };
                 });
             return services;
