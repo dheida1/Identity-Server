@@ -108,19 +108,19 @@ namespace IdentityServer.Api
             {
                 return new[]
                 {
-                    // MVC client using hybrid flow
+                    //pkce
                     new Client
                         {
-                            ClientId = "mvcClient",
-                            ClientName = "MVC Client",
-                            Description = "Client App using client_id and client_secret for Client Authentication",
-                            ClientSecrets = { new Secret("secret".Sha256()) },
+                            ClientId = "mvcClient.pkce",
+                            ClientName = "MVC Pkce Client",
+                            Description = "Client App using authorization code flow with pkce for client authentication",
                             EnableLocalLogin = false,
                             IdentityProviderRestrictions = new List<string>(){"adfs"},
-                            AllowedGrantTypes = GrantTypes.Hybrid, //response type is "code id_token"
+                            AllowedGrantTypes = GrantTypes.CodeAndClientCredentials, //response type is "code"
+                            RequireClientSecret = false,
                             AccessTokenType = AccessTokenType.Jwt,
                             RequireConsent = false,
-                            RequirePkce = false,
+                            RequirePkce = true,
                             AllowedCorsOrigins = { "https://localhost:5001" },
                             AlwaysIncludeUserClaimsInIdToken= true,
                             AlwaysSendClientClaims= true,
@@ -139,13 +139,13 @@ namespace IdentityServer.Api
                                 StandardScopes.Email,
                                 "api1",
                                 "api2",
-                                "roles",
-                                "emails"
+                                "roles"
                             },
-                            //Allow requesting refresh tokens for long lived API access
-                            //AllowAccessTokensViaBrowser = true,
+                            //Allow requesting refresh tokens for long lived API access                         
                             AllowOfflineAccess = true
                         },
+
+                    //mtls
                     new Client
                         {
                             ClientId = "mvcClient.mtls",
@@ -187,6 +187,7 @@ namespace IdentityServer.Api
                             AllowOfflineAccess = true
                         },
 
+                    //jwt
                     new Client
                     {
                         ClientId = "mvcClient.jwt",
@@ -201,7 +202,7 @@ namespace IdentityServer.Api
                             new Secret
                             {
                                 // Type must be "X509CertificateBase64"
-                                Type = IdentityServerConstants.SecretTypes.X509CertificateBase64,
+                                Type = SecretTypes.X509CertificateBase64,
 
                                 // base64 value of the client cert public key      
                                 Value = Convert.ToBase64String(new X509Certificate2("Certificates/MvcJwtClient.Web.cer").GetRawCertData())

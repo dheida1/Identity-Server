@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleJwtClient", "samples
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcMtlsClient.Web", "samples\MvcMtlsClient.Web\MvcMtlsClient.Web.csproj", "{84170606-4E0E-43F6-B5B5-1E725D921883}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcPkceClient.Web", "samples\MvcPkceClient.Web\MvcPkceClient.Web.csproj", "{614985A0-A371-43CD-9431-896C53983CE7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,10 @@ Global
 		{84170606-4E0E-43F6-B5B5-1E725D921883}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84170606-4E0E-43F6-B5B5-1E725D921883}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84170606-4E0E-43F6-B5B5-1E725D921883}.Release|Any CPU.Build.0 = Release|Any CPU
+		{614985A0-A371-43CD-9431-896C53983CE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{614985A0-A371-43CD-9431-896C53983CE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{614985A0-A371-43CD-9431-896C53983CE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{614985A0-A371-43CD-9431-896C53983CE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

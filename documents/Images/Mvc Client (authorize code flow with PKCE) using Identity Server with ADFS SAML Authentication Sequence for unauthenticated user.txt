@@ -1,19 +1,27 @@
-title Mvc Client (authorize code flow with PKCE) using Identity Server with ADFS SAML Authentication Sequence for unauthenticated user
+title Mvc Client (authorize code flow with PKCE) using Identity Server \nwith ADFS SAML Authentication Sequence for unauthenticated user
 
-Browser -> Client : Access protected url
-Client -> Client : Generate code verification + code challenge
-Client -> IdentityServer4: Authorization code request + code challenge to authorize
-IdentityServer4 --> Browser : Redirect to SAML IDP with auth request in query string
-Browser -> SAML IDP : Here is my auth request that IdentityServer4 gave me
-SAML IDP --> Browser : Login page
-Browser -> SAML IDP : Credentials
-SAML IDP --> Browser : Redirect to Application with auth result encoded in POST data
-Browser -> IdentityServer4 : Here's my signed auth result from the IDP
-IdentityServer4 --> Client : Authorization Code
-Client -> IdentityServer4 : Authorize Code + code verifier to /connect/token
-IdentityServer4 -> IdentityServer4  : Validate code verifier and challenge
-IdentityServer4 --> Client :Id token and access token
-Client --> Browser : Authenticaion cookie
-Browser->Client: Click on something to get some Api data
-Client-> Api: Call Api with access token
-Api-->Client: Respond with some data
+participant "Browser" as B
+participant "Client" as C
+participant "IdentityServer4" as IDS4
+participant "SAML IDP" as IDP
+participant "Api" as A
+
+B -> C : Access protected url
+C -> C : Generate code verification + code challenge
+C -> +IDS4: GET/ connect/authorize \nAuthorization code request + code challenge \nto authorize to  
+note over IDS4: Needs client id, redirect_uri, scope, \nresponse_type = code, \ncode challenge, code challenge method, \nnonce, state
+IDS4 -->-B : GET/ Redirect to SAML IDP with auth request in query string
+B -> IDP : GET/ Here is my auth request that IdentityServer4 gave me
+IDP --> B : GET/ Login page
+B-> IDP : POST/ Credentials
+IDP --> B : GET/ Redirect to Application with auth result encoded in POST data
+B -> IDS4 : POST/ Here's my signed auth result from the IDP
+IDS4 --> Client : POST/ signin-oidc  Authorization Code 
+C -> +IDS4 : POST/ connect/token \nAuthorize Code + code verifier to
+note over IDS4: Needs client_id, redirect uri, code challenge, \ncode verifier, grant type 
+IDS4 -> IDS4  : Validate code verifier and challenge
+IDS4 --> -C :Id token and access token
+C --> B : Authenticaion cookie
+B->C: Click on something to get some Api data
+C-> A: Call Api with access token
+A-->C: Respond with some data
