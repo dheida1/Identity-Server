@@ -2,7 +2,7 @@
 
 namespace Api2.Interfaces
 {
-    public class IApi3ServiceClient
+    public interface IApi3ServiceClient
     {
         Task<string> Get();
     }
