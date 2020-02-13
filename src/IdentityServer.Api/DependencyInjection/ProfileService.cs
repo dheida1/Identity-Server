@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IdentityServer.Api
+namespace IdentityServer.Api.DependencyInjection
 {
     public class ProfileService : IProfileService
     {

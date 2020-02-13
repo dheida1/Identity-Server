@@ -53,7 +53,6 @@ namespace MvcPkceClient.Web.Configurations
                     //application/x-www-form-urlencoded format.
                     //this allows us to keep codes out of the URL and protected via TLS
                     options.ResponseMode = "form_post";
-
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
                     options.Scope.Clear();
@@ -68,14 +67,6 @@ namespace MvcPkceClient.Web.Configurations
                         NameClaimType = JwtClaimTypes.Name,
                         RoleClaimType = JwtClaimTypes.Role
                     };
-                    //options.Events.OnAuthorizationCodeReceived = context =>
-                    //{
-                    //    context.TokenEndpointRequest.ClientAssertionType = OidcConstants.ClientAssertionTypes.JwtBearer;
-                    //    //context.TokenEndpointRequest.ClientAssertion = TokenGenerator.CreateClientAuthJwt(configuration["Client:Id"], );
-                    //    context.TokenEndpointRequest.ClientAssertion = TokenGenerator.CreateClientAuthJwt();
-
-                    //    return Task.CompletedTask;
-                    //};
                 });
             return services;
         }

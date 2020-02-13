@@ -1,5 +1,4 @@
 ﻿using IdentityModel;
-using IdentityServer4;
 using IdentityServer4.Models;
 using System;
 using System.Collections.Generic;
@@ -100,7 +99,9 @@ namespace IdentityServer.Api
                                     },
                               }
                           }
-                    }
+                    },
+
+                    new ApiResource("api3", "My API #3")
                 };
             }
 
@@ -108,6 +109,9 @@ namespace IdentityServer.Api
             {
                 return new[]
                 {
+                    ////////////////////////////////////////////////
+                    // Mvc Clients Authorization Code Flow and PKCE
+                    ///////////////////////////////////////////////
                     //pkce
                     new Client
                         {
@@ -187,6 +191,9 @@ namespace IdentityServer.Api
                             AllowOfflineAccess = true
                         },
 
+                    /////////////////////////////////////////////////////////////////
+                    // Mvc Clients Authrorization Code Flow with client JWT assertion
+                    /////////////////////////////////////////////////////////////////
                     //jwt
                     new Client
                     {
@@ -216,11 +223,11 @@ namespace IdentityServer.Api
                         PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
                         AllowedScopes = {"openid", "profile", "api1", "api2" },
                         AllowOfflineAccess = true
-                    },
+                    },                   
 
-                    ///////////////////////////////////////////
+                    ///////////////////////////////////////////////////////////
                     // Console Client Credentials Flow with client JWT assertion
-                    //////////////////////////////////////////
+                    ///////////////////////////////////////////////////////////
                     new Client
                     {
                         ClientId = "client.jwt",
@@ -230,13 +237,34 @@ namespace IdentityServer.Api
                         {
                             new Secret
                             {
-                                Type = IdentityServerConstants.SecretTypes.X509CertificateBase64,
+                                Type = SecretTypes.X509CertificateBase64,
                                 Value = Convert.ToBase64String(new X509Certificate2("Certificates/MvcJwtClient.Web.cer").GetRawCertData())
                             }
                         },
 
                         AllowedGrantTypes = GrantTypes.ClientCredentials,
                         AllowedScopes = { "api1", "api2" }
+                    },
+
+                    ////////////////////////////////////////////////
+                    // Api to act as Client for delegation tokens
+                    ///////////////////////////////////////////////
+                    new Client
+                    {
+                        ClientId = "api2.jwt",
+                        ClientSecrets =
+                        {
+                            new Secret
+                            {
+                                Type = SecretTypes.X509CertificateBase64,
+                                Value = Convert.ToBase64String(new X509Certificate2("Certificates/Api2.cer").GetRawCertData())
+                            }
+                        },
+                         AllowedGrantTypes = { "delegation" },
+                         AllowedScopes = new List<string>
+                         {
+                             "api3"
+                         }
                     },
 
                     // SPA client using implicit flow

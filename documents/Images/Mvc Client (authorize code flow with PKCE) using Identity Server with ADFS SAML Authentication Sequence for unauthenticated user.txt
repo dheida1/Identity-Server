@@ -1,27 +1,30 @@
 title Mvc Client (authorize code flow with PKCE) using Identity Server \nwith ADFS SAML Authentication Sequence for unauthenticated user
 
+participant "User" as U
 participant "Browser" as B
 participant "Client" as C
 participant "IdentityServer4" as IDS4
 participant "SAML IDP" as IDP
 participant "Api" as A
 
+U->B: Enter url
 B -> C : Access protected url
-C -> C : Generate code verification + code challenge
-C -> +IDS4: GET/ connect/authorize \nAuthorization code request + code challenge \nto authorize to  
+C -> C : Generate code verification + \ncode challenge
+C -> +IDS4: GET/ connect/authorize \nAuthorization code request + code challenge \nto authorize
 note over IDS4: Needs client id, redirect_uri, scope, \nresponse_type = code, \ncode challenge, code challenge method, \nnonce, state
 IDS4 -->-B : GET/ Redirect to SAML IDP with auth request in query string
 B -> IDP : GET/ Here is my auth request that IdentityServer4 gave me
 IDP --> B : GET/ Login page
+B --> U : Login page UI
+U ->B :Enter credentials
 B-> IDP : POST/ Credentials
 IDP --> B : GET/ Redirect to Application with auth result encoded in POST data
 B -> IDS4 : POST/ Here's my signed auth result from the IDP
 IDS4 --> Client : POST/ signin-oidc  Authorization Code 
 C -> +IDS4 : POST/ connect/token \nAuthorize Code + code verifier to
-note over IDS4: Needs client_id, redirect uri, code challenge, \ncode verifier, grant type 
+note over IDS4: Needs client_id, redirect uri, code, \ncode verifier, grant type 
 IDS4 -> IDS4  : Validate code verifier and challenge
 IDS4 --> -C :Id token and access token
 C --> B : Authenticaion cookie
-B->C: Click on something to get some Api data
-C-> A: Call Api with access token
-A-->C: Respond with some data
+C-> A: Call protected Api with access token
+A-->C: Respond with some protected Api data
