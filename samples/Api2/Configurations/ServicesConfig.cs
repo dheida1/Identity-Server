@@ -1,5 +1,8 @@
-﻿using Api2.Interfaces;
+﻿using Api2.Clients;
+using Api2.Interfaces;
 using Api2.Services;
+using IdentityModel;
+using IdentityModel.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -12,6 +15,27 @@ namespace Api2.Configurations
               this IServiceCollection services,
               IConfiguration configuration)
         {
+            services.AddSingleton(new Token
+            {
+                Address = configuration["IdentityServer:TokenEndpoint"],
+                GrantType = "delegation",
+
+                ClientId = configuration["Client:Id"],
+                ClientAssertion = new ClientAssertion
+                {
+                    Type = OidcConstants.ClientAssertionTypes.JwtBearer,
+                    Value = TokenGenerator.CreateClientAuthJwt()
+                },
+
+                Parameters =
+                {
+                    { "scope", "api3" },
+                    { "token", userToken}
+                }
+            });
+
+            services.AddHttpClient<IIdentityServerClient, IdentityServerClient>();
+
             // add automatic token management
             // this will refresh the mvc client access_token and use it along with the mtls cert
             // when calling an api
