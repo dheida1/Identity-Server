@@ -216,13 +216,14 @@ namespace IdentityServer.Api
                             }
                         },
 
-                        AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                        AllowedGrantTypes = GrantTypes.Hybrid,
                         RedirectUris = {"https://localhost:5001/signin-oidc"},
                      
                         // where to redirect to after logout
                         PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
                         AllowedScopes = {"openid", "profile", "api1", "api2" },
-                        AllowOfflineAccess = true
+                        AllowOfflineAccess = true,
+                        AllowAccessTokensViaBrowser = true //this is dangerous since access_token will appear in browser
                     },                   
 
                     ///////////////////////////////////////////////////////////

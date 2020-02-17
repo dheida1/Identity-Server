@@ -50,7 +50,7 @@ namespace MvcJwtClient.Web.Configurations
                     options.Authority = configuration["IdentityServer:Authority"];
                     options.RequireHttpsMetadata = environment.IsDevelopment() ? false : true;
                     options.ClientId = configuration["Client:Id"];
-                    options.ResponseType = "code";
+                    options.ResponseType = "code token id_token";
                     options.ResponseMode = "form_post"; //this allows us to keep codes out of the URL and protected via TLS
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;

@@ -1,0 +1,30 @@
+title Mvc Client (hyrbid flow with JWT client assertion instead of client secret) \nusing Identity Server with ADFS SAML Authentication Sequence for unauthenticated user
+
+participant "User" as U
+participant "Browser" as B
+participant "Client" as C
+participant "IdentityServer4" as IDS4
+participant "SAML IDP" as IDP
+participant "Api" as A
+
+U->B: Enter url
+B -> C : Access protected url
+C -> +IDS4: GET/ connect/authorize \nAuthorization code request  \nto authorize
+note over IDS4: Needs client id, redirect_uri, scope, \nresponse_type = code,\nnonce, state
+IDS4 -->-B : GET/ Redirect to SAML IDP with auth request in query string
+B -> IDP : GET/ Here is my auth request that IdentityServer4 gave me
+IDP --> B : GET/ Login page
+B --> U : Login page UI
+U ->B :Enter credentials
+B-> IDP : POST/ Credentials
+IDP --> B : GET/ Redirect to Application with auth result encoded in POST data
+B -> IDS4 : POST/ Here's my signed auth result from the IDP
+IDS4 --> Client : POST/ signin-oidc  Authorization Code 
+C -> +IDS4 : POST/ connect/token \nAuthorize Code
+note over IDS4: Needs client_id, redirect uri, code, \nclient assertion, \nclient assertion type, grant type 
+IDS4 --> -C : access_token
+C -> IDS4 : GET/ connect/userinfo \nwith access_token as \nBearer in header request
+IDS4 --> C :id_token 
+C --> B : Authenticaion cookie
+C-> A: Call protected Api with access token
+A-->C: Respond with some protected Api data
