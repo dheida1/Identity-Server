@@ -26,6 +26,7 @@ namespace Api2.Clients
 
         public async Task<string> RequestTokenAsync()
         {
+            //don't like this
             var token = await httpContextAccessor.HttpContext.GetTokenAsync("access_token");
             tokenRequest.Parameters.Remove("token");
             tokenRequest.Parameters.Add("token", token);

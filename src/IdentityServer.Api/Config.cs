@@ -102,6 +102,16 @@ namespace IdentityServer.Api
                     },
 
                     new ApiResource("api3", "My API #3")
+                    {
+                         UserClaims = new [] { ClaimTypes.Name,
+                          ClaimTypes.Email,
+                          ClaimTypes.Name,
+                          ClaimTypes.Role,
+                          JwtClaimTypes.Name,
+                          JwtClaimTypes.Email,
+                          JwtClaimTypes.Role
+                      }
+                    }
                 };
             }
 
@@ -248,34 +258,12 @@ namespace IdentityServer.Api
                         AllowedScopes = { "api1", "api2" }
                     },
 
-                    ////////////////////////////////////////////////
-                    // Api to act as Client for delegation tokens
-                    ///////////////////////////////////////////////
-                    //new Client
-                    //{
-                    //    ClientId = "api2.jwt",
-                    //    ClientSecrets =
-                    //    {
-                    //        new Secret
-                    //        {
-                    //            Type = SecretTypes.X509CertificateBase64,
-                    //            Value = Convert.ToBase64String(new X509Certificate2("Certificates/Api2.cer").GetRawCertData())
-                    //        }
-                    //    },
-                    //     AllowedGrantTypes = { "delegation" },
-                    //     AllowedScopes = new List<string>
-                    //     {
-                    //         "api3"
-                    //     }
-                    //},
-
-
                      new Client
                         {
                             ClientId = "api2",
                             ClientName = "Api2 Pkce as Client",
                             Description = "Api using authorization code flow with pkce for api authentication",
-                            AllowedGrantTypes = { "delegation" },
+                            AllowedGrantTypes = { "delegation" , GrantType.ClientCredentials},
                             AllowedScopes = new List<string>
                              {
                                  "api3"

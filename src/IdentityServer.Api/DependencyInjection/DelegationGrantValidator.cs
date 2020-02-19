@@ -37,7 +37,7 @@ namespace IdentityServer.Api.DependencyInjection
             // get user's identity
             var sub = result.Claims.FirstOrDefault(c => c.Type == "sub").Value;
 
-            context.Result = new GrantValidationResult(sub, GrantType);
+            context.Result = new GrantValidationResult(sub, GrantType, result.Claims);
             return;
         }
     }

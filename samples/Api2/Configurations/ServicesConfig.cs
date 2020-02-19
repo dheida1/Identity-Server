@@ -32,7 +32,7 @@ namespace Api2.Configurations
 
                 Parameters =
                 {
-                    { "scope", "api3" }
+                    { "scope", "api3 openid profile" }
                 }
             });
 
@@ -42,18 +42,24 @@ namespace Api2.Configurations
                 client.BaseAddress = new Uri(configuration["IdentityServer:TokenEndpoint"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             })
-            .AddClientAccessTokenHandler("api2");
+            .AddUserAccessTokenHandler();
 
             // add automatic token management
-            // this will refresh the mvc client access_token and use it along with the mtls cert
-            // when calling an api
+            // this will refresh the mvc client access_token 
+            //this has not been implemented here but this shows how it can be
+            // this is different than user access_token
             services.AddAccessTokenManagement(o =>
                 {
                     o.Client.Clients.Add("api2", new ClientCredentialsTokenRequest()
                     {
-
+                        Address = configuration["IdentityServer:TokenEndpoint"],
                         ClientId = configuration["Client:Id"],
                         Scope = "api3",
+                        ClientAssertion = new ClientAssertion
+                        {
+                            Type = OidcConstants.ClientAssertionTypes.JwtBearer,
+                            Value = TokenGenerator.CreateClientAuthJwt()
+                        },
                     });
                 })
             .ConfigureBackchannelHttpClient(client =>
@@ -61,8 +67,8 @@ namespace Api2.Configurations
                 client.Timeout = TimeSpan.FromSeconds(30);
             });
 
-            //create an api2 service to call the api2
-            //this will get back an access_token with the user claims - on behalf of the user
+            //create an api2 service to call the api3
+            //this will get back an access_token with the sub as the user
             services.AddHttpClient<IApi3ServiceClient, Api3ServiceClient>(client =>
             {
                 client.BaseAddress = new Uri(configuration["Api3:BaseUrl"]);
