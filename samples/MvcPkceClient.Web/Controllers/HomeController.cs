@@ -47,6 +47,13 @@ namespace MvcPkceClient.Web.Controllers
             return Ok(apiResult);
         }
 
+        [Authorize]
+        public async Task<IActionResult> Api2Delegated()
+        {
+            var apiResult = await mediator.Send(new Api2DelegateRequest());
+            return Ok(apiResult);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

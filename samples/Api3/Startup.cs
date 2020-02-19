@@ -1,10 +1,12 @@
 using IdentityServer4.AccessTokenValidation;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -23,6 +25,7 @@ namespace Api3
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
 
             services.AddAuthentication(options =>
             {

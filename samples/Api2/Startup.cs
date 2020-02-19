@@ -1,3 +1,4 @@
+using Api2.Configurations;
 using IdentityServer4.AccessTokenValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,8 @@ namespace Api2
             services.AddControllers();
             services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
 
+            services.AddDataServices(Configuration);
+
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
@@ -37,7 +40,6 @@ namespace Api2
                      options.Authority = "https://localhost:4300";
                      options.RequireHttpsMetadata = Environment.IsDevelopment() ? false : true;
                      options.ApiName = "api2";
-                     options.ApiSecret = "secret";
                      options.SaveToken = true;
                      options.JwtBearerEvents.OnMessageReceived = context =>
                      {

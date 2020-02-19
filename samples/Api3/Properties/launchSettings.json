@@ -16,8 +16,7 @@
       }
     },
     "Api3": {
-      "commandName": "Project",
-      "launchBrowser": true,
+      "commandName": "Project",    
       "applicationUrl": "https://localhost:5004;http://localhost:4397",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

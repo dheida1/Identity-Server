@@ -27,5 +27,18 @@ namespace MvcPkceClient.Web.Services
             }
             return await response.Content.ReadAsStringAsync();
         }
+
+        public async Task<string> Delegate()
+        {
+            // No more getting access_tokens code!
+            var response = await client.GetAsync("/api2/ApiDelegate");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine(response.StatusCode);
+                throw new Exception("Failed to get protected resources.");
+            }
+            return await response.Content.ReadAsStringAsync();
+        }
     }
 }

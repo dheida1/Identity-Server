@@ -121,6 +121,7 @@ namespace IdentityServer.Api
                             EnableLocalLogin = false,
                             IdentityProviderRestrictions = new List<string>(){"adfs"},
                             AllowedGrantTypes = GrantTypes.CodeAndClientCredentials, //response type is "code"
+                            //do not require a secret
                             RequireClientSecret = false,
                             AccessTokenType = AccessTokenType.Jwt,
                             RequireConsent = false,
@@ -250,23 +251,50 @@ namespace IdentityServer.Api
                     ////////////////////////////////////////////////
                     // Api to act as Client for delegation tokens
                     ///////////////////////////////////////////////
-                    new Client
-                    {
-                        ClientId = "api2.jwt",
-                        ClientSecrets =
+                    //new Client
+                    //{
+                    //    ClientId = "api2.jwt",
+                    //    ClientSecrets =
+                    //    {
+                    //        new Secret
+                    //        {
+                    //            Type = SecretTypes.X509CertificateBase64,
+                    //            Value = Convert.ToBase64String(new X509Certificate2("Certificates/Api2.cer").GetRawCertData())
+                    //        }
+                    //    },
+                    //     AllowedGrantTypes = { "delegation" },
+                    //     AllowedScopes = new List<string>
+                    //     {
+                    //         "api3"
+                    //     }
+                    //},
+
+
+                     new Client
                         {
-                            new Secret
+                            ClientId = "api2",
+                            ClientName = "Api2 Pkce as Client",
+                            Description = "Api using authorization code flow with pkce for api authentication",
+                            AllowedGrantTypes = { "delegation" },
+                            AllowedScopes = new List<string>
+                             {
+                                 "api3"
+                             },
+                            ClientSecrets =
                             {
-                                Type = SecretTypes.X509CertificateBase64,
-                                Value = Convert.ToBase64String(new X509Certificate2("Certificates/Api2.cer").GetRawCertData())
-                            }
+                                new Secret
+                                {
+                                    // Type must be "X509CertificateBase64"
+                                    Type = SecretTypes.X509CertificateBase64,
+
+                                    // base64 value of the client cert public key      
+                                    Value = Convert.ToBase64String(new X509Certificate2("Certificates/Api2.cer").GetRawCertData())
+                                }
+                            },
+                            RequirePkce = false
                         },
-                         AllowedGrantTypes = { "delegation" },
-                         AllowedScopes = new List<string>
-                         {
-                             "api3"
-                         }
-                    },
+
+
 
                     // SPA client using implicit flow
                     new Client

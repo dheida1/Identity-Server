@@ -18,15 +18,16 @@ namespace IdentityServer.Api.DependencyInjection
 
         public async Task ValidateAsync(ExtensionGrantValidationContext context)
         {
-            var userToken = context.Request.Raw.Get("token");
+            var accessToken = context.Request.Raw.Get("token");
 
-            if (string.IsNullOrEmpty(userToken))
+            if (string.IsNullOrEmpty(accessToken))
             {
                 context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant);
                 return;
             }
 
-            var result = await tokenValidator.ValidateAccessTokenAsync(userToken);
+            //get id_token that belongs to this user
+            var result = await tokenValidator.ValidateAccessTokenAsync(accessToken);
             if (result.IsError)
             {
                 context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant);

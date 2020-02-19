@@ -81,6 +81,7 @@ namespace ConsoleJwtClient
 
             var now = DateTime.UtcNow;
 
+            //signed JWT (JWS)
             var token = new JwtSecurityToken(
                     clientId,
                     audience,
