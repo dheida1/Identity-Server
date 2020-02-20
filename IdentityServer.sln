@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.Core", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.Infrastructure", "src\IdentityServer.Infrastructure\IdentityServer.Infrastructure.csproj", "{74F20C05-4C28-4602-B921-7828858D8137}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.Admin", "src\IdentityServer.Admin\IdentityServer.Admin.csproj", "{1A8B9E59-E7A4-4649-90FB-219828D190E8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api1", "samples\Api1\Api1.csproj", "{3E636DB0-995F-4675-A2DE-8390490CB063}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api2", "samples\Api2\Api2.csproj", "{54C86088-F5CC-4D48-A890-FE03413C4F38}"
@@ -30,7 +28,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcPkceClient.Web", "sample
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcJwtPkceClient.Web", "samples\MvcJwtPkceClient.Web\MvcJwtPkceClient.Web.csproj", "{D8F11933-1EAF-4E3A-B6A0-5B1E0A0E5E8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api3", "samples\Api3\Api3.csproj", "{89018EFC-142E-48B9-B9FA-CDA7846C11A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api3", "samples\Api3\Api3.csproj", "{89018EFC-142E-48B9-B9FA-CDA7846C11A6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.AdminUi", "src\IdentityServer.AdminUi\IdentityServer.AdminUi.csproj", "{B3F2A4F8-7ADC-4773-9E33-8AC8294E79A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,10 +50,6 @@ Global
 		{74F20C05-4C28-4602-B921-7828858D8137}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74F20C05-4C28-4602-B921-7828858D8137}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74F20C05-4C28-4602-B921-7828858D8137}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A8B9E59-E7A4-4649-90FB-219828D190E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A8B9E59-E7A4-4649-90FB-219828D190E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A8B9E59-E7A4-4649-90FB-219828D190E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A8B9E59-E7A4-4649-90FB-219828D190E8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E636DB0-995F-4675-A2DE-8390490CB063}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3E636DB0-995F-4675-A2DE-8390490CB063}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E636DB0-995F-4675-A2DE-8390490CB063}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -86,6 +82,10 @@ Global
 		{89018EFC-142E-48B9-B9FA-CDA7846C11A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89018EFC-142E-48B9-B9FA-CDA7846C11A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89018EFC-142E-48B9-B9FA-CDA7846C11A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3F2A4F8-7ADC-4773-9E33-8AC8294E79A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3F2A4F8-7ADC-4773-9E33-8AC8294E79A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3F2A4F8-7ADC-4773-9E33-8AC8294E79A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3F2A4F8-7ADC-4773-9E33-8AC8294E79A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

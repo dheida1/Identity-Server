@@ -5,6 +5,7 @@ To get this started...
 
 ### Important- Please make sure:
 * That the Package Manager default project is set to "IdentityServer.Infrastructure".
+* That "IdentityServer.Api" is set as the startup project.
 * Run these commands: 
 
 `
