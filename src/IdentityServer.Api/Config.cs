@@ -103,13 +103,10 @@ namespace IdentityServer.Api
 
                     new ApiResource("api3", "My API #3")
                     {
-                         UserClaims = new [] { ClaimTypes.Name,
+                         UserClaims = new [] {
                           ClaimTypes.Email,
-                          ClaimTypes.Name,
-                          ClaimTypes.Role,
-                          JwtClaimTypes.Name,
-                          JwtClaimTypes.Email,
-                          JwtClaimTypes.Role
+                          JwtClaimTypes.Email
+
                       }
                     }
                 };
