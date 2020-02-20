@@ -32,7 +32,7 @@ namespace Api2.Configurations
 
                 Parameters =
                 {
-                    { "scope", "api3 openid profile" }
+                    { "scope", "api3" }
                 }
             });
 
@@ -42,7 +42,7 @@ namespace Api2.Configurations
                 client.BaseAddress = new Uri(configuration["IdentityServer:TokenEndpoint"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             })
-            .AddUserAccessTokenHandler();
+            .AddClientAccessTokenHandler();
 
             // add automatic token management
             // this will refresh the mvc client access_token 
