@@ -1,4 +1,5 @@
 ﻿using IdentityModel;
+using IdentityServer.Core.Entities;
 using IdentityServer4.Models;
 using System;
 using System.Collections.Generic;
@@ -112,7 +113,7 @@ namespace IdentityServer.Api
                 };
             }
 
-            public static IEnumerable<Client> GetClients()
+            public static IEnumerable<Core.Entities.ExtClient> GetClients()
             {
                 return new[]
                 {
@@ -120,7 +121,7 @@ namespace IdentityServer.Api
                     // Mvc Clients Authorization Code Flow and PKCE
                     ///////////////////////////////////////////////
                     //pkce
-                    new Client
+                    new ExtClient
                         {
                             ClientId = "mvcClient.pkce",
                             ClientName = "MVC Pkce Client",
@@ -136,7 +137,13 @@ namespace IdentityServer.Api
                             AllowedCorsOrigins = { "https://localhost:5001" },
                             AlwaysIncludeUserClaimsInIdToken= true,
                             AlwaysSendClientClaims= true,
-                            UpdateAccessTokenClaimsOnRefresh = true,                         
+                            UpdateAccessTokenClaimsOnRefresh = true,
+                            ExtendedClient =  new ExtendedClient
+                            {
+                                ClientType = ClientType.WebHybrid,
+                                RawCertData = Convert.ToBase64String(new X509Certificate2("Certificates/MvcJwtClient.Web.cer").GetRawCertData()),
+                                RequireJwe = true
+                            },
                                             
                             // where to redirect to after login
                             RedirectUris = { "https://localhost:5001/signin-oidc" },
@@ -158,7 +165,7 @@ namespace IdentityServer.Api
                         },
 
                     //mtls
-                    new Client
+                    new ExtClient
                         {
                             ClientId = "mvcClient.mtls",
                             ClientName = "MVC Mtls Client",
@@ -203,7 +210,7 @@ namespace IdentityServer.Api
                     // Mvc Clients Authrorization Code Flow with client JWT assertion
                     /////////////////////////////////////////////////////////////////
                     //jwt
-                    new Client
+                    new ExtClient
                     {
                         ClientId = "mvcClient.jwt",
                         ClientName = "Mvc Jwt Client",
@@ -237,7 +244,7 @@ namespace IdentityServer.Api
                     ///////////////////////////////////////////////////////////
                     // Console Client Credentials Flow with client JWT assertion
                     ///////////////////////////////////////////////////////////
-                    new Client
+                    new ExtClient
                     {
                         ClientId = "client.jwt",
                         ClientName = "Console Jwt Client",
@@ -255,7 +262,7 @@ namespace IdentityServer.Api
                         AllowedScopes = { "api1", "api2" }
                     },
 
-                     new Client
+                     new ExtClient
                         {
                             ClientId = "api2",
                             ClientName = "Api2 Pkce as Client",
@@ -282,7 +289,7 @@ namespace IdentityServer.Api
 
 
                     // SPA client using implicit flow
-                    new Client
+                    new ExtClient
                         {
                             ClientId = "spa",
                             ClientName = "SPA Client",

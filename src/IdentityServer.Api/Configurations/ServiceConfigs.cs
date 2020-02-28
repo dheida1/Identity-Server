@@ -1,4 +1,4 @@
-﻿using IdentityServer.Api.DependencyInjection;
+﻿using IdentityServer.Api.Extensions;
 using IdentityServer4.Services;
 using IdentityServer4.Validation;
 using Microsoft.Extensions.Configuration;
@@ -12,8 +12,10 @@ namespace IdentityServer.Api.Configurations
            this IServiceCollection services,
            IConfiguration configuration)
         {
+            //services.AddAutoMapper(typeof(ExtendedClientMapperProfile));
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IExtensionGrantValidator, DelegationGrantValidator>();
+            services.AddTransient<ITokenCreationService, JweTokenCreationService>();
             return services;
         }
     }

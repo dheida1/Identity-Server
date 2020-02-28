@@ -1,5 +1,6 @@
-﻿using IdentityServer.Api.DependencyInjection;
+﻿using IdentityServer.Api.Extensions;
 using IdentityServer.Core.Entities;
+using IdentityServer.Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -48,8 +49,14 @@ namespace IdentityServer.Api.Configurations
                  .AddAspNetIdentity<ApplicationUser>()
                  .AddJwtBearerClientAuthentication() //to accept clients via jwts
 
-                 // this adds the config data from DB (clients, resources, CORS)
-                 .AddConfigurationStore(options =>
+                   // this adds the config data from DB (clients, resources, CORS)
+                   //.AddConfigurationStore(options =>
+                   //{                    
+                   //    options.ConfigureDbContext = builder =>
+                   //            builder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                   //            sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly));
+                   //})
+                   .AddConfigurationStore<ExtendedConfigurationDbContext>(options =>
                  {
                      options.ConfigureDbContext = builder =>
                              builder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
@@ -65,6 +72,7 @@ namespace IdentityServer.Api.Configurations
                      // this enables automatic token cleanup. this is optional.
                      options.EnableTokenCleanup = true;
                  })
+
                  .AddProfileService<ProfileService>()
                  .AddExtensionGrantValidator<DelegationGrantValidator>();
 

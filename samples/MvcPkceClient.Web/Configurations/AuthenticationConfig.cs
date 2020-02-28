@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace MvcPkceClient.Web.Configurations
@@ -65,7 +66,14 @@ namespace MvcPkceClient.Web.Configurations
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = JwtClaimTypes.Name,
-                        RoleClaimType = JwtClaimTypes.Role
+                        RoleClaimType = JwtClaimTypes.Role,
+                        TokenDecryptionKey =
+                        environment.IsDevelopment() ? new X509SecurityKey(new X509Certificate2("Certificates/MvcClient.Web.pfx", "1234"))
+                        : new X509SecurityKey(new Cryptography.X509Certificates.Extension.X509Certificate2(
+                         configuration["Certificates:Personal"],
+                         StoreName.My,
+                         StoreLocation.LocalMachine,
+                         X509FindType.FindBySerialNumber))
                     };
                 });
             return services;

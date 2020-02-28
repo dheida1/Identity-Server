@@ -1,6 +1,7 @@
 using IdentityServer.Api.Configurations;
 using IdentityServer.Api.IdentityServer.Api;
 using IdentityServer.Infrastructure.Data;
+using IdentityServer.Infrastructure.Mappers;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
@@ -84,15 +85,15 @@ namespace IdentityServer.Api
             {
                 serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
 
-                var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+                var context = serviceScope.ServiceProvider.GetRequiredService<ExtendedConfigurationDbContext>();
                 context.Database.Migrate();
 
-                if (!context.Clients.Any())
+                if (!context.ExtClients.Any())
                 {
                     Console.WriteLine("Clients being populated");
                     foreach (var client in Config.GetClients())
                     {
-                        context.Clients.Add(client.ToEntity());
+                        context.ExtClients.Add(client.ToEntity());
                     }
                     context.SaveChanges();
                 }
