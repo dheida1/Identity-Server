@@ -7,7 +7,7 @@ namespace IdentityServer.Infrastructure.Mappers
         public ExtClientMapperProfile()
         {
             CreateMap<IdentityServer4.Models.Client, IdentityServer4.EntityFramework.Entities.Client>()
-                    .IncludeAllDerived();
+                    .Include<Core.Entities.ExtClient, Dto.ExtClient>();
 
             CreateMap<Dto.ExtClient, Core.Entities.ExtClient>()
                 .ForPath(dest => dest.ExtendedClient.ClientType, opts => opts.MapFrom(src => src.ExtendedClient.ClientType))
