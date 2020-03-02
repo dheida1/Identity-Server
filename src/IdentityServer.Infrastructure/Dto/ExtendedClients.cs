@@ -1,19 +1,22 @@
 ﻿using IdentityServer4.EntityFramework.Entities;
+using System;
 
 namespace IdentityServer.Infrastructure.Dto
 {
     public class ExtClient : Client
     {
-        //public int? ExtendedClientId { get; set; }
         public ExtendedClient ExtendedClient { get; set; }
     }
 
     public class ExtendedClient
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public ClientType ClientType { get; set; }
         public string RawCertData { get; set; }
         public bool RequireJwe { get; set; } = true;
+        public virtual ExtClient Client { get; set; }
+        //[ForeignKey("ExtClient")]
+        public int ClientId { get; set; }
     }
 
 

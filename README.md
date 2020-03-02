@@ -8,14 +8,13 @@ To get this started...
 * That "IdentityServer.Api" is set as the startup project.
 * Run these commands: 
 
-`
+```        
 PM> Add-Migration Initial -c PersistedGrantDbContext -o Data/Migrations/PersistedGrantDb
 
 PM> Add-Migration Initial -c ApplicationDbContext -o Data/Migrations/ApplicationDb
 
-PM> Add-Migration Initial -c ConfigurationDbContext -o Data/Migrations/ConfigurationDb
-
-`
+PM> Add-Migration Initial -c ExtendedConfigurationDbContext -o Data/Migrations/ExtendedConfigurationDbContext
+```
 
 # 2 - Set up databases (via Package Manager)
  Use these commands (below) to set up database. 
@@ -25,15 +24,13 @@ PM> Add-Migration Initial -c ConfigurationDbContext -o Data/Migrations/Configura
 * That the Package Manager default project is set to "IdentityServer.Infrastructure".
 * That you have a DefaultConnection setup in your appsettings for a database
 
-`
-
+```        
 PM> update-database -Context PersistedGrantDbContext
 
 PM> update-database -Context ApplicationDbContext
 
-PM> update-database -Context ConfigurationDbContext
-
-`
+PM> update-database -Context ExtendedConfigurationDbContext
+```
 
 # 4- To run the project
 1- Select the solution, right click and select 'Set Startup Projects'.

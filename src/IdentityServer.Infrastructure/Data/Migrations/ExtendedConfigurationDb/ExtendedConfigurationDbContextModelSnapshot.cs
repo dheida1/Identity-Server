@@ -21,12 +21,11 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ExtendedConfigurationDb
 
             modelBuilder.Entity("IdentityServer.Infrastructure.Dto.ExtendedClient", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("ClientId")
+                    b.Property<int>("ClientId")
                         .HasColumnType("int");
 
                     b.Property<int>("ClientType")
@@ -40,7 +39,8 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ExtendedConfigurationDb
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("ClientId")
+                        .IsUnique();
 
                     b.ToTable("ExtendedClient");
                 });
@@ -720,19 +720,16 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ExtendedConfigurationDb
                 {
                     b.HasBaseType("IdentityServer4.EntityFramework.Entities.Client");
 
-                    b.Property<int?>("ExtendedClientId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("ExtendedClientId");
-
                     b.HasDiscriminator().HasValue("ExtClient");
                 });
 
             modelBuilder.Entity("IdentityServer.Infrastructure.Dto.ExtendedClient", b =>
                 {
-                    b.HasOne("IdentityServer4.EntityFramework.Entities.Client", null)
-                        .WithMany()
-                        .HasForeignKey("ClientId");
+                    b.HasOne("IdentityServer.Infrastructure.Dto.ExtClient", "Client")
+                        .WithOne("ExtendedClient")
+                        .HasForeignKey("IdentityServer.Infrastructure.Dto.ExtendedClient", "ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ApiResourceClaim", b =>
@@ -877,13 +874,6 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ExtendedConfigurationDb
                         .HasForeignKey("IdentityResourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("IdentityServer.Infrastructure.Dto.ExtClient", b =>
-                {
-                    b.HasOne("IdentityServer.Infrastructure.Dto.ExtendedClient", "ExtendedClient")
-                        .WithMany()
-                        .HasForeignKey("ExtendedClientId");
                 });
 #pragma warning restore 612, 618
         }

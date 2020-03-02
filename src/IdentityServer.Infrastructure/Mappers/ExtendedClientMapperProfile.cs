@@ -1,19 +1,19 @@
-﻿using AutoMapper;
+﻿using IdentityServer4.EntityFramework.Mappers;
 
 namespace IdentityServer.Infrastructure.Mappers
 {
-    public class ExtClientMapperProfile : Profile
+    public class ExtClientMapperProfile : ClientMapperProfile
     {
         public ExtClientMapperProfile()
         {
-            CreateMap<IdentityServer4.Models.Client, IdentityServer4.EntityFramework.Entities.Client>()
-                    .Include<Core.Entities.ExtClient, Dto.ExtClient>();
+            CreateMap<Dto.ExtendedClient, Core.Entities.ExtendedClient>()
+                .ReverseMap();
+
+            CreateMap<Core.Entities.ExtClient, Dto.ExtClient>()
+                .IncludeBase<IdentityServer4.Models.Client, IdentityServer4.EntityFramework.Entities.Client>();
 
             CreateMap<Dto.ExtClient, Core.Entities.ExtClient>()
-                .ForPath(dest => dest.ExtendedClient.ClientType, opts => opts.MapFrom(src => src.ExtendedClient.ClientType))
-                .ForPath(dest => dest.ExtendedClient.RawCertData, opts => opts.MapFrom(src => src.ExtendedClient.RawCertData))
-                .ForPath(dest => dest.ExtendedClient.RequireJwe, opts => opts.MapFrom(src => src.ExtendedClient.RequireJwe))
-                .ReverseMap();
+                .IncludeBase<IdentityServer4.EntityFramework.Entities.Client, IdentityServer4.Models.Client>();
         }
     }
 }

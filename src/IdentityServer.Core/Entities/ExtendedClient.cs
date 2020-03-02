@@ -1,4 +1,5 @@
 ﻿using IdentityServer4.Models;
+using System;
 
 namespace IdentityServer.Core.Entities
 {
@@ -9,10 +10,13 @@ namespace IdentityServer.Core.Entities
 
     public class ExtendedClient
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public ClientType ClientType { get; set; }
         public string RawCertData { get; set; }
         public bool RequireJwe { get; set; } = true;
+        public virtual ExtClient Client { get; set; }
+        //[ForeignKey("ExtClient")]
+        public int ClientId { get; set; }
     }
 
 

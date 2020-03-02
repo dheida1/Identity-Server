@@ -1,6 +1,5 @@
 ﻿using IdentityServer.Infrastructure.Dto;
 using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,10 +17,13 @@ namespace IdentityServer.Infrastructure.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<ExtClient>(e =>
-              {
-                  e.HasOne<Client>();
-              });
+            //builder.Entity<ExtClient>()
+            //    .HasOne(c => c.ExtendedClient);
+
+            builder.Entity<ExtClient>()
+                       .HasOne(c => c.ExtendedClient)
+                       .WithOne(b => b.Client)
+                       .HasForeignKey<ExtendedClient>(f => f.ClientId);
         }
     }
 }
