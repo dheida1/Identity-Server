@@ -32,6 +32,7 @@ namespace IdentityServer.Api.Extensions
 
         public override async Task<string> CreateTokenAsync(Token token)
         {
+            //TODO must extend ClientStore
             var client = await clientStore.FindEnabledClientByIdAsync(token.ClientId);
             var clientCertificate = new X509Certificate2(Convert.FromBase64String(client.ClientSecrets
                                         .FirstOrDefault(s => s.Type == SecretTypes.X509CertificateBase64).Value));

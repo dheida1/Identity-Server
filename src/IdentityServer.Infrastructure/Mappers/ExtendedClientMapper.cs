@@ -24,5 +24,15 @@ namespace IdentityServer.Infrastructure.Mappers
         {
             return Mapper.Map<Dto.ExtClient>(entity);
         }
+
+        public static Core.Entities.ExtendedClient ToModel(this Dto.ExtendedClient dto)
+        {
+            return Mapper.Map<Core.Entities.ExtendedClient>(dto);
+        }
+
+        public static Dto.ExtendedClient ToEntity(this Core.Entities.ExtendedClient entity)
+        {
+            return Mapper.Map<Dto.ExtendedClient>(entity);
+        }
     }
 }
