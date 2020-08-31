@@ -1,6 +1,8 @@
 ﻿using IdentityServer.Infrastructure.Dto;
 using IdentityServer.Infrastructure.Interfaces;
+using IdentityServer.Infrastructure.Mappers;
 using IdentityServer4.EntityFramework.Mappers;
+using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -34,7 +36,12 @@ namespace IdentityServer.Infrastructure.Services
             Logger = logger;
         }
 
-        public virtual async Task<ExtendedClient> FindExtClientByIdAsync(int clientId)
+        public Task<Client> FindClientByIdAsync(string clientId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual async Task<Core.Entities.ExtendedClient> FindExtClientByIdAsync(int clientId)
         {
             IQueryable<ExtendedClient> baseQuery = Context.ExtendedClient
                 .Where(x => x.ClientId == clientId)
