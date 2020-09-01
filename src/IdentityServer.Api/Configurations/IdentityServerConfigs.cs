@@ -57,11 +57,11 @@ namespace IdentityServer.Api.Configurations
                    //            sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly));
                    //})
                    .AddConfigurationStore<ExtendedConfigurationDbContext>(options =>
-                 {
-                     options.ConfigureDbContext = builder =>
-                             builder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                             sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly));
-                 })
+                   {
+                       options.ConfigureDbContext = builder =>
+                               builder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                               sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly));
+                   })
                  // this adds the operational data from DB (codes, tokens, consents)
                  .AddOperationalStore(options =>
                  {

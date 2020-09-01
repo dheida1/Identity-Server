@@ -14,7 +14,7 @@ namespace IdentityServer.Core.Entities
         public ClientType ClientType { get; set; }
         public string RawCertData { get; set; }
         public bool RequireJwe { get; set; } = true;
-        public virtual ExtClient Client { get; set; }
+        public ExtClient Client { get; set; }
         //[ForeignKey("ExtClient")]
         public int ClientId { get; set; }
     }

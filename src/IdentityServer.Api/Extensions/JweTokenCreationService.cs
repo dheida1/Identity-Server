@@ -6,50 +6,45 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using static IdentityServer4.IdentityServerConstants;
+using static IdentityModel.OidcConstants;
 
 namespace IdentityServer.Api.Extensions
 {
     public class JweTokenCreationService : DefaultTokenCreationService
     {
 
-        private readonly IClientStore clientStore;
+        private readonly IClientStore extClientStore;
 
         public JweTokenCreationService(
-           IClientStore clientStore,
+           IClientStore extClientStore,
            ISystemClock clock,
            IKeyMaterialService keys,
            IdentityServerOptions options,
            ILogger<DefaultTokenCreationService> logger)
            : base(clock, keys, options, logger)
         {
-            this.clientStore = clientStore;
+            this.extClientStore = extClientStore;
         }
 
         public override async Task<string> CreateTokenAsync(Token token)
         {
-            //TODO must extend ClientStore
-            var client = await clientStore.FindEnabledClientByIdAsync(token.ClientId);
-            var clientCertificate = new X509Certificate2(Convert.FromBase64String(client.ClientSecrets
-                                        .FirstOrDefault(s => s.Type == SecretTypes.X509CertificateBase64).Value));
+            if (token.Type == TokenTypes.IdentityToken)
+            {
+                //TODO must extend ClientStore
+                var clientCertificate = new X509Certificate2(); //await extClientStore.FindClientCertificate(token.ClientId);
+                var payload = await base.CreatePayloadAsync(token);
 
-            //if (token.Type == TokenTypes.IdentityToken)
-            // {
-            var payload = await base.CreatePayloadAsync(token);
+                var handler = new JsonWebTokenHandler();
+                var jwe = handler.CreateToken(
+                    payload.SerializeToJson(),
+                    await Keys.GetSigningCredentialsAsync(),
+                    new X509EncryptingCredentials(clientCertificate));
 
-            var handler = new JsonWebTokenHandler();
-            var jwe = handler.CreateToken(
-                payload.SerializeToJson(),
-                await Keys.GetSigningCredentialsAsync(),
-                new X509EncryptingCredentials(clientCertificate));
-
-            return jwe;
-            // }
-            //return await base.CreateTokenAsync(token);
+                return jwe;
+            }
+            return await base.CreateTokenAsync(token);
         }
     }
 }

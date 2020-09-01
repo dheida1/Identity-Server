@@ -7,5 +7,6 @@ namespace IdentityServer.Infrastructure.Interfaces
     public interface IExtendedConfigurationDbContext : IConfigurationDbContext
     {
         DbSet<ExtendedClient> ExtendedClient { get; set; }
+        //IEnumerable<object> Client { get; }
     }
 }

@@ -19,7 +19,6 @@ namespace IdentityServer.Infrastructure.Dto
         public int ClientId { get; set; }
     }
 
-
     public enum ClientType
     {
         Empty = 0,

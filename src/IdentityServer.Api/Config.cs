@@ -69,37 +69,37 @@ namespace IdentityServer.Api
                           JwtClaimTypes.Email,
                           JwtClaimTypes.Role
                       },
-                      Scopes = new[]
-                          {
-                           new Scope
-                              {
-                                    Name = "api2",
-                                    DisplayName = "Full access to Api2",
-                                    UserClaims = new[] {"emails" }
-                              },
-                              new Scope
-                              {
-                                    Name = "api2.full_access",
-                                    DisplayName = "Full access to Api2",
-                                    UserClaims = new[] { JwtClaimTypes.Role,
-                                        ClaimTypes.Role,
-                                        ClaimTypes.Name,
-                                        ClaimTypes.Email,
-                                        JwtClaimTypes.Name,
-                                        JwtClaimTypes.Email
-                                    },
-                              },
-                               new Scope
-                              {
-                                    Name = "api2.read_only",
-                                    DisplayName = "Read only access to Api2",
-                                    UserClaims = new[] { JwtClaimTypes.Role,
-                                        ClaimTypes.Role,  ClaimTypes.Name,
-                                        ClaimTypes.Email, JwtClaimTypes.Name,
-                                        JwtClaimTypes.Email
-                                    },
-                              }
-                          }
+                      //Scopes = new[]
+                      //    {
+                      //     new Scope
+                      //        {
+                      //              Name = "api2",
+                      //              DisplayName = "Full access to Api2",
+                      //              UserClaims = new[] {"emails" }
+                      //        },
+                      //        new Scope
+                      //        {
+                      //              Name = "api2.full_access",
+                      //              DisplayName = "Full access to Api2",
+                      //              UserClaims = new[] { JwtClaimTypes.Role,
+                      //                  ClaimTypes.Role,
+                      //                  ClaimTypes.Name,
+                      //                  ClaimTypes.Email,
+                      //                  JwtClaimTypes.Name,
+                      //                  JwtClaimTypes.Email
+                      //              },
+                      //        },
+                      //         new Scope
+                      //        {
+                      //              Name = "api2.read_only",
+                      //              DisplayName = "Read only access to Api2",
+                      //              UserClaims = new[] { JwtClaimTypes.Role,
+                      //                  ClaimTypes.Role,  ClaimTypes.Name,
+                      //                  ClaimTypes.Email, JwtClaimTypes.Name,
+                      //                  JwtClaimTypes.Email
+                      //              },
+                      //        }
+                      //    }
                     },
 
                     new ApiResource("api3", "My API #3")
