@@ -49,13 +49,7 @@ namespace IdentityServer.Api.Configurations
                  .AddAspNetIdentity<ApplicationUser>()
                  .AddJwtBearerClientAuthentication() //to accept clients via jwts
 
-                   // this adds the config data from DB (clients, resources, CORS)
-                   //.AddConfigurationStore(options =>
-                   //{                    
-                   //    options.ConfigureDbContext = builder =>
-                   //            builder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                   //            sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly));
-                   //})
+                   // this adds the config data from DB (clients, resources, CORS)                   
                    .AddConfigurationStore<ExtendedConfigurationDbContext>(options =>
                    {
                        options.ConfigureDbContext = builder =>

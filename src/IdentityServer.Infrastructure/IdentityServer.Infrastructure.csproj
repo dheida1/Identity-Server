@@ -24,10 +24,4 @@
     <ProjectReference Include="..\IdentityServer.Core\IdentityServer.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\Migrations\ApplicationDb\" />
-    <Folder Include="Data\Migrations\ExtendedConfigurationDb\" />
-    <Folder Include="Data\Migrations\PersistedGrantDb\" />
-  </ItemGroup>
-
 </Project>
