@@ -1,50 +1,54 @@
-﻿using IdentityServer4.Configuration;
-using IdentityServer4.Models;
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using static IdentityModel.OidcConstants;
+﻿//using AutoMapper.Internal;
+//using IdentityServer4.Configuration;
+//using IdentityServer4.Models;
+//using IdentityServer4.Services;
+//using IdentityServer4.Stores;
+//using Microsoft.AspNetCore.Authentication;
+//using Microsoft.Extensions.Logging;
+//using Microsoft.IdentityModel.JsonWebTokens;
+//using Microsoft.IdentityModel.Tokens;
+//using System;
+//using System.Security.Cryptography.X509Certificates;
+//using System.Threading.Tasks;
+//using static IdentityModel.OidcConstants;
 
-namespace IdentityServer.Api.Extensions
-{
-    public class JweTokenCreationService : DefaultTokenCreationService
-    {
+//namespace IdentityServer.Api.Extensions
+//{
+//public class JweTokenCreationService : DefaultTokenCreationService
+//    {
 
-        private readonly IClientStore extClientStore;
+//        private readonly IClientStore clientStore;
 
-        public JweTokenCreationService(
-           IClientStore extClientStore,
-           ISystemClock clock,
-           IKeyMaterialService keys,
-           IdentityServerOptions options,
-           ILogger<DefaultTokenCreationService> logger)
-           : base(clock, keys, options, logger)
-        {
-            this.extClientStore = extClientStore;
-        }
+//        public JweTokenCreationService(
+//           IClientStore clientStore,
+//           ISystemClock clock,
+//           IKeyMaterialService keys,
+//           IdentityServerOptions options,
+//           ILogger<DefaultTokenCreationService> logger)
+//           : base(clock, keys, options, logger)
+//        {
+//            this.clientStore = clientStore;
+//        }
 
-        public override async Task<string> CreateTokenAsync(Token token)
-        {
-            if (token.Type == TokenTypes.IdentityToken)
-            {
-                //TODO must extend ClientStore
-                var clientCertificate = new X509Certificate2(); //await extClientStore.FindClientCertificate(token.ClientId);
-                var payload = await base.CreatePayloadAsync(token);
+//        public override async Task<string> CreateTokenAsync(Token token)
+//        {
+//            if (token.Type == TokenTypes.IdentityToken)
+//            {
+//                var client = await clientStore.FindEnabledClientByIdAsync(token.ClientId);
+//                var clientRawCertificate = client.Properties.GetOrDefault("RequireJwe");
 
-                var handler = new JsonWebTokenHandler();
-                var jwe = handler.CreateToken(
-                    payload.SerializeToJson(),
-                    await Keys.GetSigningCredentialsAsync(),
-                    new X509EncryptingCredentials(clientCertificate));
+//                var clientCertificate = new X509Certificate2(Convert.FromBase64String(clientRawCertificate));
+//                var payload = await base.CreatePayloadAsync(token);
 
-                return jwe;
-            }
-            return await base.CreateTokenAsync(token);
-        }
-    }
-}
+//                var handler = new JsonWebTokenHandler();
+//                var jwe = handler.CreateToken(
+//                    payload.SerializeToJson(),
+//                    await Keys.GetSigningCredentialsAsync(),
+//                    new X509EncryptingCredentials(clientCertificate));
+
+//                return jwe;
+//            }
+//            return await base.CreateTokenAsync(token);
+//        }
+//    }
+//}

@@ -1,6 +1,7 @@
 using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication.Certificate;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +27,17 @@ namespace Api1
         {
             services.AddControllers();
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("myPolicy", builder =>
+                {
+                    // require scope1
+                    builder.RequireScope("invoices.update");
+                    // and require scope2 or scope3
+                    builder.RequireScope("inventory.manage", "inventory.update");
+                });
+            });
+
             // //to add the certicate to the http client header
             // services.AddTransient<MtlsHandler>();
 
@@ -46,9 +58,9 @@ namespace Api1
             })
                  .AddIdentityServerAuthentication(options =>
                  {
-                     options.Authority = "https://localhost:4300";
+                     options.Authority = Configuration["IdentityServer:Address"];// https://localhost:4300";
                      options.RequireHttpsMetadata = Environment.IsDevelopment() ? false : true;
-                     options.ApiName = "api1";
+                     options.ApiName = "inventory";
                      //options.JwtBackChannelHandler = new MtlsHandler(Configuration, Environment);
                      options.JwtBearerEvents.OnMessageReceived = context =>
                      {

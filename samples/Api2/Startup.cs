@@ -39,7 +39,7 @@ namespace Api2
                  {
                      options.Authority = "https://localhost:4300";
                      options.RequireHttpsMetadata = Environment.IsDevelopment() ? false : true;
-                     options.ApiName = "api2";
+                     options.ApiName = "invoices";
                      options.SaveToken = true;
                      options.JwtBearerEvents.OnMessageReceived = context =>
                      {

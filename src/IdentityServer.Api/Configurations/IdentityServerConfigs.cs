@@ -1,6 +1,6 @@
 ﻿using IdentityServer.Api.Extensions;
 using IdentityServer.Core.Entities;
-using IdentityServer.Infrastructure.Data;
+using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +37,8 @@ namespace IdentityServer.Api.Configurations
             var migrationsAssembly = "IdentityServer.Infrastructure";
             var identityServer = services.AddIdentityServer(options =>
             {
+                options.EmitStaticAudienceClaim = true;
+
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
@@ -50,7 +52,7 @@ namespace IdentityServer.Api.Configurations
                  .AddJwtBearerClientAuthentication() //to accept clients via jwts
 
                    // this adds the config data from DB (clients, resources, CORS)                   
-                   .AddConfigurationStore<ExtendedConfigurationDbContext>(options =>
+                   .AddConfigurationStore<ConfigurationDbContext>(options =>
                    {
                        options.ConfigureDbContext = builder =>
                                builder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),

@@ -27,7 +27,8 @@ namespace MvcPkceClient.Web
             services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
 
             services
-               .AddDataServices(Configuration)
+               //.AddDataServices(Configuration)
+               .AddTokenManagementServices(Configuration)
                .AddOtsAuthentication(Environment, Configuration)
                .AddAuthorization();
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace IdentityServer.Infrastructure.Data.Migrations.ExtendedConfigurationDb
+namespace IdentityServer.Infrastructure.Data.Migrations.ConfigurationDb
 {
     public partial class InitialCreate : Migration
     {
@@ -96,8 +96,7 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ExtendedConfigurationDb
                     UserSsoLifetime = table.Column<int>(nullable: true),
                     UserCodeType = table.Column<string>(maxLength: 100, nullable: true),
                     DeviceCodeLifetime = table.Column<int>(nullable: false),
-                    NonEditable = table.Column<bool>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false)
+                    NonEditable = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -439,27 +438,6 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ExtendedConfigurationDb
                 });
 
             migrationBuilder.CreateTable(
-                name: "ExtendedClient",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    ClientType = table.Column<int>(nullable: false),
-                    RawCertData = table.Column<string>(nullable: true),
-                    RequireJwe = table.Column<bool>(nullable: false),
-                    ClientId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExtendedClient", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ExtendedClient_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "IdentityResourceClaims",
                 columns: table => new
                 {
@@ -594,12 +572,6 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ExtendedConfigurationDb
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExtendedClient_ClientId",
-                table: "ExtendedClient",
-                column: "ClientId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_IdentityResourceClaims_IdentityResourceId",
                 table: "IdentityResourceClaims",
                 column: "IdentityResourceId");
@@ -662,9 +634,6 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ExtendedConfigurationDb
 
             migrationBuilder.DropTable(
                 name: "ClientSecrets");
-
-            migrationBuilder.DropTable(
-                name: "ExtendedClient");
 
             migrationBuilder.DropTable(
                 name: "IdentityResourceClaims");

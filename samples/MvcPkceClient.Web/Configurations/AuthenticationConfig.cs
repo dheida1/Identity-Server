@@ -59,8 +59,8 @@ namespace MvcPkceClient.Web.Configurations
                     options.Scope.Clear();
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
-                    options.Scope.Add("api1");
-                    options.Scope.Add("api2");
+                    options.Scope.Add("inventory.read");
+                    options.Scope.Add("invoices.write");
                     options.Scope.Add("offline_access"); //need this to get back '.refreshToken' to use when calling api's   
 
                     options.TokenValidationParameters = new TokenValidationParameters

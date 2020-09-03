@@ -15,7 +15,7 @@ namespace IdentityServer.Api.Configurations
             //services.AddAutoMapper(typeof(ExtendedClientMapperProfile));
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IExtensionGrantValidator, DelegationGrantValidator>();
-            services.AddTransient<ITokenCreationService, JweTokenCreationService>();
+            //services.AddTransient<ITokenCreationService, JweTokenCreationService>();
             return services;
         }
     }

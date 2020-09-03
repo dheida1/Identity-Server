@@ -18,7 +18,7 @@ namespace MvcPkceClient.Web.Services
         public async Task<string> Get()
         {
             // No more getting access_tokens code!
-            var response = await client.GetAsync("/api1/ApiSecure");
+            var response = await client.GetAsync("/inventory/ApiSecure");
 
             if (!response.IsSuccessStatusCode)
             {

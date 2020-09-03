@@ -1,7 +1,7 @@
 ﻿using IdentityModel;
+using IdentityServer4;
 using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -44,7 +44,7 @@ namespace IdentityServer.Api.Configurations
            })
            .AddSamlCore("adfs", options =>
              {
-                 options.SignInScheme = IdentityConstants.ExternalScheme;
+                 options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
                  options.ServiceProvider.EntityId = configuration["AppConfiguration:ServiceProvider:EntityId"];
                  options.MetadataAddress = configuration["AppConfiguration:IdentityProvider:MetadataAddress"];
 

@@ -56,64 +56,68 @@ namespace IdentityServer.Api
             {
                 return new ApiResource[]
                 {
-                    new ApiResource("api1", "My API #1"),
-
-                    new ApiResource("api2",  "My API #2")
+                    new ApiResource("invoices", "Invoices")
                     {
-                      ApiSecrets = { new Secret("secret".Sha256()) },
-                      UserClaims = new [] { ClaimTypes.Name,
-                          ClaimTypes.Email,
-                          ClaimTypes.Name,
-                          ClaimTypes.Role,
-                          JwtClaimTypes.Name,
-                          JwtClaimTypes.Email,
-                          JwtClaimTypes.Role
-                      },
-                      //Scopes = new[]
-                      //    {
-                      //     new Scope
-                      //        {
-                      //              Name = "api2",
-                      //              DisplayName = "Full access to Api2",
-                      //              UserClaims = new[] {"emails" }
-                      //        },
-                      //        new Scope
-                      //        {
-                      //              Name = "api2.full_access",
-                      //              DisplayName = "Full access to Api2",
-                      //              UserClaims = new[] { JwtClaimTypes.Role,
-                      //                  ClaimTypes.Role,
-                      //                  ClaimTypes.Name,
-                      //                  ClaimTypes.Email,
-                      //                  JwtClaimTypes.Name,
-                      //                  JwtClaimTypes.Email
-                      //              },
-                      //        },
-                      //         new Scope
-                      //        {
-                      //              Name = "api2.read_only",
-                      //              DisplayName = "Read only access to Api2",
-                      //              UserClaims = new[] { JwtClaimTypes.Role,
-                      //                  ClaimTypes.Role,  ClaimTypes.Name,
-                      //                  ClaimTypes.Email, JwtClaimTypes.Name,
-                      //                  JwtClaimTypes.Email
-                      //              },
-                      //        }
-                      //    }
+                        Enabled = true,
+                        Scopes = new[]{"invoices.read" , "invoices.write", "invoices.delete", "invoices.update", "manage"}
                     },
 
-                    new ApiResource("api3", "My API #3")
+                    new ApiResource("inventory", "Inventory")
                     {
-                         UserClaims = new [] {
+                        ApiSecrets = { new Secret("secret".Sha256()) },
+                        Enabled = true,
+                        UserClaims = new[] { ClaimTypes.Name,
+                              ClaimTypes.Email,
+                              ClaimTypes.Name,
+                              ClaimTypes.Role,
+                              JwtClaimTypes.Name,
+                              JwtClaimTypes.Email,
+                              JwtClaimTypes.Role
+                          },
+                        Scopes = new[] { "inventory.read", "inventory.write", "inventory.delete", "inventory.update" , "manage"}
+
+                    },
+
+                    new ApiResource("permissions", "Permission assignments")
+                    {
+                        UserClaims = new[] {
                           ClaimTypes.Email,
                           JwtClaimTypes.Email
-
-                      }
+                        },
+                        Scopes = new[] { "permissions.read", "permissions.write", "permissions.delete", "permissions.update", "manage"}
                     }
                 };
             }
 
-            public static IEnumerable<Core.Entities.ExtClient> GetClients()
+            public static IEnumerable<ApiScope> GetApiScopes()
+            {
+                return new List<ApiScope>
+                {
+                    // invoice API 1 specific scopes
+                    new ApiScope(name: "invoices.read",   displayName: "Read the data.", userClaims: new[] { "user_read" }),
+                    new ApiScope(name: "invoices.write",  displayName: "Write to data.",userClaims: new[] { "user_write" }),
+                    new ApiScope(name: "invoices.delete", displayName: "Delete the data.",userClaims: new[] { "user_delete" }),
+                    new ApiScope(name: "invoices.update", displayName: "Update the data.",userClaims: new[] { "user_update" }),
+
+                    // invoice API 2 specific scopes
+                    new ApiScope(name: "inventory.read",   displayName: "Read the data.", userClaims: new[] { "user_read" }),
+                    new ApiScope(name: "inventory.write",  displayName: "Write to data.",userClaims: new[] { "user_write" }),
+                    new ApiScope(name: "inventory.delete", displayName: "Delete the data.",userClaims: new[] { "user_delete" }),
+                    new ApiScope(name: "inventory.update", displayName: "Update the data.",userClaims: new[] { "user_update" }),
+
+                    // invoice API 3 specific scopes
+                    new ApiScope(name: "permissions.read",   displayName: "Read the data.", userClaims: new[] { "user_read" }),
+                    new ApiScope(name: "permissions.write",  displayName: "Write to data.",userClaims: new[] { "user_write" }),
+                    new ApiScope(name: "permissions.delete", displayName: "Delete the data.",userClaims: new[] { "user_delete" }),
+                    new ApiScope(name: "permissions.update", displayName: "Update the data.",userClaims: new[] { "user_update" }),
+                
+                    // shared scope
+                    new ApiScope(name: "manage", displayName: "Provides administrative access to invoice, inventory and permissions")
+                };
+            }
+
+
+            public static IEnumerable<Client> GetClients()
             {
                 return new[]
                 {
@@ -121,7 +125,7 @@ namespace IdentityServer.Api
                     // Mvc Clients Authorization Code Flow and PKCE
                     ///////////////////////////////////////////////
                     //pkce
-                    new ExtClient
+                    new Client
                         {
                             ClientId = "mvcClient.pkce",
                             ClientName = "MVC Pkce Client",
@@ -131,6 +135,7 @@ namespace IdentityServer.Api
                             AllowedGrantTypes = GrantTypes.CodeAndClientCredentials, //response type is "code"
                             //do not require a secret
                             RequireClientSecret = false,
+                            IncludeJwtId = true,
                             AccessTokenType = AccessTokenType.Jwt,
                             RequireConsent = false,
                             RequirePkce = true,
@@ -138,11 +143,11 @@ namespace IdentityServer.Api
                             AlwaysIncludeUserClaimsInIdToken= true,
                             AlwaysSendClientClaims= true,
                             UpdateAccessTokenClaimsOnRefresh = true,
-                            ExtendedClient =  new ExtendedClient
+                            Properties =  new Dictionary<string, string>
                             {
-                                ClientType = ClientType.WebHybrid,
-                                RawCertData = Convert.ToBase64String(new X509Certificate2("Certificates/MvcJwtClient.Web.cer").GetRawCertData()),
-                                RequireJwe = true
+                                {"ClientType", ClientType.WebHybrid },
+                                {"RawCertData", Convert.ToBase64String(new X509Certificate2("Certificates/MvcJwtClient.Web.cer").GetRawCertData())},
+                                {"RequireJwe", true.ToString() }
                             },
                                             
                             // where to redirect to after login
@@ -156,8 +161,9 @@ namespace IdentityServer.Api
                                 StandardScopes.OpenId,
                                 StandardScopes.Profile,
                                 StandardScopes.Email,
-                                "api1",
-                                "api2",
+                                "invoices",
+                                "invoices.write",
+                                "inventory.read",
                                 "roles"
                             },
                             //Allow requesting refresh tokens for long lived API access                         
@@ -165,7 +171,7 @@ namespace IdentityServer.Api
                         },
 
                     //mtls
-                    new ExtClient
+                    new Client
                         {
                             ClientId = "mvcClient.mtls",
                             ClientName = "MVC Mtls Client",
@@ -197,8 +203,8 @@ namespace IdentityServer.Api
                                 StandardScopes.OpenId,
                                 StandardScopes.Profile,
                                 StandardScopes.Email,
-                                "api1",
-                                "api2"
+                                "invoices",
+                                "inventory"
                             },                          
                   
                             //Allow requesting refresh tokens for long lived API access
@@ -210,7 +216,7 @@ namespace IdentityServer.Api
                     // Mvc Clients Authrorization Code Flow with client JWT assertion
                     /////////////////////////////////////////////////////////////////
                     //jwt
-                    new ExtClient
+                    new Client
                     {
                         ClientId = "mvcClient.jwt",
                         ClientName = "Mvc Jwt Client",
@@ -244,7 +250,7 @@ namespace IdentityServer.Api
                     ///////////////////////////////////////////////////////////
                     // Console Client Credentials Flow with client JWT assertion
                     ///////////////////////////////////////////////////////////
-                    new ExtClient
+                    new Client
                     {
                         ClientId = "client.jwt",
                         ClientName = "Console Jwt Client",
@@ -262,7 +268,7 @@ namespace IdentityServer.Api
                         AllowedScopes = { "api1", "api2" }
                     },
 
-                     new ExtClient
+                     new Client
                         {
                             ClientId = "api2",
                             ClientName = "Api2 Pkce as Client",
@@ -289,7 +295,7 @@ namespace IdentityServer.Api
 
 
                     // SPA client using implicit flow
-                    new ExtClient
+                    new Client
                         {
                             ClientId = "spa",
                             ClientName = "SPA Client",

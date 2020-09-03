@@ -18,7 +18,7 @@ namespace MvcPkceClient.Web.Services
         public async Task<string> Get()
         {
             // No more getting access_tokens code!
-            var response = await client.GetAsync("/api2/ApiSecure");
+            var response = await client.GetAsync("/invoices/ApiSecure");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -31,7 +31,7 @@ namespace MvcPkceClient.Web.Services
         public async Task<string> Delegate()
         {
             // No more getting access_tokens code!
-            var response = await client.GetAsync("/api2/ApiDelegate");
+            var response = await client.GetAsync("/invoices/ApiDelegate");
 
             if (!response.IsSuccessStatusCode)
             {
