@@ -13,7 +13,7 @@ PM> Add-Migration Initial -c PersistedGrantDbContext -o Data/Migrations/Persiste
 
 PM> Add-Migration Initial -c ApplicationDbContext -o Data/Migrations/ApplicationDb
 
-PM> Add-Migration Initial -c ExtendedConfigurationDbContext -o Data/Migrations/ExtendedConfigurationDbContext
+PM> Add-Migration Initial -c ConfigurationDbContext -o Data/Migrations/ConfigurationDbContext
 ```
 
 # 2 - Set up databases (via Package Manager)
@@ -29,7 +29,7 @@ PM> update-database -Context PersistedGrantDbContext
 
 PM> update-database -Context ApplicationDbContext
 
-PM> update-database -Context ExtendedConfigurationDbContext
+PM> update-database -Context ConfigurationDbContext
 ```
 
 # 4- To run the project
