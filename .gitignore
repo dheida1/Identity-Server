@@ -33,3 +33,5 @@
 /src/IdentityServer.AdminUi/updateUI.ps1
 /src/IdentityServer.Api/tempkey.jwk
 /src/IdentityServer.Infrastructure/IdentityServer.Infrastructure.csproj.user
+/documents/Technical Design Document.docx
+/documents/identitymodel-readthedocs-io-en-latest.pdf
