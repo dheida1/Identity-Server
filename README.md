@@ -41,15 +41,11 @@ PM> update-database -Context ConfigurationDbContext
 2- Select 'multiple startup projects'.
 
 3- Select and set in this order 
->a- IdentityServer.Api
+>a- Authorization Server: IdentityServer.Api
 
->b- MvcClient.Web
+>b- Client: MvcPkceClient.Web
 
->c- Api1
+>c- Protected Resource: Api1 (e.g Inventory)
 
->d- Api2 
+>d- Protected Resource: Api2 (e.g Invoices)
  
-
-# 3- The Architecture
-
-Protecting an API using Client Credentials  
