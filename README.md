@@ -1,6 +1,9 @@
 # Identity Server
 To get this started...
 
+https://readthedocs.org/projects/identitymodel/downloads/pdf/latest/
+
+
 # 1- Add-Migrations (via Package Manager)
 
 ### Important- Please make sure:
