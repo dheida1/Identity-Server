@@ -194,8 +194,12 @@ namespace IdentityServer.Api.Controllers
                 // complete our single sign-out processing.
                 string url = Url.Action("Logout", new { logoutId = vm.LogoutId });
 
+
                 // this triggers a redirect to the external provider for sign-out
-                return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
+                var result = await HttpContext.AuthenticateAsync();
+                await HttpContext.SignOutAsync(vm.ExternalAuthenticationScheme, result.Properties);
+                //await HttpContext.SignOutAsync(vm.ExternalAuthenticationScheme, new AuthenticationProperties { RedirectUri = url });
+                //return SignOut(result.Properties, vm.ExternalAuthenticationScheme);
             }
 
             return View("LoggedOut", vm);

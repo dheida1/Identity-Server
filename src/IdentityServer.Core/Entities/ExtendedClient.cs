@@ -24,5 +24,6 @@
         public const string Native = "Native"; //A desktop or mobile application running on a user's device.
         public const string Machine = "Machine"; // A machine-to-machine method of communication.
         public const string Device = "Device"; //An IoT application or otherwise browserless or input constrained device.
+        public const string Confidential = "confidential"; //confidential clients
     }
 }

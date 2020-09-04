@@ -8,7 +8,7 @@ https://readthedocs.org/projects/identitymodel/downloads/pdf/latest/
 Represent claims about a user like user ID, display name, email address etc. that can be requested using the scope parameter.
 These could be retrieved from an identity provider whether internal (e.g. IdentityServer) or external (e.g. ADFS, Google)
 
-# Api Resources:
+# API Resources:
 Represent functionality a client wants to access. Typically, they are HTTP-based endpoints (aka APIs), but could be also message queuing endpoints or similar.
 
 # Scopes: 
@@ -36,6 +36,113 @@ The details vary, but you typically define the following common settings for a c
 * the allowed interactions with the token service (called a grant type)
 * a network location where identity and/or access token gets sent to (called a redirect URI)
 * a list of scopes (aka resources) the client is allowed to access
+
+
+# Types of tokens:
+
+## Access token: This is a client based token. It contains the client information 
+
+```
+//HEADER:ALGORITHM & TOKEN TYPE
+{
+  "alg": "RS256",
+  "kid": "1B866B3C1ABC5A5DCA6B6593A15D377C",
+  "typ": "at+jwt"
+}
+//PAYLOAD:DATA
+{
+  "nbf": 1599145056,
+  "exp": 1599148656,
+  "iss": "https://localhost:4300",
+  "aud": [
+    "inventory",
+    "invoices",
+    "https://localhost:4300/resources"
+  ],
+  "client_id": "mvcClient.pkce",
+  "sub": "8dc9bd64-70ca-45f4-a704-7bf333a32988",
+  "auth_time": 1599143508,
+  "idp": "adfs",
+  "name": "Dina.Heidar@LA.GOV",
+  "email": "Dina.Heidar@LA.GOV",
+  "jti": "A41051704010CCA73D8F0DFC589566FE",
+  "sid": "12D96389094CDABF0700E042FF3BC1E0",
+  "iat": 1599145056,
+  "scope": [
+    "openid",
+    "profile",
+    "inventory.read",
+    "invoices.write",
+    "offline_access"
+  ],
+  "amr": [
+    "external"
+  ]
+}
+//VERIFY SIGNATURE
+{
+}
+```
+
+## Reference Token (this is instead of using Access Tokens)
+
+```
+
+```
+
+## Id Token: This contains user information
+
+```
+//HEADER:ALGORITHM & TOKEN TYPE
+{
+  "alg": "RS256",
+  "kid": "1B866B3C1ABC5A5DCA6B6593A15D377C",
+  "typ": "JWT"
+}
+//PAYLOAD:DATA
+{
+  "nbf": 1599145056,
+  "exp": 1599145356,
+  "iss": "https://localhost:4300",
+  "aud": "mvcClient.pkce",
+  "nonce": "637347418547986890.NzU0MjA0NmItNGVkMi00MGQ1LWEwMDQtMjYyNzAxMDkxZGIzZDM4ZjVmZGMtM2MyYS00ZmMzLWEzMmUtN2ZlNzFkMDAzZWMw",
+  "iat": 1599145056,
+  "at_hash": "KlR0SeIoTB8PtsN06ZQ7sQ",
+  "s_hash": "9B3Xxyx6Akekf76u8PTWFg",
+  "sid": "12D96389094CDABF0700E042FF3BC1E0",
+  "sub": "8dc9bd64-70ca-45f4-a704-7bf333a32988",
+  "auth_time": 1599143508,
+  "idp": "adfs",
+  "name": "Dina.Heidar@LA.GOV",
+  "preferred_username": "5f783dd7-1014-401e-8ee7-3d5d4c4e4301",
+  "amr": [
+    "external"
+  ]
+}
+//VERIFY SIGNATURE
+{
+}
+```
+# Authentication Methods and Secrets:
+https://medium.com/@darutk/oauth-2-0-client-authentication-4b5f929305d4 
+Identity Server Token API supports these methods:
+* Basic Authentication (client_secret_basic) 
+* Client Secret JWT Authentication (client_secret_jwt)
+* Private Key JWT Client Authentication (private_key_jwt): can be used with X509Certficates using the client_assertion as a secret. In the context of FAPI Read-and-Write, other algorithms than ES256 (ECDSA using P-256 and SHA-256) and PS256 (RSASSA-PSS using SHA-256 and MGF1 with SHA-256) are not permitted. By default, IdentityServer4 uses RS256 to sign identity tokens and JWT access tokens; however, it does also support Elliptical Curve Cryptography (ECC). Using Elliptical Curve Digital Signing Algorithms (ECDSA) such as ES256 does have some benefits over RSA, such as shorter signature and smaller keys while providing the same level of security.
+* Mutual TLS Authentication (tls_client_auth) :In a normal TLS connection, only the server presents its certificate. On the other hand, in a mutual TLS connection, the client presents its certificate, too. As a result, the server receives a client certificate.
+* Self signed (self_signed_tls_client_auth) same as above.
+
+# Secrets
+Clients (if not using PKCE) and API's can be configured with secrets. There are a few types of secrets:
+
+* client_secret: which is basically a string value. this would be comparable to a password. Please do not use!
+* client_assertion: because passwords suck. Instead of comparing the client_secret against a value stored in the database, the authorization server must now instead validate a signed JWT. 
+
+# Client Assertion Signature Algorithm
+Financial-grade API (FAPI) requires higher security than traditional OAuth 2.0 and OpenID Connect. The specification puts restrictions on client authentication methods. Client authentication methods permitted by FAPI Part 2 are as follows. Note that client_secret_jwt is excluded.
+* private_key_jwt
+* tls_client_auth
+* self_signed_tls_client_auth
 
 ## To get started....
 

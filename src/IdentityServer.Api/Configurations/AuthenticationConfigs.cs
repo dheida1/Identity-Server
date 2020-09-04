@@ -47,6 +47,7 @@ namespace IdentityServer.Api.Configurations
                  options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
                  options.ServiceProvider.EntityId = configuration["AppConfiguration:ServiceProvider:EntityId"];
                  options.MetadataAddress = configuration["AppConfiguration:IdentityProvider:MetadataAddress"];
+                 options.SignOutPath = "/signedout";
 
                  options.RequireMessageSigned = false;
                  options.WantAssertionsSigned = true;

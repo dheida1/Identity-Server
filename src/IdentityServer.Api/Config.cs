@@ -59,6 +59,17 @@ namespace IdentityServer.Api
                     new ApiResource("invoices", "Invoices")
                     {
                         Enabled = true,
+                        ApiSecrets =
+                        {
+                            new Secret
+                            {
+                                // Type must be "X509CertificateBase64"
+                                Type = SecretTypes.X509CertificateBase64,
+
+                                // base64 value of the api cert public key      
+                                Value = Convert.ToBase64String(new X509Certificate2("Certificates/Api1.cer").GetRawCertData())
+                            }
+                        },
                         Scopes = new[]{"invoices.read" , "invoices.write", "invoices.delete", "invoices.update", "manage"}
                     },
 

@@ -67,6 +67,7 @@ namespace IdentityServer.Api.Configurations
 
                      // this enables automatic token cleanup. this is optional.
                      options.EnableTokenCleanup = true;
+                     options.TokenCleanupInterval = 3600; // interval in seconds (default is 3600)
                  })
 
                  .AddProfileService<ProfileService>()
@@ -81,7 +82,11 @@ namespace IdentityServer.Api.Configurations
             }
             else
             {
-                //identityServer.AddSigningCredential();
+                //TODO to comply with FAPI2 (Financial-grade API) get cert using ES256 and PS256 algorithm
+                //https://www.scottbrady91.com/OpenSSL/Creating-Elliptical-Curve-Keys-using-OpenSSL
+                //https://www.scottbrady91.com/Identity-Server/Using-ECDSA-in-IdentityServer4
+
+                //identityServer.AddSigningCredential(new X509Certificate2(configuration["AppConfiguration:ServiceProvider:Certificate"], "1234"), signingAlgorithm: "ES256");
                 throw new Exception("need to configure key material");
             }
 
