@@ -132,7 +132,7 @@ namespace IdentityServer.Api
                 if (!context.ApiScopes.Any())
                 {
                     Console.WriteLine("Scopes being populated");
-                    foreach (var resource in Config.GetApiScopes())
+                    foreach (var resource in Config.GetApiScopes(Configuration))
                     {
                         context.ApiScopes.Add(resource.ToEntity());
                     }

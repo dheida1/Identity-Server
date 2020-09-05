@@ -33,6 +33,7 @@ namespace IdentityServer.Api.Extensions
             //context.IssuedClaims = claims.ToList();
 
             //Add custom claims in token here based on user properties or any other source
+            claims.AddRange(claims.Where(claim => claim.Type == "ots-permissions"));
             //claims.Add(new Claim("employee_id", user.EmployeeId ?? string.Empty));
             context.IssuedClaims = claims;
         }

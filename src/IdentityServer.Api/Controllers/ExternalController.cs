@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ namespace IdentityServer.Api.Controllers
         private readonly IClientStore _clientStore;
         private readonly IEventService _events;
         private readonly ILogger<ExternalController> _logger;
+        private readonly IConfiguration _configuration;
 
         public ExternalController(
             UserManager<ApplicationUser> userManager,
@@ -37,7 +39,8 @@ namespace IdentityServer.Api.Controllers
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IEventService events,
-            ILogger<ExternalController> logger)
+            ILogger<ExternalController> logger,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -45,6 +48,7 @@ namespace IdentityServer.Api.Controllers
             _clientStore = clientStore;
             _events = events;
             _logger = logger;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -155,6 +159,7 @@ namespace IdentityServer.Api.Controllers
         private async Task<(ApplicationUser user, string provider, string providerUserId, IEnumerable<Claim> claims)>
             FindUserFromExternalProviderAsync(AuthenticateResult result)
         {
+            //https://support.zendesk.com/hc/en-us/articles/203663896-Mapping-attributes-from-Active-Directory-with-ADFS-and-SAML
             var externalUser = result.Principal;
 
             // try to determine the unique id of the external user (issued by the provider)
@@ -219,7 +224,8 @@ namespace IdentityServer.Api.Controllers
 
             var user = new ApplicationUser
             {
-                UserName = Guid.NewGuid().ToString(),
+                UserName = _configuration["AppConfiguration:AgencyConfiguration:ObjectGUID"] ??
+                    Guid.NewGuid().ToString(),
             };
             var identityResult = await _userManager.CreateAsync(user);
             if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
@@ -242,7 +248,9 @@ namespace IdentityServer.Api.Controllers
         {
             // if the external system sent a session id claim, copy it over
             // so we can use it for single sign-out
-            var sid = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == JwtClaimTypes.SessionId);
+            //add saml2Core session id here
+            var sid = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == JwtClaimTypes.SessionId) ??
+                externalResult.Principal.Claims.FirstOrDefault(x => x.Type == _configuration["AppConfiguration:ServiceProvider:SessionIdClaimType"]);
             if (sid != null)
             {
                 localClaims.Add(new Claim(JwtClaimTypes.SessionId, sid.Value));

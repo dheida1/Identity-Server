@@ -55,10 +55,10 @@ namespace MvcPkceClient.Web.Configurations
                     //this allows us to keep codes out of the URL and protected via TLS
                     options.ResponseMode = "form_post";
                     options.SaveTokens = true;
-                    options.GetClaimsFromUserInfoEndpoint = true;
+                    //options.GetClaimsFromUserInfoEndpoint = true;
                     options.Scope.Clear();
                     options.Scope.Add("openid");
-                    options.Scope.Add("profile");
+                    //options.Scope.Add("profile");
                     options.Scope.Add("inventory.read");
                     options.Scope.Add("invoices.write");
                     options.Scope.Add("offline_access"); //need this to get back '.refreshToken' to use when calling api's   

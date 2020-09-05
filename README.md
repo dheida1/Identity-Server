@@ -141,8 +141,11 @@ Clients (if not using PKCE) and API's can be configured with secrets. There are 
 # Client Assertion Signature Algorithm
 Financial-grade API (FAPI) requires higher security than traditional OAuth 2.0 and OpenID Connect. The specification puts restrictions on client authentication methods. Client authentication methods permitted by FAPI Part 2 are as follows. Note that client_secret_jwt is excluded.
 * private_key_jwt
-* tls_client_auth
+* tls_client_auth 
 * self_signed_tls_client_auth
+
+# Proof-of-Possession (PoP) Access Tokens
+IdentityServer supports PoP tokens by using the Mutual TLS mechanism.
 
 ## To get started....
 
