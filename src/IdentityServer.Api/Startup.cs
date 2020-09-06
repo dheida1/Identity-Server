@@ -1,6 +1,7 @@
 using IdentityServer.Api.Configurations;
 using IdentityServer.Api.IdentityServer.Api;
 using IdentityServer.Infrastructure.Data;
+using IdentityServer.Infrastructure.Entities;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
@@ -104,7 +105,7 @@ namespace IdentityServer.Api
                 if (!context.IdentityResources.Any())
                 {
                     Console.WriteLine("IdentityResources being populated");
-                    foreach (var resource in Config.GetIdentityResources())
+                    foreach (var resource in Config.GetIdentityResources(Configuration))
                     {
                         context.IdentityResources.Add(resource.ToEntity());
                     }
@@ -146,7 +147,140 @@ namespace IdentityServer.Api
                 Console.WriteLine("Done seeding database.");
                 Console.WriteLine();
 
-                serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+                var aspIdentitycontext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                aspIdentitycontext.Database.Migrate();
+
+                //permissions
+                var permission1 = new Permission
+                {
+                    Name = "OfficesOfficeCreate",
+                    TimeStamp = DateTime.Now
+                };
+
+                var permission2 = new Permission
+                {
+                    Name = "OfficesOfficeContractInfoUpdate",
+                    TimeStamp = DateTime.Now
+                };
+
+                var permission3 = new Permission
+                {
+                    Name = "OfficesOfficeHoursAndDaysInfoUpdate",
+                    TimeStamp = DateTime.Now
+                };
+
+                var permission4 = new Permission
+                {
+                    Name = "InternalAnnouncementsDisplay",
+                    TimeStamp = DateTime.Now
+                };
+                var permission5 = new Permission
+                {
+                    Name = "OfficesOfficeDisplay",
+                    TimeStamp = DateTime.Now
+                };
+
+                //roles
+                var role1 = new ApplicationRole
+                {
+                    Name = "DPS-NEAL-Env-OMV-Offices",
+                    NormalizedName = "DPS-NEAL-ENV-OMV-OFFICES",
+                };
+
+                var role2 = new ApplicationRole
+                {
+                    Name = "DPS-NEAL-Env-OMV-InternalAnnouncements",
+                    NormalizedName = "DPS-NEAL-ENV-OMV-INTERNALANNOUNCEMENTS",
+                };
+
+                var role3 = new ApplicationRole
+                {
+                    Name = "DPS-NEAL-Env-OMV-Offices-Regions",
+                    NormalizedName = "DPS-NEAL-ENV-OMV-OFFICES-REGIONS",
+                };
+
+                if (!aspIdentitycontext.Permissions.Any())
+                {
+                    Console.WriteLine("Permissions being populated");
+
+                    aspIdentitycontext.Permissions.Add(permission1);
+                    aspIdentitycontext.Permissions.Add(permission2);
+                    aspIdentitycontext.Permissions.Add(permission3);
+                    aspIdentitycontext.Permissions.Add(permission4);
+                }
+                else
+                {
+                    Console.WriteLine("Permissions already populated");
+                }
+
+
+                if (!aspIdentitycontext.Roles.Any())
+                {
+                    Console.WriteLine("Roles being populated");
+
+                    aspIdentitycontext.Roles.Add(role1);
+                    aspIdentitycontext.Roles.Add(role2);
+                    aspIdentitycontext.Roles.Add(role3);
+
+                    aspIdentitycontext.SaveChanges();
+                }
+                else
+                {
+                    Console.WriteLine("Roles already populated");
+                }
+
+
+                if (!aspIdentitycontext.RolePermissions.Any())
+                {
+                    Console.WriteLine("RolePermissions being populated");
+
+                    aspIdentitycontext.RolePermissions.Add(
+                        new RolePermission
+                        {
+                            Role = role1,
+                            Permission = permission1
+                        });
+
+                    aspIdentitycontext.RolePermissions.Add(
+                       new RolePermission
+                       {
+                           Role = role1,
+                           Permission = permission2
+                       });
+
+                    aspIdentitycontext.RolePermissions.Add(
+                      new RolePermission
+                      {
+                          Role = role1,
+                          Permission = permission3
+                      });
+
+                    aspIdentitycontext.RolePermissions.Add(
+                    new RolePermission
+                    {
+                        Role = role1,
+                        Permission = permission4
+                    });
+
+                    aspIdentitycontext.RolePermissions.Add(
+                     new RolePermission
+                     {
+                         Role = role2,
+                         Permission = permission4
+                     });
+
+                    aspIdentitycontext.RolePermissions.Add(
+                     new RolePermission
+                     {
+                         Role = role3,
+                         Permission = permission4
+                     });
+
+                    aspIdentitycontext.SaveChanges();
+                }
+
+                Console.WriteLine("Done seeding database.");
+                Console.WriteLine();
             }
         }
     }

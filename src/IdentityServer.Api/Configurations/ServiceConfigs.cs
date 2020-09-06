@@ -1,4 +1,4 @@
-﻿using IdentityServer.Api.Extensions;
+﻿using IdentityServer.Api.Validators;
 using IdentityServer4.Validation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -15,7 +15,7 @@ namespace IdentityServer.Api
         //https://stackoverflow.com/questions/45574821/identityserver4-persistedgrantdbcontext-configurationdbcontext
         public static class Config
         {
-            public static IEnumerable<IdentityResource> GetIdentityResources()
+            public static IEnumerable<IdentityResource> GetIdentityResources(IConfiguration configuration)
             {
                 return new IdentityResource[]
                 {
@@ -31,6 +31,12 @@ namespace IdentityServer.Api
                 },
                 new IdentityResource
                 {
+                    Name = "ots",
+                    DisplayName = "Ots",
+                    UserClaims = new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] },
+                },
+                new IdentityResource
+                {
                     Name = "adfs",
                     DisplayName = "LA State ADFS",
                     Description = "LA State ADFS",
@@ -41,7 +47,7 @@ namespace IdentityServer.Api
                         ClaimTypes.Surname,
                         ClaimTypes.NameIdentifier,
                         ClaimTypes.Sid,
-                        ClaimTypes.Role}
+                        ClaimTypes.Role},
                 },
                 new IdentityResource
                 {

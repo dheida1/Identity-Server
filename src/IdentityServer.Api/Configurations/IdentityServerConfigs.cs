@@ -1,5 +1,6 @@
-﻿using IdentityServer.Api.Extensions;
-using IdentityServer.Core.Entities;
+﻿using IdentityServer.Api.Services;
+using IdentityServer.Api.Validators;
+using IdentityServer.Infrastructure.Entities;
 using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;

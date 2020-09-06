@@ -12,7 +12,7 @@
 //using System.Threading.Tasks;
 //using static IdentityModel.OidcConstants;
 
-//namespace IdentityServer.Api.Extensions
+//namespace IdentityServer.Api.Services
 //{
 //public class JweTokenCreationService : DefaultTokenCreationService
 //    {

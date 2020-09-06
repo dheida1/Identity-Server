@@ -1,5 +1,5 @@
-﻿using IdentityServer.Core.Entities;
-using IdentityServer.Infrastructure.Data;
+﻿using IdentityServer.Infrastructure.Data;
+using IdentityServer.Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

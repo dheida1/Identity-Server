@@ -2,7 +2,7 @@ using IdentityModel;
 using IdentityServer.Api.Attributes;
 using IdentityServer.Api.Extensions;
 using IdentityServer.Api.Models;
-using IdentityServer.Core.Entities;
+using IdentityServer.Infrastructure.Entities;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;

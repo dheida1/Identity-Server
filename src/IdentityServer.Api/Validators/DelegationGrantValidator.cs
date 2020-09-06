@@ -3,7 +3,7 @@ using IdentityServer4.Validation;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IdentityServer.Api.Extensions
+namespace IdentityServer.Api.Validators
 {
     public class DelegationGrantValidator : IExtensionGrantValidator
     {
