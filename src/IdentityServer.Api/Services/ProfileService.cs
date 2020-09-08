@@ -12,16 +12,13 @@ namespace IdentityServer.Api.Services
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> claimsFactory;
-        //private readonly IUserStore<ApplicationUser> userStore;
 
         public ProfileService(
             UserManager<ApplicationUser> userManager,
             IUserClaimsPrincipalFactory<ApplicationUser> claimsFactory)
-        //IUserStore<ApplicationUser> userStore)
         {
             this.userManager = userManager;
             this.claimsFactory = claimsFactory;
-            //this.userStore = userStore;
         }
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
@@ -36,11 +33,6 @@ namespace IdentityServer.Api.Services
             var claims = principal.Claims.ToList();
             claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
 
-            //context.IssuedClaims = claims.ToList();
-
-            //Add custom claims in token here based on user properties or any other source
-            claims.AddRange(claims.Where(claim => claim.Type == "ots-permissions"));
-            //claims.Add(new Claim("employee_id", user.EmployeeId ?? string.Empty));
             context.IssuedClaims = claims;
         }
 

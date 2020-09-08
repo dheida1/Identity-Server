@@ -9,7 +9,7 @@ namespace Api1.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("inventory/[controller]")]
+    [Route("invoices/[controller]")]
     public class ApiSecureController : ControllerBase
     {
         private readonly ILogger<ApiSecureController> logger;
@@ -20,7 +20,7 @@ namespace Api1.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Policy = "myPolicy")]
+        [Authorize(Policy = "myPolicy")]
         public async Task<ActionResult> Get()
         {
             var accessToken = await HttpContext.GetTokenAsync("access_token");

@@ -16,11 +16,32 @@ namespace MvcPkceClient.Web.Configurations
         {
             services.AddAccessTokenManagement(options =>
             {
-                options.Client.Clients.Add("identityserver", new ClientCredentialsTokenRequest
+                options.Client.Clients.Add("Invoices", new ClientCredentialsTokenRequest
                 {
                     Address = configuration["IdentityServer:TokenEndpoint"],
                     ClientId = configuration["Client:Id"],
-                    //Scope = "inventory.read" // optional
+                    Scope = "invoices.read" // optional
+                });
+            })
+                .ConfigureBackchannelHttpClient(client =>
+                {
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                })
+                .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[]
+                {
+                    TimeSpan.FromSeconds(1),
+                    TimeSpan.FromSeconds(2),
+                    TimeSpan.FromSeconds(3)
+                })
+            );
+
+            services.AddAccessTokenManagement(options =>
+            {
+                options.Client.Clients.Add("Inventory", new ClientCredentialsTokenRequest
+                {
+                    Address = configuration["IdentityServer:TokenEndpoint"],
+                    ClientId = configuration["Client:Id"],
+                    Scope = "inventory.read" // optional
                 });
             })
                 .ConfigureBackchannelHttpClient(client =>
@@ -41,7 +62,7 @@ namespace MvcPkceClient.Web.Configurations
                 client.BaseAddress = new Uri(configuration["Api1:BaseUrl"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             })
-             .AddClientAccessTokenHandler("identityserver");
+             .AddClientAccessTokenHandler("Invoices");
 
 
             //create an api2 service to call the invoices api2

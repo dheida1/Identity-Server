@@ -9,7 +9,7 @@ namespace Api2.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("invoices/[controller]")]
+    [Route("inventory/[controller]")]
     public class ApiSecureController : ControllerBase
     {
         private readonly ILogger<ApiSecureController> logger;

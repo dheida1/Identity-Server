@@ -31,10 +31,10 @@ namespace Api1
             {
                 options.AddPolicy("myPolicy", builder =>
                 {
-                    // require scope1
-                    builder.RequireScope("invoices.update");
+                    // require invoices.update or invoices.read
+                    builder.RequireScope("invoices.update", "invoices.read");
                     // and require scope2 or scope3
-                    builder.RequireScope("inventory.manage", "inventory.update");
+                    //builder.RequireScope("inventory.manage", "inventory.update");
                 });
             });
 
@@ -60,7 +60,7 @@ namespace Api1
                  {
                      options.Authority = Configuration["IdentityServer:Address"];// https://localhost:4300";
                      options.RequireHttpsMetadata = Environment.IsDevelopment() ? false : true;
-                     options.ApiName = "inventory";
+                     options.ApiName = "invoices";
                      //options.JwtBackChannelHandler = new MtlsHandler(Configuration, Environment);
                      options.JwtBearerEvents.OnMessageReceived = context =>
                      {

@@ -64,6 +64,7 @@ namespace IdentityServer.Api
             {
                 return new ApiResource[]
                 {
+                    //api1
                     new ApiResource("invoices", "Invoices")
                     {
                         Enabled = true,
@@ -78,15 +79,22 @@ namespace IdentityServer.Api
                                 Value = Convert.ToBase64String(new X509Certificate2("Certificates/Api1.cer").GetRawCertData())
                             }
                         },
-                        UserClaims = new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] },
+                        UserClaims = new[] {
+                            configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"],
+                            "preferred_username"
+                        },
                         Scopes = new[]{"invoices.read" , "invoices.write", "invoices.delete", "invoices.update", "manage"}
                     },
 
+                    //api2
                     new ApiResource("inventory", "Inventory")
                     {
                         ApiSecrets = { new Secret("secret".Sha256()) },
                         Enabled = true,
-                        UserClaims = new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] },
+                        UserClaims = new[] {
+                            configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"],
+                            "preferred_username"
+                        },
                         //UserClaims = new[] {
                         //      ClaimTypes.Name,
                         //      ClaimTypes.Email,
@@ -117,7 +125,7 @@ namespace IdentityServer.Api
                 return new List<ApiScope>
                 {
                     // invoice API 1 specific scopes
-                    new ApiScope(name: "invoices.read",   displayName: "Read the invoices data.", userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
+                    new ApiScope(name: "invoices.read",   displayName: "Read the invoices data.", userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"], "preferred_username" }),
                     new ApiScope(name: "invoices.write",  displayName: "Write to invoices data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
                     new ApiScope(name: "invoices.delete", displayName: "Delete the invoices data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
                     new ApiScope(name: "invoices.update", displayName: "Update the invoices data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
@@ -184,7 +192,7 @@ namespace IdentityServer.Api
                                 StandardScopes.OpenId,
                                 //StandardScopes.Profile,
                                 //StandardScopes.Email,
-                                "invoices",
+                                "invoices.read",
                                 "invoices.write",
                                 "inventory.read",
                                 "roles"
