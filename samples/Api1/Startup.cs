@@ -32,7 +32,7 @@ namespace Api1
                 options.AddPolicy("myPolicy", builder =>
                 {
                     // require invoices.update or invoices.read
-                    builder.RequireScope("invoices.update", "invoices.read");
+                    builder.RequireScope("invoices.read");
                     // and require scope2 or scope3
                     //builder.RequireScope("inventory.manage", "inventory.update");
                 });

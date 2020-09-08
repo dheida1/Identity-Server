@@ -17,13 +17,13 @@ namespace MvcPkceClient.Web.Configurations
             //api1
             services.AddAccessTokenManagement(options =>
             {
-                options.Client.Scope = "openid invoices.read";
-                options.Client.Clients.Add("Invoices", new ClientCredentialsTokenRequest
-                {
-                    Address = configuration["IdentityServer:TokenEndpoint"],
-                    //ClientId = configuration["Client:Id"],
-                    // Scope = "invoices.read", // optional                    
-                });
+                //options.Client.Scope = "invoices.read";
+                //options.Client.Clients.Add("Invoices", new ClientCredentialsTokenRequest
+                //{
+                //    Address = configuration["IdentityServer:TokenEndpoint"],
+                //    ClientId = configuration["Client:Id"],
+                //    Scope = "invoices.read", // optional                    
+                //});
             })
                 .ConfigureBackchannelHttpClient(client =>
                 {
@@ -69,12 +69,12 @@ namespace MvcPkceClient.Web.Configurations
             //});
 
             //create an api1 service to call the inventory api 
+            //this will refresh abd attach the user access token (access_token with some user claims"
             services.AddHttpClient<IApi1ServiceClient, Api1ServiceClient>(client =>
             {
                 client.BaseAddress = new Uri(configuration["Api1:BaseUrl"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             })
-            //.AddClientAccessTokenHandler("Invoices");
             .AddUserAccessTokenHandler();
 
             //create an api2 service to call the invoices api2
