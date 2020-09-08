@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200906131024_InitialCreate")]
+    [Migration("20200906165426_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("IdentityServer.Infrastructure.Dto.ApplicationRole", b =>
+            modelBuilder.Entity("IdentityServer.Infrastructure.Entities.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -48,7 +48,7 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                     b.ToTable("AspNetRoles");
                 });
 
-            modelBuilder.Entity("IdentityServer.Infrastructure.Dto.ApplicationUser", b =>
+            modelBuilder.Entity("IdentityServer.Infrastructure.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -122,7 +122,7 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("IdentityServer.Infrastructure.Dto.Permission", b =>
+            modelBuilder.Entity("IdentityServer.Infrastructure.Entities.Permission", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,7 +142,7 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                     b.ToTable("Permissions");
                 });
 
-            modelBuilder.Entity("IdentityServer.Infrastructure.Dto.RolePermission", b =>
+            modelBuilder.Entity("IdentityServer.Infrastructure.Entities.RolePermission", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -267,22 +267,22 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("IdentityServer.Infrastructure.Dto.RolePermission", b =>
+            modelBuilder.Entity("IdentityServer.Infrastructure.Entities.RolePermission", b =>
                 {
-                    b.HasOne("IdentityServer.Infrastructure.Dto.Permission", "Permission")
+                    b.HasOne("IdentityServer.Infrastructure.Entities.Permission", "Permission")
                         .WithMany()
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IdentityServer.Infrastructure.Dto.ApplicationRole", "Role")
+                    b.HasOne("IdentityServer.Infrastructure.Entities.ApplicationRole", "Role")
                         .WithMany("RolePermissions")
                         .HasForeignKey("RoleId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("IdentityServer.Infrastructure.Dto.ApplicationRole", null)
+                    b.HasOne("IdentityServer.Infrastructure.Entities.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -291,7 +291,7 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("IdentityServer.Infrastructure.Dto.ApplicationUser", null)
+                    b.HasOne("IdentityServer.Infrastructure.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -300,7 +300,7 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("IdentityServer.Infrastructure.Dto.ApplicationUser", null)
+                    b.HasOne("IdentityServer.Infrastructure.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -309,13 +309,13 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("IdentityServer.Infrastructure.Dto.ApplicationRole", null)
+                    b.HasOne("IdentityServer.Infrastructure.Entities.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IdentityServer.Infrastructure.Dto.ApplicationUser", null)
+                    b.HasOne("IdentityServer.Infrastructure.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -324,7 +324,7 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("IdentityServer.Infrastructure.Dto.ApplicationUser", null)
+                    b.HasOne("IdentityServer.Infrastructure.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -1,29 +1,29 @@
-﻿using IdentityServer.Core.Interfaces;
-using IdentityServer.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
+﻿//using IdentityServer.Core.Interfaces;
+//using IdentityServer.Infrastructure.Repositories;
+//using Microsoft.EntityFrameworkCore;
 
-namespace IdentityServer.Infrastructure
-{
-    public class UnitOfWork : IUnitOfWork
-    {
-        private readonly DbContext context;
-        public UnitOfWork(DbContext context)
-        {
-            this.context = context;
-        }
-        public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
-        {
-            return new Repository<TEntity>(context);
-        }
+//namespace IdentityServer.Infrastructure
+//{
+//    public class UnitOfWork : IUnitOfWork
+//    {
+//        private readonly DbContext context;
+//        public UnitOfWork(DbContext context)
+//        {
+//            this.context = context;
+//        }
+//        public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
+//        {
+//            return new Repository<TEntity>(context);
+//        }
 
-        public void Commit()
-        {
-            context.SaveChanges();
-        }
+//        public void Commit()
+//        {
+//            context.SaveChanges();
+//        }
 
-        public void Dispose()
-        {
-            context.Dispose();
-        }
-    }
-}
+//        public void Dispose()
+//        {
+//            context.Dispose();
+//        }
+//    }
+//}

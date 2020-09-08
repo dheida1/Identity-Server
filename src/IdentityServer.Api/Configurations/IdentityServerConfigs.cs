@@ -1,8 +1,10 @@
 ﻿using IdentityServer.Api.Services;
 using IdentityServer.Api.Validators;
+using IdentityServer.Infrastructure.Data;
 using IdentityServer.Infrastructure.Entities;
 using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,9 +18,18 @@ namespace IdentityServer.Api.Configurations
     {
         public static IServiceCollection AddIdentityServerConfigs(
              this IServiceCollection services,
-             IWebHostEnvironment environment,
+             IHostEnvironment environment,
              IConfiguration configuration)
         {
+            services.AddDbContext<ApplicationDbContext>(options =>
+             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<ApplicationUser, ApplicationRole>
+                (options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+
             //for mtls
             services.AddCertificateForwarding(options =>
             {
@@ -90,6 +101,9 @@ namespace IdentityServer.Api.Configurations
                 //identityServer.AddSigningCredential(new X509Certificate2(configuration["AppConfiguration:ServiceProvider:Certificate"], "1234"), signingAlgorithm: "ES256");
                 throw new Exception("need to configure key material");
             }
+
+
+
 
             return services;
         }

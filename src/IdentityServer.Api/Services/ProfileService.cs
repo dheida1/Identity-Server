@@ -12,19 +12,25 @@ namespace IdentityServer.Api.Services
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> claimsFactory;
+        //private readonly IUserStore<ApplicationUser> userStore;
 
         public ProfileService(
             UserManager<ApplicationUser> userManager,
             IUserClaimsPrincipalFactory<ApplicationUser> claimsFactory)
+        //IUserStore<ApplicationUser> userStore)
         {
             this.userManager = userManager;
             this.claimsFactory = claimsFactory;
+            //this.userStore = userStore;
         }
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
             var sub = context.Subject.GetSubjectId();
 
             var user = await userManager.FindByIdAsync(sub);
+
+            var userRoles = await userManager.GetRolesAsync(user);
+
             var principal = await claimsFactory.CreateAsync(user);
 
             var claims = principal.Claims.ToList();

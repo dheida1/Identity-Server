@@ -55,12 +55,12 @@ namespace IdentityServer.Api
                     DisplayName = "EA CA IAM",
                     Description = "Enterprise Architecture CA IAM"
                 },
-                new IdentityResource("roles", new[] { JwtClaimTypes.Role  })
+                new IdentityResource("roles", new[] { JwtClaimTypes.Role, ClaimTypes.Role })
 
                 };
             }
 
-            public static IEnumerable<ApiResource> GetApis()
+            public static IEnumerable<ApiResource> GetApis(IConfiguration configuration)
             {
                 return new ApiResource[]
                 {
@@ -78,6 +78,7 @@ namespace IdentityServer.Api
                                 Value = Convert.ToBase64String(new X509Certificate2("Certificates/Api1.cer").GetRawCertData())
                             }
                         },
+                        UserClaims = new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] },
                         Scopes = new[]{"invoices.read" , "invoices.write", "invoices.delete", "invoices.update", "manage"}
                     },
 
@@ -85,6 +86,7 @@ namespace IdentityServer.Api
                     {
                         ApiSecrets = { new Secret("secret".Sha256()) },
                         Enabled = true,
+                        UserClaims = new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] },
                         //UserClaims = new[] {
                         //      ClaimTypes.Name,
                         //      ClaimTypes.Email,
@@ -100,10 +102,11 @@ namespace IdentityServer.Api
 
                     new ApiResource("permissions", "Permission assignments")
                     {
-                        UserClaims = new[] {
-                          ClaimTypes.Email,
-                          JwtClaimTypes.Email
-                        },
+                        //UserClaims = new[] {
+                        //  ClaimTypes.Email,
+                        //  JwtClaimTypes.Email
+                        //},
+                        UserClaims = new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] },
                         Scopes = new[] { "permissions.read", "permissions.write", "permissions.delete", "permissions.update", "manage"}
                     }
                 };

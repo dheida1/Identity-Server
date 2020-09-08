@@ -36,7 +36,7 @@ namespace IdentityServer.Api
             services.AddControllersWithViews();
 
             services.AddIISConfigs()
-                    .AddDatabase(Configuration)
+                    //.AddDatabase(Configuration)
                     .AddDataServices(Configuration)
                     .AddOtsAuthentication(Environment, Configuration)
                     .AddIdentityServerConfigs(Environment, Configuration);
@@ -73,10 +73,14 @@ namespace IdentityServer.Api
             app.UseStaticFiles();
             app.UseRouting();
 
+            app.UseIdentityServer();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseIdentityServer();
-            app.UseEndpoints(endpoints => endpoints.MapDefaultControllerRoute());
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+            });
+
         }
 
         private void InitializeDatabase(IApplicationBuilder app)
@@ -119,7 +123,7 @@ namespace IdentityServer.Api
                 if (!context.ApiResources.Any())
                 {
                     Console.WriteLine("ApiResources being populated");
-                    foreach (var resource in Config.GetApis())
+                    foreach (var resource in Config.GetApis(Configuration))
                     {
                         context.ApiResources.Add(resource.ToEntity());
                     }
