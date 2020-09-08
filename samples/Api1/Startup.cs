@@ -61,9 +61,16 @@ namespace Api1
                      options.Authority = Configuration["IdentityServer:Address"];// https://localhost:4300";
                      options.RequireHttpsMetadata = Environment.IsDevelopment() ? false : true;
                      options.ApiName = "invoices";
+
                      //options.JwtBackChannelHandler = new MtlsHandler(Configuration, Environment);
                      options.JwtBearerEvents.OnMessageReceived = context =>
                      {
+                         //context.Options.TokenValidationParameters = new TokenValidationParameters
+                         //{
+                         //    NameClaimType = "preferred_username",
+                         //    RoleClaimType = JwtClaimTypes.Role
+                         //};
+
                          return Task.FromResult(0);
                      };
                      options.JwtBearerEvents.OnAuthenticationFailed = context =>

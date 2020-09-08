@@ -14,13 +14,15 @@ namespace MvcPkceClient.Web.Configurations
            this IServiceCollection services,
            IConfiguration configuration)
         {
+            //api1
             services.AddAccessTokenManagement(options =>
             {
+                options.Client.Scope = "openid invoices.read";
                 options.Client.Clients.Add("Invoices", new ClientCredentialsTokenRequest
                 {
                     Address = configuration["IdentityServer:TokenEndpoint"],
-                    ClientId = configuration["Client:Id"],
-                    Scope = "invoices.read" // optional
+                    //ClientId = configuration["Client:Id"],
+                    // Scope = "invoices.read", // optional                    
                 });
             })
                 .ConfigureBackchannelHttpClient(client =>
@@ -35,13 +37,15 @@ namespace MvcPkceClient.Web.Configurations
                 })
             );
 
+            //api2
             services.AddAccessTokenManagement(options =>
             {
                 options.Client.Clients.Add("Inventory", new ClientCredentialsTokenRequest
                 {
                     Address = configuration["IdentityServer:TokenEndpoint"],
                     ClientId = configuration["Client:Id"],
-                    Scope = "inventory.read" // optional
+                    Scope = "inventory.read", // optional, 
+
                 });
             })
                 .ConfigureBackchannelHttpClient(client =>
@@ -55,6 +59,14 @@ namespace MvcPkceClient.Web.Configurations
                     TimeSpan.FromSeconds(3)
                 })
             );
+
+            //services.
+
+            //services.AddUserAccessTokenClient("api1", client =>
+            //{
+            //    client.BaseAddress = new Uri(configuration["Api1:BaseUrl"]);
+            //    client.DefaultRequestHeaders.Add("Accept", "application/json");
+            //});
 
             //create an api1 service to call the inventory api 
             services.AddHttpClient<IApi1ServiceClient, Api1ServiceClient>(client =>
@@ -62,8 +74,8 @@ namespace MvcPkceClient.Web.Configurations
                 client.BaseAddress = new Uri(configuration["Api1:BaseUrl"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             })
-             .AddClientAccessTokenHandler("Invoices");
-
+            //.AddClientAccessTokenHandler("Invoices");
+            .AddUserAccessTokenHandler();
 
             //create an api2 service to call the invoices api2
             services.AddHttpClient<IApi2ServiceClient, Api2ServiceClient>(client =>

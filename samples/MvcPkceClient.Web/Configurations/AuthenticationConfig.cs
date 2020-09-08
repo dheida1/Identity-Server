@@ -65,7 +65,7 @@ namespace MvcPkceClient.Web.Configurations
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        NameClaimType = JwtClaimTypes.Name,
+                        NameClaimType = "preferred_username",
                         RoleClaimType = JwtClaimTypes.Role,
                         TokenDecryptionKey =
                         environment.IsDevelopment() ? new X509SecurityKey(new X509Certificate2("Certificates/MvcClient.Web.pfx", "1234"))

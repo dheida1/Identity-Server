@@ -126,9 +126,9 @@ namespace IdentityServer.Api
                 {
                     // invoice API 1 specific scopes
                     new ApiScope(name: "invoices.read",   displayName: "Read the invoices data.", userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"], "preferred_username" }),
-                    new ApiScope(name: "invoices.write",  displayName: "Write to invoices data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-                    new ApiScope(name: "invoices.delete", displayName: "Delete the invoices data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-                    new ApiScope(name: "invoices.update", displayName: "Update the invoices data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
+                    new ApiScope(name: "invoices.write",  displayName: "Write to invoices data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"], "preferred_username" }),
+                    new ApiScope(name: "invoices.delete", displayName: "Delete the invoices data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] , "preferred_username"}),
+                    new ApiScope(name: "invoices.update", displayName: "Update the invoices data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] , "preferred_username"}),
 
                     // invoice API 2 specific scopes
                     new ApiScope(name: "inventory.read",   displayName: "Read the inventory data.", userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
