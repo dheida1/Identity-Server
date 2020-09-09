@@ -198,7 +198,13 @@ namespace IdentityServer.Api
                                 "roles"
                             },
                             //Allow requesting refresh tokens for long lived API access                         
-                            AllowOfflineAccess = true
+                            AllowOfflineAccess = true,
+
+                            
+                            //Access token life time is 7200 seconds (2 hour)
+                            AccessTokenLifetime = 7200,
+                            //Identity token life time is 7200 seconds (2 hour)
+                            IdentityTokenLifetime = 7200
                         },
 
                     //mtls

@@ -83,7 +83,6 @@ namespace IdentityServer.Api.Configurations
                  })
 
                  .AddProfileService<ProfileService>()
-                 .AddCustomTokenRequestValidator<PoopRequestValidator>()
                  .AddExtensionGrantValidator<DelegationGrantValidator>();
 
             //for mtls
