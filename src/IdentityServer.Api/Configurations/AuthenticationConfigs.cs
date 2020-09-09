@@ -20,7 +20,11 @@ namespace IdentityServer.Api.Configurations
            IWebHostEnvironment environment,
            IConfiguration configuration)
         {
-            services.AddAuthentication()
+            services.AddAuthentication(sharedOptions =>
+            {
+                sharedOptions.DefaultScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                sharedOptions.DefaultSignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+            })
            .AddCertificate("x509", options =>
            {
                options.RevocationMode = (environment.IsDevelopment() ? X509RevocationMode.NoCheck : X509RevocationMode.Online);
@@ -96,7 +100,8 @@ namespace IdentityServer.Api.Configurations
                       identity.AddClaim(new Claim(ClaimTypes.Email, name));
                       return Task.FromResult(0);
                   };
-             });
+             })
+           .AddCookie();
             return services;
         }
     }

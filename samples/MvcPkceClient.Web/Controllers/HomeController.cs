@@ -53,6 +53,7 @@ namespace MvcPkceClient.Web.Controllers
             var apiResult = await mediator.Send(new Api2DelegateRequest());
             return Ok(apiResult);
         }
+        public IActionResult Logout() => SignOut("oidc");
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

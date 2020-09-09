@@ -116,6 +116,7 @@ namespace IdentityServer.Api.Controllers
             var additionalLocalClaims = new List<Claim>();
             var localSignInProps = new AuthenticationProperties();
             ProcessLoginCallback(result, additionalLocalClaims, localSignInProps);
+            ProcessLoginCallbackForSaml2(result, additionalLocalClaims, localSignInProps);
 
             // issue authentication cookie for user
             // we must issue the cookie maually, and can't use the SignInManager because
@@ -227,6 +228,8 @@ namespace IdentityServer.Api.Controllers
                 UserName = claims.FirstOrDefault(x => x.Type == _configuration["AppConfiguration:AgencyConfiguration:ObjectGUID"])?.Value ??
                     Guid.NewGuid().ToString(),
             };
+
+
             var identityResult = await _userManager.CreateAsync(user);
             if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
 
@@ -247,10 +250,8 @@ namespace IdentityServer.Api.Controllers
         private void ProcessLoginCallback(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
         {
             // if the external system sent a session id claim, copy it over
-            // so we can use it for single sign-out
-            //add saml2Core session id here
-            var sid = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == JwtClaimTypes.SessionId) ??
-                externalResult.Principal.Claims.FirstOrDefault(x => x.Type == _configuration["AppConfiguration:ServiceProvider:SessionIdClaimType"]);
+            // so we can use it for single sign-out            
+            var sid = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == JwtClaimTypes.SessionId);
             if (sid != null)
             {
                 localClaims.Add(new Claim(JwtClaimTypes.SessionId, sid.Value));
@@ -262,6 +263,23 @@ namespace IdentityServer.Api.Controllers
             {
                 localSignInProps.StoreTokens(new[] { new AuthenticationToken { Name = "id_token", Value = idToken } });
             }
+        }
+
+        private void ProcessLoginCallbackForSaml2(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
+        {
+            var sid = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == _configuration["AppConfiguration:ServiceProvider:SessionIdClaimType"]);
+            if (sid != null)
+            {
+                localClaims.Add(new Claim(_configuration["AppConfiguration:ServiceProvider:SessionIdClaimType"], sid.Value));
+            }
+
+            //sessionId if using saml
+            var sessionId = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == _configuration["AppConfiguration:ServiceProvider:SessionIdClaimType"]);
+            if (sessionId != null)
+            {
+                localClaims.Add(new Claim(_configuration["AppConfiguration:ServiceProvider:SessionIdClaimType"], sessionId.Value));
+            }
+
         }
     }
 }

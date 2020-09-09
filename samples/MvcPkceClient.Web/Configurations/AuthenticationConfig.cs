@@ -40,42 +40,42 @@ namespace MvcPkceClient.Web.Configurations
                           await e.HttpContext.RevokeUserRefreshTokenAsync();
                       };
                   })
-                .AddOpenIdConnect(options =>
-                {
-                    options.Authority = configuration["IdentityServer:Authority"];
-                    options.RequireHttpsMetadata = environment.IsDevelopment() ? false : true;
-                    options.ClientId = configuration["Client:Id"];
-                    options.ResponseType = "code";
-                    //https://www.scottbrady91.com/OpenID-Connect/ASPNET-Core-using-Proof-Key-for-Code-Exchange-PKCE
-                    options.UsePkce = true; // enable PKCE (authorization code flow only)
+               .AddOpenIdConnect("oidc", options =>
+               {
+                   options.Authority = configuration["IdentityServer:Authority"];
+                   options.RequireHttpsMetadata = environment.IsDevelopment() ? false : true;
+                   options.ClientId = configuration["Client:Id"];
+                   options.ResponseType = "code";
+                   //https://www.scottbrady91.com/OpenID-Connect/ASPNET-Core-using-Proof-Key-for-Code-Exchange-PKCE
+                   options.UsePkce = true; // enable PKCE (authorization code flow only)
 
-                    //recommended for best security. The response is transmitted via the HTTP POST method, 
-                    //with the code or token being encoded in the body using the 
-                    //application/x-www-form-urlencoded format.
-                    //this allows us to keep codes out of the URL and protected via TLS
-                    options.ResponseMode = "form_post";
-                    options.SaveTokens = true;
-                    //options.GetClaimsFromUserInfoEndpoint = true;
-                    options.Scope.Clear();
-                    options.Scope.Add("openid");
-                    //options.Scope.Add("profile");
-                    options.Scope.Add("inventory.read");
-                    options.Scope.Add("invoices.write");
-                    options.Scope.Add("offline_access"); //need this to get back '.refreshToken' to use when calling api's   
+                   //recommended for best security. The response is transmitted via the HTTP POST method, 
+                   //with the code or token being encoded in the body using the 
+                   //application/x-www-form-urlencoded format.
+                   //this allows us to keep codes out of the URL and protected via TLS
+                   options.ResponseMode = "form_post";
+                   options.SaveTokens = true;
+                   //options.GetClaimsFromUserInfoEndpoint = true;
+                   options.Scope.Clear();
+                   options.Scope.Add("openid");
+                   //options.Scope.Add("profile");
+                   options.Scope.Add("inventory.read");
+                   options.Scope.Add("invoices.write");
+                   options.Scope.Add("offline_access"); //need this to get back '.refreshToken' to use when calling api's   
 
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        NameClaimType = "preferred_username",
-                        RoleClaimType = JwtClaimTypes.Role,
-                        TokenDecryptionKey =
-                        environment.IsDevelopment() ? new X509SecurityKey(new X509Certificate2("Certificates/MvcClient.Web.pfx", "1234"))
-                        : new X509SecurityKey(new Cryptography.X509Certificates.Extension.X509Certificate2(
-                         configuration["Certificates:Personal"],
-                         StoreName.My,
-                         StoreLocation.LocalMachine,
-                         X509FindType.FindBySerialNumber))
-                    };
-                });
+                   options.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       NameClaimType = "preferred_username",
+                       RoleClaimType = JwtClaimTypes.Role,
+                       TokenDecryptionKey =
+                       environment.IsDevelopment() ? new X509SecurityKey(new X509Certificate2("Certificates/MvcClient.Web.pfx", "1234"))
+                       : new X509SecurityKey(new Cryptography.X509Certificates.Extension.X509Certificate2(
+                        configuration["Certificates:Personal"],
+                        StoreName.My,
+                        StoreLocation.LocalMachine,
+                        X509FindType.FindBySerialNumber))
+                   };
+               });
             return services;
         }
     }
