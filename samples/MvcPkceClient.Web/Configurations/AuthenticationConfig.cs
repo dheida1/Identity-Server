@@ -1,5 +1,4 @@
-﻿using IdentityModel;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
@@ -67,7 +66,8 @@ namespace MvcPkceClient.Web.Configurations
                    options.TokenValidationParameters = new TokenValidationParameters
                    {
                        NameClaimType = "preferred_username",
-                       RoleClaimType = JwtClaimTypes.Role,
+                       RoleClaimType = "role",
+                       //RoleClaimType = JwtClaimTypes.Role,
                        TokenDecryptionKey =
                        environment.IsDevelopment() ? new X509SecurityKey(new X509Certificate2("Certificates/MvcClient.Web.pfx", "1234"))
                        : new X509SecurityKey(new Cryptography.X509Certificates.Extension.X509Certificate2(

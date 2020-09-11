@@ -26,6 +26,7 @@ namespace IdentityServer.Api.Controllers
     public class ExternalController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
@@ -35,6 +36,7 @@ namespace IdentityServer.Api.Controllers
 
         public ExternalController(
             UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
@@ -43,6 +45,7 @@ namespace IdentityServer.Api.Controllers
             IConfiguration configuration)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _signInManager = signInManager;
             _interaction = interaction;
             _clientStore = clientStore;
@@ -114,7 +117,9 @@ namespace IdentityServer.Api.Controllers
             // for the specific protocols used and store them in the local auth cookie.
             // this is typically used to store data needed for signout from those protocols.
             var additionalLocalClaims = new List<Claim>();
+            //var localRoles = new List<Claim>();
             var localSignInProps = new AuthenticationProperties();
+
             ProcessLoginCallback(result, additionalLocalClaims, localSignInProps);
             ProcessLoginCallbackForSaml2(result, additionalLocalClaims, localSignInProps);
 
@@ -122,6 +127,9 @@ namespace IdentityServer.Api.Controllers
             // we must issue the cookie maually, and can't use the SignInManager because
             // it doesn't expose an API to issue additional claims from the login workflow
             var principal = await _signInManager.CreateUserPrincipalAsync(user);
+
+            await ProcessRolesForUser(user, result);
+
             additionalLocalClaims.AddRange(principal.Claims);
             var name = principal.FindFirst(JwtClaimTypes.Name)?.Value ?? user.Id.ToString();
 
@@ -225,7 +233,7 @@ namespace IdentityServer.Api.Controllers
 
             var user = new ApplicationUser
             {
-                UserName = claims.FirstOrDefault(x => x.Type == _configuration["AppConfiguration:AgencyConfiguration:ObjectGUID"])?.Value ??
+                UserName = claims.FirstOrDefault(x => x.Type == _configuration["AppConfiguration:IdentityProvider:ObjectGUID"])?.Value ??
                     Guid.NewGuid().ToString(),
             };
 
@@ -280,6 +288,43 @@ namespace IdentityServer.Api.Controllers
                 localClaims.Add(new Claim(_configuration["AppConfiguration:ServiceProvider:SessionIdClaimType"], sessionId.Value));
             }
 
+        }
+        private async Task ProcessRolesForUser(ApplicationUser user, AuthenticateResult externalResult)
+        {
+            //get appsettings regex
+            var searchList = _configuration.GetSection("AppConfiguration:AgencyConfiguration:RolePrefix").Get<List<string>>();
+
+            //get user ad groups
+            var externalUserRoles = externalResult.Principal.Claims.Where(x => x.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+
+            //filter the ad groups by matching what is in appsettings
+            var filteredList = externalUserRoles.Where(r => searchList.Any(f => r.StartsWith(f)));
+
+            //add roles in db if they don't exist
+            foreach (var role in filteredList)
+            {
+                if (!await _roleManager.RoleExistsAsync(role))
+                {
+                    await _roleManager.CreateAsync(new ApplicationRole(role));
+                }
+            }
+
+            //get user existing roles
+            var databaseUserRoles = await _userManager.GetRolesAsync(user);
+
+            //check if any of the user existing roles have been revoked to be deleted from the db
+            var toBeDeleted = databaseUserRoles.Where(c => !externalUserRoles.Any(d => c == d)).ToList();
+            if (toBeDeleted != null)
+            {
+                await _userManager.RemoveFromRolesAsync(user, toBeDeleted);
+            }
+
+            //check if any new roles have been granted the user 
+            var toBeAdded = externalUserRoles.Where(c => !databaseUserRoles.Any(d => c == d)).ToList();
+            if (toBeAdded != null)
+            {
+                await _userManager.AddToRolesAsync(user, toBeAdded);
+            }
         }
     }
 }

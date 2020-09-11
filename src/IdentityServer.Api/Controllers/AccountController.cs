@@ -189,19 +189,21 @@ namespace IdentityServer.Api.Controllers
             // check if we need to trigger sign-out at an upstream identity provider
             if (vm.TriggerExternalSignout)
             {
-                //var result = await HttpContext.AuthenticateAsync();
-                // this triggers a sign-out from the external provider 
-                //return SignOut(result.Properties, vm.ExternalAuthenticationScheme);
-
                 // build a return URL so the upstream provider will redirect back
                 // to us after the user has logged out. this allows us to then
                 // complete our single sign-out processing.
-                string url = Url.Action("Logout", new { logoutId = vm.LogoutId });
+                string url = !string.IsNullOrWhiteSpace(vm.PostLogoutRedirectUri) ? vm.PostLogoutRedirectUri : Url.Action("Logout", new { logoutId = vm.LogoutId });
                 // this triggers a redirect to the external provider for sign-out
                 return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
             }
-            if (vm.AutomaticRedirectAfterSignOut)
+            if (!string.IsNullOrWhiteSpace(vm.PostLogoutRedirectUri))
             {
+                HttpContext.Session.Clear();
+                foreach (var key in HttpContext.Request.Cookies.Keys)
+                {
+                    HttpContext.Response.Cookies.Append(key, "", new CookieOptions() { Expires = DateTime.Now.AddDays(-1) });
+                    HttpContext.Response.Cookies.Delete(key);
+                }
                 return Redirect(vm.PostLogoutRedirectUri);
             }
             return View("LoggedOut", vm);
