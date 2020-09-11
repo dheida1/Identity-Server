@@ -14,7 +14,7 @@ namespace MvcPkceClient.Web.Configurations
            this IServiceCollection services,
            IConfiguration configuration)
         {
-            //api1
+            //generic
             services.AddAccessTokenManagement(options =>
             {
                 //options.Client.Scope = "invoices.read";
@@ -25,16 +25,13 @@ namespace MvcPkceClient.Web.Configurations
                 //    Scope = "invoices.read", // optional                    
                 //});
             })
-                .ConfigureBackchannelHttpClient(client =>
-                {
-                    client.Timeout = TimeSpan.FromSeconds(30);
-                })
-                .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[]
-                {
-                    TimeSpan.FromSeconds(1),
-                    TimeSpan.FromSeconds(2),
-                    TimeSpan.FromSeconds(3)
-                })
+                .ConfigureBackchannelHttpClient()
+                    .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[]
+                    {
+                        TimeSpan.FromSeconds(1),
+                        TimeSpan.FromSeconds(2),
+                        TimeSpan.FromSeconds(3)
+                    })
             );
 
             //api2
@@ -68,8 +65,9 @@ namespace MvcPkceClient.Web.Configurations
             //    client.DefaultRequestHeaders.Add("Accept", "application/json");
             //});
 
-            //create an api1 service to call the inventory api 
-            //this will refresh abd attach the user access token (access_token with some user claims"
+            //api1  - invoices
+            //create an api1 service to call the invoices api 
+            //this will refresh and attach the user access token (access_token with some user claims"
             services.AddHttpClient<IApi1ServiceClient, Api1ServiceClient>(client =>
             {
                 client.BaseAddress = new Uri(configuration["Api1:BaseUrl"]);

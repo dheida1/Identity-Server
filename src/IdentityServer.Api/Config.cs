@@ -197,14 +197,19 @@ namespace IdentityServer.Api
                                 "inventory.read",
                                 "roles"
                             },
+
+                            //Token
                             //Allow requesting refresh tokens for long lived API access                         
                             AllowOfflineAccess = true,
-
                             
-                            //Access token life time is 7200 seconds (2 hour)
-                            AccessTokenLifetime = 7200,
-                            //Identity token life time is 7200 seconds (2 hour)
-                            IdentityTokenLifetime = 7200
+                            //Access token life time example 7200 seconds (2 hour) - 2 x 60 x 60
+                            //default is 3600 => 1 hour
+                            AccessTokenLifetime = 60,
+                            //Identity token life time example 7200 seconds (2 hour)
+                            //default is 300 =>  5 minutes
+                            IdentityTokenLifetime = 60,
+
+                            RefreshTokenUsage = TokenUsage.ReUse
                         },
 
                     //mtls

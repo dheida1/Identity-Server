@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
@@ -27,8 +26,9 @@ namespace MvcPkceClient.Web.Configurations
             })
                 .AddCookie(options =>
                   {
-                      options.ExpireTimeSpan = TimeSpan.FromMinutes(60); //this is diffferent than the access_token expiration
-                      options.SlidingExpiration = false;
+                      options.Cookie.Name = "MvcPkceCookie";
+                      //options.ExpireTimeSpan = TimeSpan.FromMinutes(60); //this is diffferent than the access_token expiration
+                      //options.SlidingExpiration = false;
                       options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
                       options.Events.OnRedirectToAccessDenied = context =>
                       {
@@ -40,7 +40,7 @@ namespace MvcPkceClient.Web.Configurations
                           await e.HttpContext.RevokeUserRefreshTokenAsync();
                       };
                   })
-               .AddOpenIdConnect("oidc", options =>
+               .AddOpenIdConnect(options =>
                {
                    options.Authority = configuration["IdentityServer:Authority"];
                    options.RequireHttpsMetadata = environment.IsDevelopment() ? false : true;
@@ -54,6 +54,7 @@ namespace MvcPkceClient.Web.Configurations
                    //application/x-www-form-urlencoded format.
                    //this allows us to keep codes out of the URL and protected via TLS
                    options.ResponseMode = "form_post";
+                   options.UseTokenLifetime = true;
                    options.SaveTokens = true;
                    //options.GetClaimsFromUserInfoEndpoint = true;
                    options.Scope.Clear();
