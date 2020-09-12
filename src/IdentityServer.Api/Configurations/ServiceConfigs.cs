@@ -1,7 +1,10 @@
 ﻿using IdentityServer.Api.Validators;
+using IdentityServer.Infrastructure.Interfaces;
+using IdentityServer.Infrastructure.Stores;
 using IdentityServer4.Validation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace IdentityServer.Api.Configurations
 {
@@ -15,7 +18,13 @@ namespace IdentityServer.Api.Configurations
             //services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IExtensionGrantValidator, DelegationGrantValidator>();
             //services.AddTransient<ITokenCreationService, JweTokenCreationService>();
+            services.AddTransient(typeof(IUserPermissionStore<>), typeof(UserPermissionStore<>));
             return services;
+        }
+
+        private static void IUserPermissionStore<T>()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -309,6 +309,8 @@ namespace IdentityServer.Api.Controllers
                 }
             }
 
+
+
             //get user existing roles
             var databaseUserRoles = await _userManager.GetRolesAsync(user);
 
