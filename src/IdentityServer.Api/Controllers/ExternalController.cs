@@ -297,18 +297,23 @@ namespace IdentityServer.Api.Controllers
             //get user ad groups
             var externalUserRoles = externalResult.Principal.Claims.Where(x => x.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
+            //Permissions need to be entered via a UI and mapped manually to the Roles (AD groups).
+            //The UserRoles MUST be mapped to existing roles that are in the table above via a UI
             //filter the ad groups by matching what is in appsettings
             var filteredList = externalUserRoles.Where(r => searchList.Any(f => r.StartsWith(f)));
 
-            //add roles in db if they don't exist
-            foreach (var role in filteredList)
-            {
-                if (!await _roleManager.RoleExistsAsync(role))
-                {
-                    await _roleManager.CreateAsync(new ApplicationRole(role));
-                }
-            }
 
+
+            //********TODO remove these lines per James since Roles (AD groups) will need to be added manually into the tables
+            //add roles in db if they don't exist
+            //foreach (var role in filteredList)
+            //{
+            //    if (!await _roleManager.RoleExistsAsync(role))
+            //    {
+            //        await _roleManager.CreateAsync(new ApplicationRole(role));
+            //    }
+            //}
+            //**********
 
 
             //get user existing roles
