@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MvcPkceClient.Web.Services
 {
-    public class Api1ClientService : IApi1Service
+    public class Api1ClientService : IApi1ClientService
     {
         private readonly HttpClient client;
 

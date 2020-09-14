@@ -2,7 +2,7 @@
 
 namespace MvcPkceClient.Web.Interfaces
 {
-    public interface IApi1Service
+    public interface IApi1UserService
     {
         Task<string> Get();
     }

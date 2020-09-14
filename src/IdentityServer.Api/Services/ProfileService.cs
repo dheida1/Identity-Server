@@ -40,7 +40,6 @@ namespace IdentityServer.Api.Services
             claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
 
             if (context.RequestedClaimTypes.Contains(configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"]))
-            //if (claims.Any(x => x.Type == configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"]))
             {
                 var permissions = await permissionStore.GetUserPermissions(user);
                 foreach (var permission in permissions)

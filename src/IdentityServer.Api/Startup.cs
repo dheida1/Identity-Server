@@ -187,20 +187,20 @@ namespace IdentityServer.Api
                 //roles
                 var role1 = new ApplicationRole
                 {
-                    Name = "DPS-NEAL-Env-OMV-Offices",
-                    NormalizedName = "DPS-NEAL-ENV-OMV-OFFICES",
+                    Name = "DPS-NEAL-Dev-OMV-Offices",
+                    NormalizedName = "DPS-NEAL-DEV-OMV-OFFICES",
                 };
 
                 var role2 = new ApplicationRole
                 {
-                    Name = "DPS-NEAL-Env-OMV-InternalAnnouncements",
-                    NormalizedName = "DPS-NEAL-ENV-OMV-INTERNALANNOUNCEMENTS",
+                    Name = "DPS-NEAL-Dev-OMV-InternalAnnouncements",
+                    NormalizedName = "DPS-NEAL-DEV-OMV-INTERNALANNOUNCEMENTS",
                 };
 
                 var role3 = new ApplicationRole
                 {
-                    Name = "DPS-NEAL-Env-OMV-Offices-Regions",
-                    NormalizedName = "DPS-NEAL-ENV-OMV-OFFICES-REGIONS",
+                    Name = "DPS-NEAL-Dev-OMV-Offices-Regions",
+                    NormalizedName = "DPS-NEAL-DEV-OMV-OFFICES-REGIONS",
                 };
 
                 if (!aspIdentitycontext.Permissions.Any())

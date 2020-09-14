@@ -63,7 +63,7 @@ namespace MvcPkceClient.Web.Configurations
             //create an api1 service for the user to call the invoices api 
             //this will refresh the token if expired and 
             //attach the user access token (access_token with some user permissions as claims)"
-            services.AddHttpClient<IApi1Service, Api1UserService>(client =>
+            services.AddHttpClient<IApi1UserService, Api1UserService>(client =>
             {
                 client.BaseAddress = new Uri(configuration["Api1:BaseUrl"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -73,7 +73,7 @@ namespace MvcPkceClient.Web.Configurations
             //api1  - invoices
             //create an api1 service for a batch job to call the invoices api  (eg hangfire)
             //this will refresh and attach the client access token (access_token with some scopes)"
-            services.AddHttpClient<IApi1Service, Api1ClientService>(client =>
+            services.AddHttpClient<IApi1ClientService, Api1ClientService>(client =>
             {
                 client.BaseAddress = new Uri(configuration["Api1:BaseUrl"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");

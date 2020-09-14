@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
@@ -33,18 +34,6 @@ namespace Api1
             // register the scope authorization handler
             services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
             services.AddSingleton<IAuthorizationHandler, HasPermissionHandler>();
-
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("Permissions", builder =>
-            //    {
-            //        // require invoices.update or invoices.read
-            //        // builder.RequireScope("invoices.read");
-            //        builder.RequireClaim("ots_omv_permission");
-            //        // and require scope2 or scope3
-            //        //builder.RequireScope("inventory.manage", "inventory.update");
-            //    });
-            //});
 
             // //to add the certicate to the http client header
             // services.AddTransient<MtlsHandler>();
@@ -73,11 +62,11 @@ namespace Api1
                      //options.JwtBackChannelHandler = new MtlsHandler(Configuration, Environment);
                      options.JwtBearerEvents.OnMessageReceived = context =>
                      {
-                         //context.Options.TokenValidationParameters = new TokenValidationParameters
-                         //{
-                         //    NameClaimType = "preferred_username",
-                         //    RoleClaimType = JwtClaimTypes.Role
-                         //};
+                         context.Options.TokenValidationParameters = new TokenValidationParameters
+                         {
+                             ValidateAudience = true,
+                             ValidateIssuer = true
+                         };
 
                          return Task.FromResult(0);
                      };
@@ -128,16 +117,16 @@ namespace Api1
                 app.UseHsts();
             }
 
-            //app.UseCors(policy =>
-            //{
-            //    policy.WithOrigins(
-            //        "https://localhost:4300",
-            //        "https://localhost:5001");
+            app.UseCors(policy =>
+            {
+                policy.WithOrigins(
+                    "https://localhost:4300",
+                    "https://localhost:5001");
 
-            //    policy.AllowAnyHeader();
-            //    policy.AllowAnyMethod();
-            //    policy.WithExposedHeaders("WWW-Authenticate");
-            //});
+                policy.AllowAnyHeader();
+                policy.AllowAnyMethod();
+                policy.WithExposedHeaders("WWW-Authenticate");
+            });
 
             app.UseHttpsRedirection();
             app.UseRouting();

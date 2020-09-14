@@ -56,7 +56,6 @@ namespace IdentityServer.Api
                     Description = "Enterprise Architecture CA IAM"
                 },
                 new IdentityResource("roles", new[] { JwtClaimTypes.Role, ClaimTypes.Role })
-
                 };
             }
 
@@ -81,9 +80,9 @@ namespace IdentityServer.Api
                         },
                         UserClaims = new[] {
                             configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"],
-                            "preferred_username"
+                            JwtClaimTypes.PreferredUserName
                         },
-                        Scopes = new[]{"invoices.read" , "invoices.write", "invoices.delete", "invoices.update", "manage"}
+                        Scopes = new[]{"invoices.read" , "invoices.write", "invoices.delete", "invoices.update", "manage", "otsuser" }
                     },
 
                     //api2
@@ -93,7 +92,7 @@ namespace IdentityServer.Api
                         Enabled = true,
                         UserClaims = new[] {
                             configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"],
-                            "preferred_username"
+                             JwtClaimTypes.PreferredUserName
                         },
                         //UserClaims = new[] {
                         //      ClaimTypes.Name,
@@ -142,9 +141,12 @@ namespace IdentityServer.Api
                     new ApiScope(name: "permissions.delete", displayName: "Delete the permissions data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
                     new ApiScope(name: "permissions.update", displayName: "Update the permissions data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
                 
-                    // shared scope
+                    // shared scopes
                     new ApiScope(name: "manage", displayName: "Provides administrative access to invoice, inventory and permissions",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-                };
+
+                    new ApiScope(name: "otsuser", displayName: "The object Guid of the user",userClaims: new[] { JwtClaimTypes.PreferredUserName, configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
+
+                  };
             }
 
 
@@ -195,7 +197,8 @@ namespace IdentityServer.Api
                                 "invoices.read",
                                 "invoices.write",
                                 "inventory.read",
-                                "roles"
+                                "roles",
+                                "otsuser"
                             },
 
                             //Token

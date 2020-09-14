@@ -34,7 +34,6 @@ namespace IdentityServer.Infrastructure.Stores
                     .Include(d => d.Permission)
                     .Where(x => x.Role.Name == role)
                     .Select(c => c.Permission.Name)
-                    //.Select(p => p.Name)
                     .ToListAsync();
 
                 permissions.AddRange(permissionList);
