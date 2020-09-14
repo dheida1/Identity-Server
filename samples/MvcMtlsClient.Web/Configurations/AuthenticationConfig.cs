@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using IdentityModel;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using MvcMtlsClient.Web.DelegatingHandlers;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace MvcMtlsClient.Web.Configurations
@@ -50,13 +52,20 @@ namespace MvcMtlsClient.Web.Configurations
                     options.Scope.Clear();
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
-                    options.Scope.Add("api2");
+                    options.Scope.Add("otsuser");
                     options.Scope.Add("offline_access"); //need this to get back '.refreshToken' to use when calling api's   
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        NameClaimType = "name",
-                        RoleClaimType = "role"
+                        NameClaimType = JwtClaimTypes.PreferredUserName,
+                        RoleClaimType = "role",
+                        TokenDecryptionKey =
+                       environment.IsDevelopment() ? new X509SecurityKey(new X509Certificate2("Certificates/MvcClient.Web.pfx", "1234"))
+                       : new X509SecurityKey(new Cryptography.X509Certificates.Extension.X509Certificate2(
+                        configuration["Certificates:Personal"],
+                        StoreName.My,
+                        StoreLocation.LocalMachine,
+                        X509FindType.FindBySerialNumber))
                     };
 
                     options.Events.OnRedirectToIdentityProvider = async context =>

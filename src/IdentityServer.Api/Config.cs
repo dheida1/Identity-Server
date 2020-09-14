@@ -233,9 +233,11 @@ namespace IdentityServer.Api
                             AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                             AccessTokenType = AccessTokenType.Jwt,
                             RequireConsent = false,
+                            IncludeJwtId = true,
                             RequirePkce = false,    //https://www.scottbrady91.com/OpenID-Connect/ASPNET-Core-using-Proof-Key-for-Code-Exchange-PKCE
                             AllowedCorsOrigins = { "https://localhost:5001" },
-                            AlwaysIncludeUserClaimsInIdToken= true,
+                            AlwaysIncludeUserClaimsInIdToken= false,
+                            AlwaysSendClientClaims= false,
                             UpdateAccessTokenClaimsOnRefresh = true,                           
                             // where to redirect to after login
                             RedirectUris = { "https://localhost:5001/signin-oidc" },
@@ -245,16 +247,37 @@ namespace IdentityServer.Api
 
                             AllowedScopes = new List<string>
                             {
-                                StandardScopes.OpenId,
-                                StandardScopes.Profile,
-                                StandardScopes.Email,
-                                "invoices",
-                                "inventory"
+                                //StandardScopes.OpenId,
+                                //StandardScopes.Profile,
+                                //StandardScopes.Email,
+                                //"invoices",
+                                //"inventory"
+
+                                 StandardScopes.OpenId,
+                                //StandardScopes.Profile,
+                                //StandardScopes.Email,
+                                "invoices.read",
+                                "invoices.write",
+                                "inventory.read",
+                                "roles",
+                                "otsuser"
                             },                          
                   
                             //Allow requesting refresh tokens for long lived API access
-                            AllowAccessTokensViaBrowser = true,
-                            AllowOfflineAccess = true
+                            //AllowAccessTokensViaBrowser = true,
+                            
+                            //Token
+                            //Allow requesting refresh tokens for long lived API access                         
+                            AllowOfflineAccess = true,
+                            
+                            //Access token life time example 7200 seconds (2 hour) - 2 x 60 x 60
+                            //default is 3600 => 1 hour
+                            AccessTokenLifetime = 60,
+                            //Identity token life time example 7200 seconds (2 hour)
+                            //default is 300 =>  5 minutes
+                            IdentityTokenLifetime = 60,
+
+                            RefreshTokenUsage = TokenUsage.ReUse
                         },
 
                     /////////////////////////////////////////////////////////////////

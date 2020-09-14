@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿//using System.Threading.Tasks;
 
-namespace MvcMtlsClient.Web.Interfaces
-{
-    public interface IApi2ServiceClient
-    {
-        Task<string> Get();
-    }
-}
+//namespace MvcMtlsClient.Web.Interfaces
+//{
+//    public interface IApi2ServiceClient
+//    {
+//        Task<string> Get();
+//    }
+//}

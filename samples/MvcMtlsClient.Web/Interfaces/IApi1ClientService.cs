@@ -2,7 +2,7 @@
 
 namespace MvcMtlsClient.Web.Interfaces
 {
-    public interface IApi1ServiceClient
+    public interface IApi1ClientService
     {
         Task<string> Get();
     }

@@ -8,16 +8,16 @@ namespace MvcMtlsClient.Web.Handlers
 {
     public class Api1RequestHandler : IRequestHandler<Api1Request, string>
     {
-        private IApi1ServiceClient api1ServiceClient;
+        private IApi1UserService api1Service;
 
-        public Api1RequestHandler(IApi1ServiceClient api1ServiceClient)
+        public Api1RequestHandler(IApi1UserService api1Service)
         {
-            this.api1ServiceClient = api1ServiceClient;
+            this.api1Service = api1Service;
         }
 
         public async Task<string> Handle(Api1Request request, CancellationToken cancellationToken)
         {
-            var result = await api1ServiceClient.Get();
+            var result = await api1Service.Get();
             return result;
         }
     }

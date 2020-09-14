@@ -29,9 +29,10 @@ namespace MvcMtlsClient.Web
 
             services
                .AddDelegates()
-               .AddDataServices(Configuration)
+               .AddTokenManagementServices(Configuration)
                .AddOtsAuthentication(Environment, Configuration)
                .AddAuthorization();
+
 
             services.AddHttpContextAccessor();
 
