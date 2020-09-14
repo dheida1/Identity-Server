@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace MvcPkceClient.Web.Services
 {
-    public class Api1ServiceClient : IApi1ServiceClient
+    public class Api1ClientService : IApi1Service
     {
         private readonly HttpClient client;
 
-        public Api1ServiceClient(
+        public Api1ClientService(
             HttpClient client)
         {
             this.client = client ?? throw new ArgumentNullException(nameof(client));
