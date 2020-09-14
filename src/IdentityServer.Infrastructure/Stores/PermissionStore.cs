@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace IdentityServer.Infrastructure.Stores
 {
-    public class UserPermissionStore<TUser> : IUserPermissionStore<TUser>
+    public class PermissionStore<TUser> : IPermissionStore<TUser>
         where TUser : class
     {
         private ApplicationDbContext _context;
         private UserManager<TUser> _userManager;
-        public UserPermissionStore(
+        public PermissionStore(
             ApplicationDbContext context,
             UserManager<TUser> userManager
             )

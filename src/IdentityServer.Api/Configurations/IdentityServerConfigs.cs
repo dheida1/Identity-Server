@@ -51,6 +51,8 @@ namespace IdentityServer.Api.Configurations
             {
                 options.EmitStaticAudienceClaim = true;
 
+                options.IssuerUri = configuration["AppConfiguration:IdentityServer:Authority"];
+
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;

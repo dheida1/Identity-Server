@@ -4,6 +4,7 @@ using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -13,17 +14,20 @@ namespace IdentityServer.Api.Services
     public class ProfileService : IProfileService
     {
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly IUserPermissionStore<ApplicationUser> userPermissionStore;
+        private readonly IPermissionStore<ApplicationUser> permissionStore;
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> claimsFactory;
+        private readonly IConfiguration configuration;
 
         public ProfileService(
             UserManager<ApplicationUser> userManager,
-            IUserPermissionStore<ApplicationUser> userPermissionStore,
-            IUserClaimsPrincipalFactory<ApplicationUser> claimsFactory)
+            IPermissionStore<ApplicationUser> permissionStore,
+            IUserClaimsPrincipalFactory<ApplicationUser> claimsFactory,
+            IConfiguration configuration)
         {
             this.userManager = userManager;
             this.claimsFactory = claimsFactory;
-            this.userPermissionStore = userPermissionStore;
+            this.permissionStore = permissionStore;
+            this.configuration = configuration;
         }
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
@@ -35,16 +39,20 @@ namespace IdentityServer.Api.Services
             var claims = principal.Claims.ToList();
             claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
 
-            var permissions = await userPermissionStore.GetUserPermissions(user);
-            foreach (var permission in permissions)
+            if (context.RequestedClaimTypes.Contains(configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"]))
+            //if (claims.Any(x => x.Type == configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"]))
             {
-                claims.Add(new Claim("ots-permissions", permission));
+                var permissions = await permissionStore.GetUserPermissions(user);
+                foreach (var permission in permissions)
+                {
+                    claims.Add(new Claim(configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"],
+                        permission,
+                        ClaimValueTypes.String,
+                        configuration["AppConfiguration:IdentityServer:Authority"]
+                        ));
+                }
             }
-
-
-            //claims.AddRange()
-
-            context.IssuedClaims = claims;
+            context.AddRequestedClaims(claims);
         }
 
         public async Task IsActiveAsync(IsActiveContext context)

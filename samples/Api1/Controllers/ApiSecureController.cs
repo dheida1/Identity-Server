@@ -20,7 +20,7 @@ namespace Api1.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize("InternalAnnouncementsDisplay")]
         public async Task<ActionResult> Get()
         {
             var accessToken = await HttpContext.GetTokenAsync("access_token");

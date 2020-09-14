@@ -1,3 +1,4 @@
+using Api1.Features.Authorize;
 using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication.Certificate;
@@ -27,16 +28,23 @@ namespace Api1
         {
             services.AddControllers();
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("myPolicy", builder =>
-                {
-                    // require invoices.update or invoices.read
-                    builder.RequireScope("invoices.read");
-                    // and require scope2 or scope3
-                    //builder.RequireScope("inventory.manage", "inventory.update");
-                });
-            });
+            services.AddAuthorization();
+
+            // register the scope authorization handler
+            services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
+            services.AddSingleton<IAuthorizationHandler, HasPermissionHandler>();
+
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("Permissions", builder =>
+            //    {
+            //        // require invoices.update or invoices.read
+            //        // builder.RequireScope("invoices.read");
+            //        builder.RequireClaim("ots_omv_permission");
+            //        // and require scope2 or scope3
+            //        //builder.RequireScope("inventory.manage", "inventory.update");
+            //    });
+            //});
 
             // //to add the certicate to the http client header
             // services.AddTransient<MtlsHandler>();

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace IdentityServer.Infrastructure.Interfaces
 {
-    public interface IUserPermissionStore<TUser>
+    public interface IPermissionStore<TUser>
         where TUser : class
     {
         Task<List<string>> GetUserPermissions(TUser user, CancellationToken cancellationToken = default(CancellationToken));

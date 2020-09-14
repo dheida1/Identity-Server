@@ -18,7 +18,7 @@ namespace IdentityServer.Api.Configurations
             //services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IExtensionGrantValidator, DelegationGrantValidator>();
             //services.AddTransient<ITokenCreationService, JweTokenCreationService>();
-            services.AddTransient(typeof(IUserPermissionStore<>), typeof(UserPermissionStore<>));
+            services.AddTransient(typeof(IPermissionStore<>), typeof(PermissionStore<>));
             return services;
         }
 
