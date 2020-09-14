@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Api1.Controllers
 {
-    //[Authorize]
     [ApiController]
     [Route("invoices/[controller]")]
     public class ApiSecureController : ControllerBase
@@ -20,7 +19,7 @@ namespace Api1.Controllers
         }
 
         [HttpGet]
-        [Authorize("InternalAnnouncementsDisplay")]
+        [Authorize(Policy = "InternalAnnouncementsDisplay2")]
         public async Task<ActionResult> Get()
         {
             var accessToken = await HttpContext.GetTokenAsync("access_token");

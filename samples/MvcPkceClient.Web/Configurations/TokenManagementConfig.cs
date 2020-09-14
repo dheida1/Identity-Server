@@ -15,7 +15,16 @@ namespace MvcPkceClient.Web.Configurations
            IConfiguration configuration)
         {
             //generic
-            services.AddAccessTokenManagement()
+            services.AddAccessTokenManagement(options =>
+            {
+                options.Client.Clients.Add("Invoices", new ClientCredentialsTokenRequest
+                {
+                    Address = configuration["IdentityServer:TokenEndpoint"],
+                    ClientId = configuration["Client:Id"],
+                    Scope = "invoices.read", // optional, 
+
+                });
+            })
                 .ConfigureBackchannelHttpClient()
                 .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[]
                 {
@@ -59,7 +68,8 @@ namespace MvcPkceClient.Web.Configurations
                 client.BaseAddress = new Uri(configuration["Api1:BaseUrl"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             })
-            .AddUserAccessTokenHandler();
+                .AddClientAccessTokenHandler("Invoices");
+            //.AddUserAccessTokenHandler();
 
             //create an api2 service to call the invoices api2
             services.AddHttpClient<IApi2ServiceClient, Api2ServiceClient>(client =>
