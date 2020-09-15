@@ -27,6 +27,7 @@ namespace MvcMtlsClient.Web.Configurations
             })
                 .AddCookie(options =>
                   {
+                      options.Cookie.Name = "MvcMtlsCookie";
                       //options.ExpireTimeSpan = TimeSpan.FromMinutes(60); //this is diffferent than the access_token expiration
                       options.SlidingExpiration = false;
                       options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -47,11 +48,10 @@ namespace MvcMtlsClient.Web.Configurations
                     options.ClientId = configuration["Client:Id"];
                     options.ResponseType = "code";
                     options.SaveTokens = true;
-                    options.GetClaimsFromUserInfoEndpoint = true;
+                    //options.GetClaimsFromUserInfoEndpoint = true;
                     options.BackchannelHttpHandler = new MtlsHandler(configuration, environment);
                     options.Scope.Clear();
                     options.Scope.Add("openid");
-                    options.Scope.Add("profile");
                     options.Scope.Add("otsuser");
                     options.Scope.Add("offline_access"); //need this to get back '.refreshToken' to use when calling api's   
 

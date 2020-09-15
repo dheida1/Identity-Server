@@ -29,12 +29,7 @@ namespace IdentityServer.Api
                     Description = "Google user accounts",
                     UserClaims = new List<string> {"hd"},
                 },
-                new IdentityResource
-                {
-                    Name = "ots",
-                    DisplayName = "Ots",
-                    UserClaims = new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] },
-                },
+
                 new IdentityResource
                 {
                     Name = "adfs",
@@ -222,6 +217,12 @@ namespace IdentityServer.Api
                             ClientName = "MVC Mtls Client",
                             Description = "Client App using Mtls or Client Authentication",
                             ClientSecrets = {
+                                // name based- do this is production so it won't be chaos when cert expires
+                                //new Secret(@"CN=mtls.test, OU=ROO\ballen@roo, O=mkcert development certificate", "mtls.test")
+                                //{
+                                //    Type = SecretTypes.X509CertificateName
+                                //},
+                                //thumbprint based
                                  new Secret("2767798A6DC7691C8EF41414BF7C9D59DB9DA31A", "MvcClient.Web")
                                  {
                                      Type = SecretTypes.X509CertificateThumbprint

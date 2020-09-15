@@ -20,7 +20,7 @@ namespace MvcMtlsClient.Web.Configurations
             {
                 options.Client.Clients.Add("Invoices", new ClientCredentialsTokenRequest
                 {
-                    Address = configuration["IdentityServer:TokenEndpoint"],
+                    Address = configuration["IdentityServer:MtlsTokenEndpoint"],
                     ClientId = configuration["Client:Id"],
                     Scope = "invoices.read", // optional, 
                 });
@@ -32,14 +32,15 @@ namespace MvcMtlsClient.Web.Configurations
                     TimeSpan.FromSeconds(2),
                     TimeSpan.FromSeconds(3)
                 })
-            );
+            )
+                .AddHttpMessageHandler<MtlsHandler>();
 
             //api2
             services.AddAccessTokenManagement(options =>
             {
                 options.Client.Clients.Add("Inventory", new ClientCredentialsTokenRequest
                 {
-                    Address = configuration["IdentityServer:TokenEndpoint"],
+                    Address = configuration["IdentityServer:MtlsTokenEndpoint"],
                     ClientId = configuration["Client:Id"],
                     Scope = "inventory.read", // optional, 
 

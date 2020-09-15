@@ -305,13 +305,13 @@ namespace IdentityServer.Api.Controllers
 
             //********TODO remove these lines per James since Roles (AD groups) will need to be added manually into the tables
             //add roles in db if they don't exist
-            //foreach (var role in filteredList)
-            //{
-            //    if (!await _roleManager.RoleExistsAsync(role))
-            //    {
-            //        await _roleManager.CreateAsync(new ApplicationRole(role));
-            //    }
-            //}
+            foreach (var role in filteredList)
+            {
+                if (!await _roleManager.RoleExistsAsync(role))
+                {
+                    await _roleManager.CreateAsync(new ApplicationRole(role));
+                }
+            }
             //**********
 
 

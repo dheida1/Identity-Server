@@ -1,15 +1,17 @@
 using Api1.Features.Authorize;
+using Api1.Middlewares;
 using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
@@ -62,12 +64,6 @@ namespace Api1
                      //options.JwtBackChannelHandler = new MtlsHandler(Configuration, Environment);
                      options.JwtBearerEvents.OnMessageReceived = context =>
                      {
-                         context.Options.TokenValidationParameters = new TokenValidationParameters
-                         {
-                             ValidateAudience = true,
-                             ValidateIssuer = true
-                         };
-
                          return Task.FromResult(0);
                      };
                      options.JwtBearerEvents.OnAuthenticationFailed = context =>
@@ -82,7 +78,8 @@ namespace Api1
                 .AddCertificate("x509", options =>
                 {
                     options.RevocationMode = (Environment.IsDevelopment() ? X509RevocationMode.NoCheck : X509RevocationMode.Online);
-                    options.AllowedCertificateTypes = (Environment.IsDevelopment() ? CertificateTypes.SelfSigned : CertificateTypes.Chained);
+                    options.AllowedCertificateTypes = CertificateTypes.All;
+                    //options.AllowedCertificateTypes = (Environment.IsDevelopment() ? CertificateTypes.SelfSigned : CertificateTypes.Chained);
                     options.ValidateCertificateUse = (Environment.IsDevelopment() ? false : true);
                     options.ValidateValidityPeriod = (Environment.IsDevelopment() ? false : true);
 
@@ -100,6 +97,22 @@ namespace Api1
                         }
                     };
                 });
+
+
+            services.AddCertificateForwarding(options =>
+            {
+                options.CertificateHeader = "X-ARR-ClientCert";
+                options.HeaderConverter = (headerValue) =>
+                {
+                    X509Certificate2 clientCertificate = null;
+                    if (!string.IsNullOrWhiteSpace(headerValue))
+                    {
+                        byte[] bytes = Convert.FromBase64String(headerValue);
+                        clientCertificate = new X509Certificate2(bytes);
+                    }
+                    return clientCertificate;
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -117,20 +130,37 @@ namespace Api1
                 app.UseHsts();
             }
 
-            app.UseCors(policy =>
-            {
-                policy.WithOrigins(
-                    "https://localhost:4300",
-                    "https://localhost:5001");
+            //app.UseCors(policy =>
+            //{
+            //    policy.WithOrigins(
+            //        "https://localhost:4300",
+            //        "https://localhost:5001");
+            //    policy.AllowAnyHeader();
+            //    policy.AllowAnyMethod();
+            //    policy.WithExposedHeaders("WWW-Authenticate");
+            //});
 
-                policy.AllowAnyHeader();
-                policy.AllowAnyMethod();
-                policy.WithExposedHeaders("WWW-Authenticate");
+            //mtls
+            //app.UseCertificateForwarding();
+            //app.UseHttpsRedirection();
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+            app.UseCertificateForwarding();
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+
+            app.UseMiddleware<ConfirmationValidationMiddleware>(new ConfirmationValidationMiddlewareOptions
+            {
+                CertificateSchemeName = "x509",
+                JwtBearerSchemeName = IdentityServerAuthenticationDefaults.AuthenticationScheme
             });
 
-            app.UseHttpsRedirection();
-            app.UseRouting();
-            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

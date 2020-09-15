@@ -47,6 +47,16 @@ namespace MvcMtlsClient.Web
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseSerilog();
+                    //webBuilder.ConfigureKestrel(options =>
+                    //{
+                    //    options.AllowSynchronousIO = true;
+                    //    options.ConfigureHttpsDefaults(httpsOptions =>
+                    //    {
+                    //        httpsOptions.CheckCertificateRevocation = false;
+                    //        httpsOptions.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
+                    //        httpsOptions.SslProtocols = SslProtocols.Tls12;
+                    //    });
+                    //});
                     webBuilder.ConfigureKestrel(options =>
                     {
                         options.AllowSynchronousIO = true;
