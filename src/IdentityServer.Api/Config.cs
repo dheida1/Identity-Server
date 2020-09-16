@@ -1,5 +1,5 @@
 ﻿using IdentityModel;
-using IdentityServer.Core.Entities;
+using IdentityServer.Infrastructure.Entities;
 using IdentityServer4.Models;
 using Microsoft.Extensions.Configuration;
 using System;

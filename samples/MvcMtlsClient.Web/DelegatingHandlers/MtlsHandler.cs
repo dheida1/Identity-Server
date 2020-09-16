@@ -36,10 +36,6 @@ namespace MvcMtlsClient.Web.DelegatingHandlers
                     CheckCertificateRevocationList = (environment.IsDevelopment() ? false : true),
                     SslProtocols = System.Security.Authentication.SslProtocols.Tls12
                 };
-
-                //var handler = new SocketsHttpHandler();
-                //handler.SslOptions.ClientCertificates = new X509CertificateCollection { certificate };
-                //base.InnerHandler = handler;
             }
             var certBytes = certificate.RawData;
             var certString = Convert.ToBase64String(certBytes);

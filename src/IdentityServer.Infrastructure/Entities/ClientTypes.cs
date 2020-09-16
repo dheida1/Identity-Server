@@ -1,21 +1,5 @@
-﻿namespace IdentityServer.Core.Entities
+﻿namespace IdentityServer.Infrastructure.Entities
 {
-    //public class ExtClient : Client
-    //{
-    //    public ExtendedClient ExtendedClient { get; set; }
-    //}
-
-    //public class ExtendedClient
-    //{
-    //    public ClientType ClientType { get; set; }
-    //    public string RawCertData { get; set; }
-    //    public bool RequireJwe { get; set; } = true;
-    //    public virtual ExtClient Client { get; set; }
-    //    [ForeignKey("Client")]
-    //    public int ClientId { get; set; }
-    //}
-
-
     public class ClientType
     {
         //public const string Empty = 0,
