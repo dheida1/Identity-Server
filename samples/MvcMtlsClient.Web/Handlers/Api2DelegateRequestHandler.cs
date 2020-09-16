@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using MvcPkceClient.Web.Interfaces;
-using MvcPkceClient.Web.Requests;
+using MvcMtlsClient.Web.Interfaces;
+using MvcMtlsClient.Web.Requests;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MvcPkceClient.Web.Handlers
+namespace MvcMtlsClient.Web.Handlers
 {
     public class Api2DelegateRequestHandler : IRequestHandler<Api2DelegateRequest, string>
     {

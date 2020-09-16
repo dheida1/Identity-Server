@@ -4,7 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using MvcPkceClient.Web.Interfaces;
 using MvcPkceClient.Web.Services;
 using Polly;
+using Polly.Extensions.Http;
 using System;
+using System.Net.Http;
 
 namespace MvcPkceClient.Web.Configurations
 {
@@ -23,39 +25,15 @@ namespace MvcPkceClient.Web.Configurations
                     ClientId = configuration["Client:Id"],
                     Scope = "invoices.read", // optional, 
                 });
-            })
-                .ConfigureBackchannelHttpClient()
-                .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[]
-                {
-                    TimeSpan.FromSeconds(1),
-                    TimeSpan.FromSeconds(2),
-                    TimeSpan.FromSeconds(3)
-                })
-            );
-
-            //api2
-            services.AddAccessTokenManagement(options =>
-            {
                 options.Client.Clients.Add("Inventory", new ClientCredentialsTokenRequest
                 {
                     Address = configuration["IdentityServer:TokenEndpoint"],
                     ClientId = configuration["Client:Id"],
-                    Scope = "inventory.read", // optional, 
-
+                    Scope = "inventory.read", // optional,                     
                 });
             })
-                .ConfigureBackchannelHttpClient(client =>
-                {
-                    client.Timeout = TimeSpan.FromSeconds(30);
-                })
-                .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[]
-                {
-                    TimeSpan.FromSeconds(1),
-                    TimeSpan.FromSeconds(2),
-                    TimeSpan.FromSeconds(3)
-                })
-            );
-
+                .ConfigureBackchannelHttpClient()
+                .AddPolicyHandler(GetRetryPolicy());
             //Api services.
 
 
@@ -81,16 +59,36 @@ namespace MvcPkceClient.Web.Configurations
             .AddClientAccessTokenHandler("Invoices");
 
 
-
             //create an api2 service to call the invoices api2
-            services.AddHttpClient<IApi2ServiceClient, Api2ServiceClient>(client =>
+            services.AddHttpClient<IApi2UserService, Api2UserService>(client =>
             {
                 client.BaseAddress = new Uri(configuration["Api2:BaseUrl"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             })
             .AddUserAccessTokenHandler();
 
+            services.AddHttpClient<IApi2ClientService, Api2ClientService>(client =>
+            {
+                client.BaseAddress = new Uri(configuration["Api2:BaseUrl"]);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            })
+           .AddClientAccessTokenHandler("Inventory");
+
             return services;
+        }
+
+        private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+              // Handle HttpRequestExceptions, 408 and 5xx status codes
+              .HandleTransientHttpError()
+              // Handle 404 not found
+              .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+              // Handle 401 Unauthorized
+              .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+              // What to do if any of the above erros occur:
+              // Retry 3 times, each time wait 1,2 and 4 seconds before retrying.
+              .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
         }
     }
 }

@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace MvcPkceClient.Web.Services
 {
-    public class Api1UserService : IApi1UserService
+    public class Api2ClientService : IApi2ClientService
     {
         private readonly HttpClient client;
 
-        public Api1UserService(
+        public Api2ClientService(
             HttpClient client)
         {
             this.client = client ?? throw new ArgumentNullException(nameof(client));
@@ -18,13 +18,26 @@ namespace MvcPkceClient.Web.Services
         public async Task<string> Get()
         {
             // No more getting access_tokens code!
-            var response = await client.GetAsync("/invoices/ApiSecure");
+            var response = await client.GetAsync("/inventory/ApiSecure");
 
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine(response.StatusCode);
                 Console.WriteLine(response.ReasonPhrase);
                 throw new Exception(response.ReasonPhrase);
+            }
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public async Task<string> Delegate()
+        {
+            // No more getting access_tokens code!
+            var response = await client.GetAsync("/invoices/ApiDelegate");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine(response.StatusCode);
+                throw new Exception("Failed to get protected resources.");
             }
             return await response.Content.ReadAsStringAsync();
         }

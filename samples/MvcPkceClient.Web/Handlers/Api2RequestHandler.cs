@@ -8,9 +8,9 @@ namespace MvcPkceClient.Web.Handlers
 {
     public class Api2RequestHandler : IRequestHandler<Api2Request, string>
     {
-        private IApi2ServiceClient api2ServiceClient;
+        private IApi2UserService api2ServiceClient;
 
-        public Api2RequestHandler(IApi2ServiceClient api2ServiceClient)
+        public Api2RequestHandler(IApi2UserService api2ServiceClient)
         {
             this.api2ServiceClient = api2ServiceClient;
         }

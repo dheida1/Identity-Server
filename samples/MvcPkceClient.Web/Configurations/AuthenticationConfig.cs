@@ -27,9 +27,6 @@ namespace MvcPkceClient.Web.Configurations
                 .AddCookie(options =>
                   {
                       options.Cookie.Name = "MvcPkceCookie";
-                      //options.ExpireTimeSpan = TimeSpan.FromMinutes(60); //this is diffferent than the access_token expiration
-                      //options.SlidingExpiration = false;
-                      options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
                       options.Events.OnRedirectToAccessDenied = context =>
                       {
                           return Task.CompletedTask;
@@ -59,10 +56,7 @@ namespace MvcPkceClient.Web.Configurations
                    //options.GetClaimsFromUserInfoEndpoint = true;
                    options.Scope.Clear();
                    options.Scope.Add("openid");
-                   //options.Scope.Add("profile");
-                   //options.Scope.Add("inventory.read");
                    options.Scope.Add("otsuser");
-                   //options.Scope.Add("invoices.write");
                    options.Scope.Add("offline_access"); //need this to get back '.refreshToken' to use when calling api's                    
 
                    options.TokenValidationParameters = new TokenValidationParameters

@@ -28,7 +28,6 @@ namespace MvcMtlsClient.Web.Configurations
                 .AddCookie(options =>
                   {
                       options.Cookie.Name = "MvcMtlsCookie";
-                      //options.ExpireTimeSpan = TimeSpan.FromMinutes(60); //this is diffferent than the access_token expiration
                       options.SlidingExpiration = false;
                       options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
                       options.Events.OnRedirectToAccessDenied = context =>

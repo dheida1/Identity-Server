@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MvcPkceClient.Web.Models;
 using MvcPkceClient.Web.Requests;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -39,22 +40,43 @@ namespace MvcPkceClient.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Api1()
         {
-            var apiResult = await mediator.Send(new Api1Request());
-            return Ok(apiResult);
+            try
+            {
+                var apiResult = await mediator.Send(new Api1Request());
+                return Ok(apiResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
         public async Task<IActionResult> Api2()
         {
-            var apiResult = await mediator.Send(new Api2Request());
-            return Ok(apiResult);
+            try
+            {
+                var apiResult = await mediator.Send(new Api2Request());
+                return Ok(apiResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
         public async Task<IActionResult> Api2Delegated()
         {
-            var apiResult = await mediator.Send(new Api2DelegateRequest());
-            return Ok(apiResult);
+            try
+            {
+                var apiResult = await mediator.Send(new Api2DelegateRequest());
+                return Ok(apiResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         public IActionResult Logout()
         {

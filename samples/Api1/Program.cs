@@ -11,7 +11,7 @@ namespace Api1
     {
         public static void Main(string[] args)
         {
-            Console.Title = "IdentityServer4.EntityFramework";
+            Console.Title = "Api1-Invoices";
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -33,16 +33,6 @@ namespace Api1
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseSerilog();
-                    //webBuilder.ConfigureKestrel(options =>
-                    //{
-                    //    options.AllowSynchronousIO = true;
-                    //    options.ConfigureHttpsDefaults(httpsOptions =>
-                    //    {
-                    //        httpsOptions.CheckCertificateRevocation = false;
-                    //        httpsOptions.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
-                    //        httpsOptions.SslProtocols = SslProtocols.Tls12;
-                    //    });
-                    //});
                 });
     }
 }

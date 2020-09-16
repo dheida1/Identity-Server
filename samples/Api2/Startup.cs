@@ -1,6 +1,8 @@
 using Api2.Configurations;
+using Api2.Features.Authorize;
 using IdentityServer4.AccessTokenValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using System.Reflection;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Api2
@@ -26,6 +27,15 @@ namespace Api2
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+
+            services.AddAuthorization();
+
+            // register the scope authorization handler
+            services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
+            services.AddSingleton<IAuthorizationHandler, HasPermissionHandler>();
+
+
             services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
 
             services.AddDataServices(Configuration);
@@ -37,7 +47,7 @@ namespace Api2
             })
                  .AddIdentityServerAuthentication(options =>
                  {
-                     options.Authority = "https://localhost:4300";
+                     options.Authority = Configuration["IdentityServer:Address"];// https://localhost:4300";
                      options.RequireHttpsMetadata = Environment.IsDevelopment() ? false : true;
                      options.ApiName = "inventory";
                      options.SaveToken = true;
@@ -54,16 +64,6 @@ namespace Api2
                          return Task.FromResult(0);
                      };
                  });
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("newpolicy", policy =>
-                {
-                    policy.RequireClaim("name");
-                    policy.RequireClaim(claimType: ClaimTypes.Name);
-                    policy.RequireClaim(claimType: ClaimTypes.Email);
-                });
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

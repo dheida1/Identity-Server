@@ -1,10 +1,12 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MvcMtlsClient.Web.Models;
 using MvcMtlsClient.Web.Requests;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -29,26 +31,54 @@ namespace MvcMtlsClient.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Secure()
+        public IActionResult Secure()
         {
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
-            var idToken = await HttpContext.GetTokenAsync("id_token"); //must be null
-            var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
             return View();
         }
 
         [Authorize]
         public async Task<IActionResult> Api1()
         {
-            var apiResult = await mediator.Send(new Api1Request());
-            return Ok(apiResult);
+            try
+            {
+                var apiResult = await mediator.Send(new Api1Request());
+                return Ok(apiResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
         public async Task<IActionResult> Api2()
         {
-            var apiResult = await mediator.Send(new Api2Request());
-            return Ok(apiResult);
+            try
+            {
+                var apiResult = await mediator.Send(new Api2Request());
+                return Ok(apiResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Authorize]
+        public async Task<IActionResult> Api2Delegated()
+        {
+            try
+            {
+                var apiResult = await mediator.Send(new Api2DelegateRequest());
+                return Ok(apiResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        public IActionResult Logout()
+        {
+            return SignOut(CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

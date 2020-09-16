@@ -37,19 +37,6 @@ namespace Api1
             services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
             services.AddSingleton<IAuthorizationHandler, HasPermissionHandler>();
 
-            // //to add the certicate to the http client header
-            // services.AddTransient<MtlsHandler>();
-
-            // //add bearer token to the http client header
-            // services.AddTransient<BearerTokenHandler>();
-
-            // services.AddHttpClient<IIdentityServerClient, IdentityServerClient>(client =>
-            // {
-            //     client.BaseAddress = new Uri(Configuration["IdentityServer:Authority"]);
-            //     client.DefaultRequestHeaders.Add("Accept", "application/json");
-            // })
-            //.AddHttpMessageHandler<MtlsHandler>();
-
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
@@ -78,8 +65,7 @@ namespace Api1
                 .AddCertificate("x509", options =>
                 {
                     options.RevocationMode = (Environment.IsDevelopment() ? X509RevocationMode.NoCheck : X509RevocationMode.Online);
-                    options.AllowedCertificateTypes = CertificateTypes.All;
-                    //options.AllowedCertificateTypes = (Environment.IsDevelopment() ? CertificateTypes.SelfSigned : CertificateTypes.Chained);
+                    options.AllowedCertificateTypes = (Environment.IsDevelopment() ? CertificateTypes.SelfSigned : CertificateTypes.Chained);
                     options.ValidateCertificateUse = (Environment.IsDevelopment() ? false : true);
                     options.ValidateValidityPeriod = (Environment.IsDevelopment() ? false : true);
 
@@ -140,10 +126,10 @@ namespace Api1
             //    policy.WithExposedHeaders("WWW-Authenticate");
             //});
 
-            //mtls
-            //app.UseCertificateForwarding();
-            //app.UseHttpsRedirection();
 
+            app.UseHttpsRedirection();
+
+            //mtls
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
@@ -151,18 +137,14 @@ namespace Api1
             app.UseCertificateForwarding();
 
             app.UseRouting();
-
             app.UseAuthentication();
-
             app.UseMiddleware<ConfirmationValidationMiddleware>(new ConfirmationValidationMiddlewareOptions
             {
                 CertificateSchemeName = "x509",
                 JwtBearerSchemeName = IdentityServerAuthenticationDefaults.AuthenticationScheme
             });
 
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace MvcPkceClient.Web.Services
 {
-    public class Api2ServiceClient : IApi2ServiceClient
+    public class Api2UserService : IApi2UserService
     {
         private readonly HttpClient client;
 
-        public Api2ServiceClient(
+        public Api2UserService(
             HttpClient client)
         {
             this.client = client ?? throw new ArgumentNullException(nameof(client));
@@ -23,7 +23,8 @@ namespace MvcPkceClient.Web.Services
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine(response.StatusCode);
-                throw new Exception("Failed to get protected resources.");
+                Console.WriteLine(response.ReasonPhrase);
+                throw new Exception(response.ReasonPhrase);
             }
             return await response.Content.ReadAsStringAsync();
         }
