@@ -51,7 +51,7 @@ namespace ConsoleJwtClient
                            .HandleResult<DiscoveryDocumentResponse>(message => message.IsError)
                            .WaitAndRetryAsync(3, i => TimeSpan.FromSeconds(2), (result, timeSpan, retryCount, context) =>
                            {
-                               Globals.logger.Warning($"Request failed with {result.Result.HttpStatusCode}. Waiting {timeSpan} before next retry. Retry attempt {retryCount}");
+                               Globals.logger.Warning($"Request failed with {result.Result.Error}. Waiting {timeSpan} before next retry. Retry attempt {retryCount}");
                            })
                            .ExecuteAsync(async () =>
                            {
