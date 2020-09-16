@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿//using System.Threading.Tasks;
 
-namespace Api2.Interfaces
-{
-    public interface IApi3ServiceClient
-    {
-        Task<string> Get();
-    }
-}
+//namespace Api2.Interfaces
+//{
+//    public interface IApi3ServiceClient
+//    {
+//        Task<string> Get();
+//    }
+//}

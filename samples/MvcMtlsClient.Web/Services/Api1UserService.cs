@@ -23,7 +23,8 @@ namespace MvcMtlsClient.Web.Services
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine(response.StatusCode);
-                throw new Exception("Failed to get protected resources.");
+                Console.WriteLine(response.ReasonPhrase);
+                throw new Exception(response.ReasonPhrase);
             }
             return await response.Content.ReadAsStringAsync();
         }

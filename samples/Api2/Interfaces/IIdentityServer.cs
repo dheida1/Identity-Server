@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿//using System.Threading.Tasks;
 
-namespace Api2.Interfaces
-{
+//namespace Api2.Interfaces
+//{
 
-    public interface IIdentityServerClient
-    {
-        Task<string> RequestTokenAsync();
-    }
-}
+//    public interface IIdentityServerClient
+//    {
+//        Task<string> RequestTokenAsync();
+//    }
+//}
 
