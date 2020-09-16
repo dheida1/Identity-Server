@@ -89,25 +89,12 @@ namespace IdentityServer.Api
                             configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"],
                              JwtClaimTypes.PreferredUserName
                         },
-                        //UserClaims = new[] {
-                        //      ClaimTypes.Name,
-                        //      ClaimTypes.Email,
-                        //      ClaimTypes.Name,
-                        //      ClaimTypes.Role,
-                        //      JwtClaimTypes.Name,
-                        //      JwtClaimTypes.Email,
-                        //      JwtClaimTypes.Role
-                        //  },
                         Scopes = new[] { "inventory.read", "inventory.write", "inventory.delete", "inventory.update" , "manage"}
 
                     },
 
                     new ApiResource("permissions", "Permission assignments")
                     {
-                        //UserClaims = new[] {
-                        //  ClaimTypes.Email,
-                        //  JwtClaimTypes.Email
-                        //},
                         UserClaims = new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] },
                         Scopes = new[] { "permissions.read", "permissions.write", "permissions.delete", "permissions.update", "manage"}
                     }
@@ -334,7 +321,7 @@ namespace IdentityServer.Api
                         },
 
                         AllowedGrantTypes = GrantTypes.ClientCredentials,
-                        AllowedScopes = { "api1", "api2" }
+                        AllowedScopes = { "invoices.read"}
                     },
 
                      new Client

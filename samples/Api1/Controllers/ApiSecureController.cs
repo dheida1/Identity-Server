@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Api1.Controllers
@@ -19,13 +18,13 @@ namespace Api1.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "InternalAnnouncementsDisplay")]
+        [Authorize(Policy = "InternalAnnouncementsDisplay invoices.read")]
         public async Task<ActionResult> Get()
         {
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var idToken = await HttpContext.GetTokenAsync("id_token"); //must be null
             var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
-            return Ok(new JsonResult(from c in User.Claims select new { c.Type, c.Value }));
+            return Ok("Congrats you've reached method to read invoices!");
         }
     }
 }
