@@ -63,19 +63,19 @@ namespace MvcMtlsClient.Web.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        //[Authorize]
-        //public async Task<IActionResult> Api2Delegated()
-        //{
-        //    try
-        //    {
-        //        var apiResult = await mediator.Send(new Api2DelegateRequest());
-        //        return Ok(apiResult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+        [Authorize]
+        public async Task<IActionResult> Api2Delegated()
+        {
+            try
+            {
+                var apiResult = await mediator.Send(new Api2DelegateRequest());
+                return Ok(apiResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         public IActionResult Logout()
         {
             return SignOut(CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
