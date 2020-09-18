@@ -35,3 +35,5 @@
 /src/IdentityServer.Infrastructure/IdentityServer.Infrastructure.csproj.user
 /documents/Technical Design Document.docx
 /documents/identitymodel-readthedocs-io-en-latest.pdf
+/src/IdentityPermission/bin
+/src/IdentityPermission/obj
