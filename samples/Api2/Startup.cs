@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -40,6 +41,8 @@ namespace Api2
             services.AddSingleton<IAuthorizationHandler, HasPermissionHandler>();
 
             services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             //services.AddDataServices(Configuration);
 

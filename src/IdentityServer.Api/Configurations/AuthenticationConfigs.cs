@@ -17,7 +17,7 @@ namespace IdentityServer.Api.Configurations
     {
         public static IServiceCollection AddOtsAuthentication(
            this IServiceCollection services,
-           IWebHostEnvironment environment,
+           IHostEnvironment environment,
            IConfiguration configuration)
         {
             services.AddAuthentication(sharedOptions =>

@@ -18,9 +18,9 @@ namespace IdentityServer.Api
 {
     public class Startup
     {
-        public IWebHostEnvironment Environment { get; }
+        public IHostEnvironment Environment { get; }
         public IConfiguration Configuration { get; }
-        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
+        public Startup(IHostEnvironment environment, IConfiguration configuration)
         {
             Configuration = configuration;
             Environment = environment;

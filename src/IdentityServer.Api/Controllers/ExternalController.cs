@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,7 @@ namespace IdentityServer.Api.Controllers
         private readonly IEventService _events;
         private readonly ILogger<ExternalController> _logger;
         private readonly IConfiguration _configuration;
+        private readonly IHostEnvironment _environment;
 
         public ExternalController(
             UserManager<ApplicationUser> userManager,
@@ -42,7 +44,8 @@ namespace IdentityServer.Api.Controllers
             IClientStore clientStore,
             IEventService events,
             ILogger<ExternalController> logger,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IHostEnvironment environment)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -52,6 +55,7 @@ namespace IdentityServer.Api.Controllers
             _events = events;
             _logger = logger;
             _configuration = configuration;
+            _environment = environment;
         }
 
         /// <summary>
@@ -292,20 +296,31 @@ namespace IdentityServer.Api.Controllers
         }
         private async Task ProcessRolesForUser(ApplicationUser user, AuthenticateResult externalResult)
         {
-            //get appsettings regex
-            var searchList = _configuration.GetSection("AppConfiguration:AgencyConfiguration:RolePrefix").Get<List<string>>();
-
             //get user ad groups
-            var externalUserRoles = externalResult.Principal.Claims.Where(x => x.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+            var externalUserRoles = externalResult.Principal.Claims.Where(x => x.Type == ClaimTypes.Role)
+            .Select(c => c.Value).ToList();
+
+            //per requirement this will only be in development
+            //roles (AD groups) need to be manually added 
+            //add roles in db if they don't exist
+            if (_environment.IsDevelopment())
+            {
+                await AddRolesToRolesIfTheyDoNotExists(externalUserRoles);
+                await UpdateUserRoles(user, externalUserRoles);
+            }
+        }
+
+        private async Task AddRolesToRolesIfTheyDoNotExists(List<string> externalUserRoles)
+        {
+            //get appsettings regex
+            var searchList = _configuration.GetSection("AppConfiguration:AgencyConfiguration:RolePrefix")
+                .Get<List<string>>();
 
             //Permissions need to be entered via a UI and mapped manually to the Roles (AD groups).
             //The UserRoles MUST be mapped to existing roles that are in the table above via a UI
             //filter the ad groups by matching what is in appsettings
             var filteredList = externalUserRoles.Where(r => searchList.Any(f => r.StartsWith(f)));
 
-
-            //********TODO remove these lines per James since Roles (AD groups) will need to be added manually into the tables
-            //add roles in db if they don't exist
             foreach (var role in filteredList)
             {
                 if (!await _roleManager.RoleExistsAsync(role))
@@ -313,10 +328,11 @@ namespace IdentityServer.Api.Controllers
                     await _roleManager.CreateAsync(new ApplicationRole(role));
                 }
             }
-            //**********
+        }
 
-
-            //get user existing roles
+        private async Task UpdateUserRoles(ApplicationUser user, List<string> externalUserRoles)
+        {
+            // get user existing roles
             var databaseUserRoles = await _userManager.GetRolesAsync(user);
 
             //check if any of the user existing roles have been revoked to be deleted from the db
@@ -332,6 +348,7 @@ namespace IdentityServer.Api.Controllers
             {
                 await _userManager.AddToRolesAsync(user, toBeAdded);
             }
+
         }
     }
 }

@@ -77,7 +77,7 @@ namespace IdentityServer.Api
                             configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"],
                             JwtClaimTypes.PreferredUserName
                         },
-                        Scopes = new[]{"invoices.read" , "invoices.write", "invoices.delete", "invoices.update",  "otsuser" }
+                        Scopes = new[]{ "invoices", "invoices.read", "invoices.write", "invoices.delete", "invoices.update" }
                     },
 
                     //api2
@@ -96,10 +96,10 @@ namespace IdentityServer.Api
                         },
                         Enabled = true,
                         UserClaims = new[] {
-                            configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"],
+                             configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"],
                              JwtClaimTypes.PreferredUserName
                         },
-                        Scopes = new[] { "inventory.read", "inventory.write", "inventory.delete", "inventory.update" , "otsuser" }
+                        Scopes = new[] { "inventory","inventory.read", "inventory.write", "inventory.delete", "inventory.update" }
 
                     },
                                        
@@ -133,25 +133,24 @@ namespace IdentityServer.Api
                 return new List<ApiScope>
                 {
                     // invoice API 1 specific scopes
-                    new ApiScope(name: "invoices.read",   displayName: "Read the invoices data.", userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-                    new ApiScope(name: "invoices.write",  displayName: "Write to invoices data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"]}),
-                    new ApiScope(name: "invoices.delete", displayName: "Delete the invoices data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-                    new ApiScope(name: "invoices.update", displayName: "Update the invoices data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"]}),
+                    new ApiScope(name: "invoices",   displayName: "invoices data."),
+                    new ApiScope(name: "invoices.read",   displayName: "Read the invoices data."),
+                    new ApiScope(name: "invoices.write",  displayName: "Write to invoices data."),
+                    new ApiScope(name: "invoices.delete", displayName: "Delete the invoices data."),
+                    new ApiScope(name: "invoices.update", displayName: "Update the invoices data."),
 
                     // invoice API 2 specific scopes
-                    new ApiScope(name: "inventory.read",   displayName: "Read the inventory data.", userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-                    new ApiScope(name: "inventory.write",  displayName: "Write to inventory data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-                    new ApiScope(name: "inventory.delete", displayName: "Delete the inventory data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-                    new ApiScope(name: "inventory.update", displayName: "Update the inventory data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
+                    new ApiScope(name: "inventory",   displayName: "inventory data."),
+                    new ApiScope(name: "inventory.read",   displayName: "Read the inventory data."),
+                    new ApiScope(name: "inventory.write",  displayName: "Write to inventory data."),
+                    new ApiScope(name: "inventory.delete", displayName: "Delete the inventory data."),
+                    new ApiScope(name: "inventory.update", displayName: "Update the inventory data."),
 
                     // invoice API 3 specific scopes
-                    new ApiScope(name: "pendinginventory.read",   displayName: "Read the pending inventory data.", userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-                    new ApiScope(name: "pendinginventor.write",  displayName: "Write to pending inventory data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-                    new ApiScope(name: "pendinginventor.delete", displayName: "Delete the pending inventory data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-                    new ApiScope(name: "pendinginventor.update", displayName: "Update the pending inventory data.",userClaims: new[] { configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-
-                    new ApiScope(name: "otsuser", displayName: "The object Guid of the user",userClaims: new[] { JwtClaimTypes.PreferredUserName, configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"] }),
-
+                    new ApiScope(name: "pendinginventory.read",   displayName: "Read the pending inventory data."),
+                    new ApiScope(name: "pendinginventor.write",  displayName: "Write to pending inventory data."),
+                    new ApiScope(name: "pendinginventor.delete", displayName: "Delete the pending inventory data."),
+                    new ApiScope(name: "pendinginventor.update", displayName: "Update the pending inventory data."),
                   };
             }
 
@@ -179,7 +178,7 @@ namespace IdentityServer.Api
                             RequireConsent = false,
                             RequirePkce = true,
                             AllowedCorsOrigins = { "https://localhost:5001" },
-                            //AlwaysIncludeUserClaimsInIdToken= true,
+                            //AlwaysIncludeUserClaimsInIdToken= true,                            
                             AlwaysSendClientClaims= false,
                             UpdateAccessTokenClaimsOnRefresh = true,
                             Properties =  new Dictionary<string, string>
@@ -198,11 +197,12 @@ namespace IdentityServer.Api
                             AllowedScopes = new List<string>
                             {
                                 StandardScopes.OpenId,
+                                "invoices",
+                                "inventory",
                                 "invoices.read",
                                 "invoices.write",
                                 "inventory.read",
-                                "roles",
-                                "otsuser"
+                                "roles"
                             },
 
                             //Token
@@ -257,12 +257,13 @@ namespace IdentityServer.Api
 
                             AllowedScopes = new List<string>
                             {
-                                 StandardScopes.OpenId,
+                                StandardScopes.OpenId,
+                                "invoices",
+                                "inventory",
                                 "invoices.read",
                                 "invoices.write",
                                 "inventory.read",
-                                "roles",
-                                "otsuser"
+                                "roles"
                             },                          
                   
                             //Token
