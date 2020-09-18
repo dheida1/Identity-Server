@@ -103,6 +103,7 @@ namespace IdentityServer.Api.Controllers
                 _logger.LogDebug("External claims: {@claims}", externalClaims);
             }
 
+
             // lookup our user and external provider info
             var (user, provider, providerUserId, claims) = await FindUserFromExternalProviderAsync(result);
             if (user == null)
