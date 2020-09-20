@@ -87,7 +87,7 @@ namespace Identity.ExtensionStore.IdentityPermission
         protected IdentityPermissionDbContext() { }
 
         public virtual DbSet<TPermission> Permissions { get; set; }
-        public virtual DbSet<TRolePermission> RolesPermissions { get; set; }
+        public virtual DbSet<TRolePermission> RolePermissions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

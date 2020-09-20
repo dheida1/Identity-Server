@@ -1,24 +1,20 @@
-﻿using IdentityServer.Infrastructure.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Identity.ExtensionStore.IdentityPermission;
+using IdentityServer.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace IdentityServer.Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+    public class ApplicationDbContext
+        : IdentityPermissionDbContext<ApplicationUser, ApplicationRole, ApplicationPermission, Guid>
     {
-        public DbSet<Permission> Permissions { get; set; }
-        public DbSet<RolePermission> RolePermissions { get; set; }
-
-
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         { }
 
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            //builder.Entity<IdentityUserRole<Guid>>().HasKey(p => new { p.UserId, p.RoleId });
         }
     }
 }

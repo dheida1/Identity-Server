@@ -14,6 +14,7 @@ namespace Identity.ExtensionStore.IdentityPermission
         /// <value>
         /// The role identifier.
         /// </value>
+
         public virtual TKey RoleId { get; set; }
 
         /// <summary>
@@ -21,7 +22,6 @@ namespace Identity.ExtensionStore.IdentityPermission
         /// </summary>
         /// <value>
         /// The permission identifier.
-        /// </value>
         public virtual TKey PermissionId { get; set; }
     }
 }

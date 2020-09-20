@@ -1,7 +1,6 @@
 ﻿using IdentityServer.Infrastructure.Data;
 using IdentityServer.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -17,6 +16,7 @@ namespace IdentityServer.Infrastructure.Stores
         public PermissionStore(
             ApplicationDbContext context,
             UserManager<TUser> userManager
+
             )
         {
             _context = context;
@@ -26,18 +26,19 @@ namespace IdentityServer.Infrastructure.Stores
         public async Task<List<string>> GetUserPermissions(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
             var permissions = new List<string>();
+            //var permissions = await _permissionStore.GetUserPermissions(user);
             var roles = await _userManager.GetRolesAsync(user);
 
-            foreach (var role in roles)
-            {
-                var permissionList = await _context.RolePermissions
-                    .Include(d => d.Permission)
-                    .Where(x => x.Role.Name == role)
-                    .Select(c => c.Permission.Name)
-                    .ToListAsync();
+            //foreach (var role in roles)
+            //{
+            //    var permissionList = await _permissionStore.
+            //        .Include(d => d.Permission)
+            //        .Where(x => x.Role.Name == role)
+            //        .Select(c => c.Permission.Name)
+            //        .ToListAsync();
 
-                permissions.AddRange(permissionList);
-            }
+            //    permissions.AddRange(permissionList);
+            //}
 
             return permissions.Distinct().ToList();
 

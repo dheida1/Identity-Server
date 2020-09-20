@@ -60,14 +60,7 @@ namespace Identity.ExtensionStore.IdentityPermission
         public PermissionStore(TContext context, IdentityErrorDescriber describer = null) : base(context, describer) { }
     }
 
-    /// <summary>
-    /// Creates a new instance of a persistence store for roles.
-    /// </summary>
-    /// <typeparam name="TRole">The type of the class representing a role.</typeparam>
-    /// <typeparam name="TContext">The type of the data context class used to access the store.</typeparam>
-    /// <typeparam name="TKey">The type of the primary key for a role.</typeparam>
-    /// <typeparam name="TUserRole">The type of the class representing a user role.</typeparam>
-    /// <typeparam name="TRoleClaim">The type of the class representing a role claim.</typeparam>
+
     public class PermissionStore<TPermission, TContext, TKey, TRolePermission> :
         IQueryablePermissionStore<TPermission>
         where TPermission : IdentityPermission<TKey>
@@ -75,11 +68,7 @@ namespace Identity.ExtensionStore.IdentityPermission
         where TContext : DbContext
         where TRolePermission : IdentityRolePermission<TKey>, new()
     {
-        /// <summary>
-        /// Constructs a new instance of <see cref="RoleStore{TRole, TContext, TKey, TUserRole, TRoleClaim}"/>.
-        /// </summary>
-        /// <param name="context">The <see cref="DbContext"/>.</param>
-        /// <param name="describer">The <see cref="IdentityErrorDescriber"/>.</param>
+
         public PermissionStore(TContext context, IdentityErrorDescriber describer = null)
         {
             if (context == null)

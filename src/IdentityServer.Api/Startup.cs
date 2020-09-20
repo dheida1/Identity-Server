@@ -1,3 +1,4 @@
+using Identity.ExtensionStore.IdentityPermission;
 using IdentityServer.Api.Configurations;
 using IdentityServer.Api.IdentityServer.Api;
 using IdentityServer.Infrastructure.Data;
@@ -155,33 +156,28 @@ namespace IdentityServer.Api
                 aspIdentitycontext.Database.Migrate();
 
                 //permissions
-                var permission1 = new Permission
+                var permission1 = new ApplicationPermission
                 {
-                    Name = "OfficesOfficeCreate",
-                    TimeStamp = DateTime.Now
+                    Name = "OfficesOfficeCreate"
                 };
 
-                var permission2 = new Permission
+                var permission2 = new ApplicationPermission
                 {
-                    Name = "OfficesOfficeContractInfoUpdate",
-                    TimeStamp = DateTime.Now
+                    Name = "OfficesOfficeContractInfoUpdate"
                 };
 
-                var permission3 = new Permission
+                var permission3 = new ApplicationPermission
                 {
-                    Name = "OfficesOfficeHoursAndDaysInfoUpdate",
-                    TimeStamp = DateTime.Now
+                    Name = "OfficesOfficeHoursAndDaysInfoUpdate"
                 };
 
-                var permission4 = new Permission
+                var permission4 = new ApplicationPermission
                 {
-                    Name = "InternalAnnouncementsDisplay",
-                    TimeStamp = DateTime.Now
+                    Name = "InternalAnnouncementsDisplay"
                 };
-                var permission5 = new Permission
+                var permission5 = new ApplicationPermission
                 {
-                    Name = "OfficesOfficeDisplay",
-                    TimeStamp = DateTime.Now
+                    Name = "OfficesOfficeDisplay"
                 };
 
                 //roles
@@ -239,45 +235,45 @@ namespace IdentityServer.Api
                     Console.WriteLine("RolePermissions being populated");
 
                     aspIdentitycontext.RolePermissions.Add(
-                        new RolePermission
+                        new IdentityRolePermission<Guid>
                         {
-                            Role = role1,
-                            Permission = permission1
+                            RoleId = role1.Id,
+                            PermissionId = permission1.Id
                         });
 
                     aspIdentitycontext.RolePermissions.Add(
-                       new RolePermission
+                       new IdentityRolePermission<Guid>
                        {
-                           Role = role1,
-                           Permission = permission2
+                           RoleId = role1.Id,
+                           PermissionId = permission2.Id
                        });
 
                     aspIdentitycontext.RolePermissions.Add(
-                      new RolePermission
+                      new IdentityRolePermission<Guid>
                       {
-                          Role = role1,
-                          Permission = permission3
+                          RoleId = role1.Id,
+                          PermissionId = permission3.Id
                       });
 
                     aspIdentitycontext.RolePermissions.Add(
-                    new RolePermission
+                    new IdentityRolePermission<Guid>
                     {
-                        Role = role1,
-                        Permission = permission4
+                        RoleId = role1.Id,
+                        PermissionId = permission4.Id
                     });
 
                     aspIdentitycontext.RolePermissions.Add(
-                     new RolePermission
+                     new IdentityRolePermission<Guid>
                      {
-                         Role = role2,
-                         Permission = permission4
+                         RoleId = role2.Id,
+                         PermissionId = permission4.Id
                      });
 
                     aspIdentitycontext.RolePermissions.Add(
-                     new RolePermission
+                     new IdentityRolePermission<Guid>
                      {
-                         Role = role3,
-                         Permission = permission4
+                         RoleId = role3.Id,
+                         PermissionId = permission4.Id
                      });
 
                     aspIdentitycontext.SaveChanges();

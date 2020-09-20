@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
+using System;
 
 namespace IdentityServer.Infrastructure.Entities
 {
-    public class ApplicationRole : IdentityRole
+    public class ApplicationRole : IdentityRole<Guid>
     {
         public ApplicationRole() : base() { }
         public ApplicationRole(string name) : base(name) { }
-        public IList<RolePermission> RolePermissions { get; set; }
+        public string FriendlyName { get; set; }
     }
 }
