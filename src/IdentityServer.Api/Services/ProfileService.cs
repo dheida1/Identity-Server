@@ -1,5 +1,4 @@
-﻿using Identity.ExtensionStore.IdentityPermission;
-using IdentityServer.Infrastructure.Entities;
+﻿using IdentityServer.Infrastructure.Entities;
 using IdentityServer.Infrastructure.Interfaces;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
@@ -18,7 +17,7 @@ namespace IdentityServer.Api.Services
         private readonly IPermissionStore<ApplicationUser> permissionStore;
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> claimsFactory;
         private readonly IConfiguration configuration;
-        private readonly IRolePermissionStore<ApplicationUser, ApplicationRole>
+        //private readonly IRolePermissionStore<ApplicationUser, ApplicationRole> rolePermission;
 
         public ProfileService(
             UserManager<ApplicationUser> userManager,

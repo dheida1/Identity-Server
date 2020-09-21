@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IdentityPermission\IdentityPermission.csproj" />
     <ProjectReference Include="..\IdentityServer.Core\IdentityServer.Core.csproj" />
   </ItemGroup>
 

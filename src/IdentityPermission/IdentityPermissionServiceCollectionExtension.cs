@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Identity.ExtensionStore.IdentityPermission
+namespace Identity.IdentityPermission
 {
     public static class IdentityPermissionServiceCollectionExtensions
     {

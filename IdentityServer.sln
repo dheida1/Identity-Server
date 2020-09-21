@@ -32,9 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api3", "samples\Api3\Api3.c
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.AdminUi", "src\IdentityServer.AdminUi\IdentityServer.AdminUi.csproj", "{B3F2A4F8-7ADC-4773-9E33-8AC8294E79A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityPermission", "src\IdentityPermission\IdentityPermission.csproj", "{0D5F0EF6-55B3-425F-AF46-BC9B774DFAA9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "src\WebApplication1\WebApplication1.csproj", "{400484BA-237B-439E-946C-C23363B36526}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityPermission", "src\IdentityPermission\IdentityPermission.csproj", "{0D5F0EF6-55B3-425F-AF46-BC9B774DFAA9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -94,10 +92,6 @@ Global
 		{0D5F0EF6-55B3-425F-AF46-BC9B774DFAA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D5F0EF6-55B3-425F-AF46-BC9B774DFAA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D5F0EF6-55B3-425F-AF46-BC9B774DFAA9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{400484BA-237B-439E-946C-C23363B36526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{400484BA-237B-439E-946C-C23363B36526}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{400484BA-237B-439E-946C-C23363B36526}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{400484BA-237B-439E-946C-C23363B36526}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

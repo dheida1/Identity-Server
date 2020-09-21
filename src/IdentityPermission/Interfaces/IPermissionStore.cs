@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Identity.ExtensionStore.IdentityPermission
+namespace Identity.IdentityPermission
 {
     /// <summary>
     /// Provides an abstraction for a storage and management of permissions.

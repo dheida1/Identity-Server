@@ -13,8 +13,8 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true)
+                    FriendlyName = table.Column<string>(nullable: true),
+                    Application = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -28,7 +28,8 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true)
+                    ConcurrencyStamp = table.Column<string>(nullable: true),
+                    FriendlyName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -53,7 +54,8 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false)
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    FirstName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -90,7 +92,7 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRolePermissions", x => new { x.RoleId, x.PermissionId });
+                    table.PrimaryKey("PK_AspNetRolePermissions", x => new { x.PermissionId, x.RoleId });
                     table.ForeignKey(
                         name: "FK_AspNetRolePermissions_AspNetPermissions_PermissionId",
                         column: x => x.PermissionId,
@@ -191,21 +193,14 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                 });
 
             migrationBuilder.CreateIndex(
-                name: "PermissionNameIndex",
-                table: "AspNetPermissions",
-                column: "NormalizedName",
-                unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetRolePermissions_PermissionId",
+                name: "IX_AspNetRolePermissions_RoleId",
                 table: "AspNetRolePermissions",
-                column: "PermissionId");
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace Identity.ExtensionStore.IdentityPermission
+namespace Identity.IdentityPermission
 {
     public class IdentityPermissionBuilder
     {

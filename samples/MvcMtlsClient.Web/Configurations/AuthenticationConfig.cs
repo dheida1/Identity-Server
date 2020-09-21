@@ -51,7 +51,8 @@ namespace MvcMtlsClient.Web.Configurations
                     options.BackchannelHttpHandler = new MtlsHandler(configuration, environment);
                     options.Scope.Clear();
                     options.Scope.Add("openid");
-                    options.Scope.Add("otsuser");
+                    options.Scope.Add("invoices");
+                    options.Scope.Add("inventory");
                     options.Scope.Add("offline_access"); //need this to get back '.refreshToken' to use when calling api's   
 
                     options.TokenValidationParameters = new TokenValidationParameters

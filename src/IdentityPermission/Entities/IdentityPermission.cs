@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Identity.ExtensionStore.IdentityPermission
+namespace Identity.IdentityPermission
 {
     /// <summary>
     /// 

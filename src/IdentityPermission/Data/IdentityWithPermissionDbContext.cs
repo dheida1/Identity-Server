@@ -3,57 +3,57 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace Identity.ExtensionStore.IdentityPermission
+namespace Identity.IdentityPermission
 {
-    public class IdentityPermissionDbContext
-        : IdentityPermissionDbContext<IdentityUser, IdentityRole, IdentityPermission, string>
+    public class IdentityWithPermissionDbContext
+        : IdentityWithPermissionDbContext<IdentityUser, IdentityRole, IdentityPermission, string>
     {
-        public IdentityPermissionDbContext(DbContextOptions options) : base(options) { }
+        public IdentityWithPermissionDbContext(DbContextOptions options) : base(options) { }
 
-        protected IdentityPermissionDbContext() { }
+        protected IdentityWithPermissionDbContext() { }
     }
 
-    public class IdentityPermissionDbContext<TUser>
-        : IdentityPermissionDbContext<TUser, IdentityRole<string>, IdentityPermission<string>, string>
+    public class IdentityWithPermissionDbContext<TUser>
+        : IdentityWithPermissionDbContext<TUser, IdentityRole<string>, IdentityPermission<string>, string>
             where TUser : IdentityUser
     {
-        public IdentityPermissionDbContext(DbContextOptions options) : base(options) { }
+        public IdentityWithPermissionDbContext(DbContextOptions options) : base(options) { }
 
-        protected IdentityPermissionDbContext() { }
+        protected IdentityWithPermissionDbContext() { }
     }
-    public class IdentityPermissionDbContext<TUser, TRole>
-        : IdentityPermissionDbContext<TUser, TRole, IdentityPermission<string>, string>
+    public class IdentityWithPermissionDbContext<TUser, TRole>
+        : IdentityWithPermissionDbContext<TUser, TRole, IdentityPermission<string>, string>
             where TUser : IdentityUser
             where TRole : IdentityRole
     {
-        public IdentityPermissionDbContext(DbContextOptions options) : base(options) { }
+        public IdentityWithPermissionDbContext(DbContextOptions options) : base(options) { }
 
-        protected IdentityPermissionDbContext() { }
+        protected IdentityWithPermissionDbContext() { }
     }
 
-    public class IdentityPermissionDbContext<TUser, TRole, TPermission>
-        : IdentityPermissionDbContext<IdentityUser<string>, IdentityRole<string>, IdentityPermission<string>, string>
+    public class IdentityWithPermissionDbContext<TUser, TRole, TPermission>
+        : IdentityWithPermissionDbContext<IdentityUser<string>, IdentityRole<string>, IdentityPermission<string>, string>
             where TUser : IdentityUser
             where TRole : IdentityRole
             where TPermission : IdentityPermission
     {
-        public IdentityPermissionDbContext(DbContextOptions options) : base(options) { }
+        public IdentityWithPermissionDbContext(DbContextOptions options) : base(options) { }
 
-        protected IdentityPermissionDbContext() { }
+        protected IdentityWithPermissionDbContext() { }
     }
 
-    public class IdentityPermissionDbContext<TUser, TRole, TPermission, TKey>
-        : IdentityPermissionDbContext<IdentityUser<TKey>, IdentityRole<TKey>, IdentityPermission<TKey>, IdentityRolePermission<TKey>, TKey, IdentityUserRole<TKey>, IdentityRoleClaim<TKey>>
+    public class IdentityWithPermissionDbContext<TUser, TRole, TPermission, TKey>
+        : IdentityWithPermissionDbContext<IdentityUser<TKey>, IdentityRole<TKey>, IdentityPermission<TKey>, IdentityRolePermission<TKey>, TKey, IdentityUserRole<TKey>, IdentityRoleClaim<TKey>>
             where TPermission : IdentityPermission<TKey>
             where TKey : IEquatable<TKey>
     {
-        public IdentityPermissionDbContext(DbContextOptions options) : base(options) { }
+        public IdentityWithPermissionDbContext(DbContextOptions options) : base(options) { }
 
-        protected IdentityPermissionDbContext() { }
+        protected IdentityWithPermissionDbContext() { }
     }
 
-    public class IdentityPermissionDbContext<TUser, TRole, TPermission, TRolePermission, TKey, TUserRole, TRoleClaim>
-        : IdentityPermissionDbContext<IdentityUser<TKey>, IdentityRole<TKey>, TKey, IdentityUserClaim<TKey>,
+    public class IdentityWithPermissionDbContext<TUser, TRole, TPermission, TRolePermission, TKey, TUserRole, TRoleClaim>
+        : IdentityWithPermissionDbContext<IdentityUser<TKey>, IdentityRole<TKey>, TKey, IdentityUserClaim<TKey>,
             IdentityUserRole<TKey>, IdentityUserLogin<TKey>, IdentityRoleClaim<TKey>, IdentityUserToken<TKey>,
             TPermission, TRolePermission>
 
@@ -65,11 +65,11 @@ namespace Identity.ExtensionStore.IdentityPermission
       where TRoleClaim : IdentityRoleClaim<TKey>
 
     {
-        public IdentityPermissionDbContext(DbContextOptions options) : base(options) { }
-        protected IdentityPermissionDbContext() { }
+        public IdentityWithPermissionDbContext(DbContextOptions options) : base(options) { }
+        protected IdentityWithPermissionDbContext() { }
     }
 
-    public class IdentityPermissionDbContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken, TPermission, TRolePermission>
+    public class IdentityWithPermissionDbContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken, TPermission, TRolePermission>
        : IdentityDbContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
 
      where TUser : IdentityUser<TKey>
@@ -83,8 +83,8 @@ namespace Identity.ExtensionStore.IdentityPermission
      where TUserLogin : IdentityUserLogin<TKey>
      where TRoleClaim : IdentityRoleClaim<TKey>
     {
-        public IdentityPermissionDbContext(DbContextOptions options) : base(options) { }
-        protected IdentityPermissionDbContext() { }
+        public IdentityWithPermissionDbContext(DbContextOptions options) : base(options) { }
+        protected IdentityWithPermissionDbContext() { }
 
         public virtual DbSet<TPermission> Permissions { get; set; }
         public virtual DbSet<TRolePermission> RolePermissions { get; set; }

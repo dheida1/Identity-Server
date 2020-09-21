@@ -2,12 +2,22 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Identity.ExtensionStore.IdentityPermission
+namespace Identity.IdentityPermission
 {
+
+    public class PermissionStore : PermissionStore<IdentityPermission<string>, DbContext, string>
+    {
+        /// <summary>
+        /// Constructs a new instance of <see cref="RoleStore{TRole}"/>.
+        /// </summary>
+        /// <param name="context">The <see cref="DbContext"/>.</param>
+        /// <param name="describer">The <see cref="IdentityErrorDescriber"/>.</param>
+        public PermissionStore(DbContext context, IdentityErrorDescriber describer = null) : base(context, describer) { }
+    }
+
     /// <summary>
     /// Creates a new instance of a persistence store for roles.
     /// </summary>
@@ -46,8 +56,8 @@ namespace Identity.ExtensionStore.IdentityPermission
     /// <typeparam name="TRole">The type of the class representing a role.</typeparam>
     /// <typeparam name="TContext">The type of the data context class used to access the store.</typeparam>
     /// <typeparam name="TKey">The type of the primary key for a role.</typeparam>
-    public class PermissionStore<TPermission, TContext, TKey> : PermissionStore<TPermission, TContext, TKey, IdentityRolePermission<TKey>>,
-        IQueryablePermissionStore<TPermission>
+    public class PermissionStore<TPermission, TContext, TKey>
+        : PermissionStore<TPermission, TContext, TKey, IdentityRolePermission<TKey>>
         where TPermission : IdentityPermission<TKey>
         where TKey : IEquatable<TKey>
         where TContext : DbContext
@@ -62,7 +72,8 @@ namespace Identity.ExtensionStore.IdentityPermission
 
 
     public class PermissionStore<TPermission, TContext, TKey, TRolePermission> :
-        IQueryablePermissionStore<TPermission>
+        IPermissionStore<TPermission>
+        //IQueryablePermissionStore<TPermission>
         where TPermission : IdentityPermission<TKey>
         where TKey : IEquatable<TKey>
         where TContext : DbContext
@@ -87,6 +98,8 @@ namespace Identity.ExtensionStore.IdentityPermission
         /// </summary>
         public virtual TContext Context { get; private set; }
 
+        private DbSet<TPermission> Permissions { get { return Context.Set<TPermission>(); } }
+
         /// <summary>
         /// Gets or sets the <see cref="IdentityErrorDescriber"/> for any error that occurred with the current operation.
         /// </summary>
@@ -103,12 +116,9 @@ namespace Identity.ExtensionStore.IdentityPermission
         /// <summary>Saves the current store.</summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
-        private async Task SaveChanges(CancellationToken cancellationToken)
+        private Task SaveChanges(CancellationToken cancellationToken)
         {
-            if (AutoSaveChanges)
-            {
-                await Context.SaveChangesAsync(cancellationToken);
-            }
+            return AutoSaveChanges ? Context.SaveChangesAsync(cancellationToken) : Task.CompletedTask;
         }
 
         /// <summary>
@@ -125,7 +135,7 @@ namespace Identity.ExtensionStore.IdentityPermission
             {
                 throw new ArgumentNullException(nameof(permission));
             }
-            Context.Add(permission);
+            Permissions.Add(permission);
             await SaveChanges(cancellationToken);
             return IdentityResult.Success;
         }
@@ -144,9 +154,9 @@ namespace Identity.ExtensionStore.IdentityPermission
             {
                 throw new ArgumentNullException(nameof(permission));
             }
-            Context.Attach(permission);
+            Permissions.Attach(permission);
             permission.ConcurrencyStamp = Guid.NewGuid().ToString();
-            Context.Update(permission);
+            Permissions.Update(permission);
             try
             {
                 await SaveChanges(cancellationToken);
@@ -172,7 +182,7 @@ namespace Identity.ExtensionStore.IdentityPermission
             {
                 throw new ArgumentNullException(nameof(permission));
             }
-            Context.Remove(permission);
+            Permissions.Remove(permission);
             try
             {
                 await SaveChanges(cancellationToken);
@@ -343,11 +353,5 @@ namespace Identity.ExtensionStore.IdentityPermission
         /// Dispose the stores
         /// </summary>
         public void Dispose() => _disposed = true;
-
-        /// <summary>
-        /// A navigation property for the roles the store contains.
-        /// </summary>
-        public virtual IQueryable<TPermission> Permissions => Context.Set<TPermission>();
-
     }
 }
