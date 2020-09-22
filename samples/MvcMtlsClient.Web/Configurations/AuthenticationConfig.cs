@@ -47,7 +47,7 @@ namespace MvcMtlsClient.Web.Configurations
                     options.ClientId = configuration["Client:Id"];
                     options.ResponseType = "code";
                     options.SaveTokens = true;
-                    //options.GetClaimsFromUserInfoEndpoint = true;
+
                     options.BackchannelHttpHandler = new MtlsHandler(configuration, environment);
                     options.Scope.Clear();
                     options.Scope.Add("openid");

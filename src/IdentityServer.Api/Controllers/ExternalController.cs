@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace IdentityServer.Api.Controllers
@@ -305,8 +306,9 @@ namespace IdentityServer.Api.Controllers
             //add roles in db if they don't exist
             if (_environment.IsDevelopment())
             {
-                await AddRolesToRolesIfTheyDoNotExists(externalUserRoles);
-                await UpdateUserRoles(user, externalUserRoles);
+                var roles = externalUserRoles.Where(f => !Regex.IsMatch(f, WildCardToRegular("*{*}*"))).ToList();
+                await AddRolesToRolesIfTheyDoNotExists(roles);
+                await UpdateUserRoles(user, roles);
             }
         }
 
@@ -321,6 +323,7 @@ namespace IdentityServer.Api.Controllers
             //filter the ad groups by matching what is in appsettings
             var filteredList = externalUserRoles.Where(r => searchList.Any(f => r.StartsWith(f)));
 
+            // Boolean complex = Regex.IsMatch(test, WildCardToRegular("S*me*a*X"));
             foreach (var role in filteredList)
             {
                 if (!await _roleManager.RoleExistsAsync(role))
@@ -328,6 +331,11 @@ namespace IdentityServer.Api.Controllers
                     await _roleManager.CreateAsync(new ApplicationRole(role));
                 }
             }
+        }
+
+        private static String WildCardToRegular(String value)
+        {
+            return "^" + Regex.Escape(value).Replace("\\*", ".*") + "$";
         }
 
         private async Task UpdateUserRoles(ApplicationUser user, List<string> externalUserRoles)

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
 {
-    public partial class Initial : Migration
+    public partial class AddedProfiles : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,11 +14,26 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     FriendlyName = table.Column<string>(nullable: true),
-                    Application = table.Column<string>(nullable: true)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetPermissions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetProfiles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(maxLength: 256, nullable: true),
+                    FriendlyName = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    CreatedInAD = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetProfiles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -29,7 +44,9 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
-                    FriendlyName = table.Column<string>(nullable: true)
+                    Application = table.Column<string>(nullable: true),
+                    FriendlyName = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -101,6 +118,30 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetRolePermissions_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProfileRoles",
+                columns: table => new
+                {
+                    RoleId = table.Column<Guid>(nullable: false),
+                    ProfileId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProfileRoles", x => new { x.ProfileId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_ProfileRoles_AspNetProfiles_ProfileId",
+                        column: x => x.ProfileId,
+                        principalTable: "AspNetProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProfileRoles_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
@@ -235,6 +276,11 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProfileRoles_RoleId",
+                table: "ProfileRoles",
+                column: "RoleId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -258,13 +304,19 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ProfileRoles");
+
+            migrationBuilder.DropTable(
                 name: "AspNetPermissions");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "AspNetProfiles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
         }
     }
 }

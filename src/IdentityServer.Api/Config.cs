@@ -96,7 +96,7 @@ namespace IdentityServer.Api
                         },
                         Enabled = true,
                         UserClaims = new[] {
-                             configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"],
+                             //configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"],
                              JwtClaimTypes.PreferredUserName
                         },
                         Scopes = new[] { "inventory","inventory.read", "inventory.write", "inventory.delete", "inventory.update" }

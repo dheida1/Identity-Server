@@ -25,7 +25,7 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Application")
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FriendlyName")
@@ -40,14 +40,59 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                     b.ToTable("AspNetPermissions");
                 });
 
+            modelBuilder.Entity("IdentityServer.Infrastructure.Entities.ApplicationProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("CreatedInAD")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FriendlyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AspNetProfiles");
+                });
+
+            modelBuilder.Entity("IdentityServer.Infrastructure.Entities.ApplicationProfileRole", b =>
+                {
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProfileId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("ProfileRoles");
+                });
+
             modelBuilder.Entity("IdentityServer.Infrastructure.Entities.ApplicationRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Application")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FriendlyName")
@@ -254,6 +299,21 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("IdentityServer.Infrastructure.Entities.ApplicationProfileRole", b =>
+                {
+                    b.HasOne("IdentityServer.Infrastructure.Entities.ApplicationProfile", "Proflle")
+                        .WithMany("ProfileRoles")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer.Infrastructure.Entities.ApplicationRole", "Role")
+                        .WithMany("ProfileRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer.Infrastructure.Entities.ApplicationRolePermission", b =>
