@@ -59,6 +59,7 @@ namespace IdentityServer.Api.Services
             {
                 claims.Add(new Claim(JwtClaimTypes.GivenName, user.FirstName));
                 claims.Add(new Claim(JwtClaimTypes.FamilyName, user.LastName));
+                claims.Add(new Claim(JwtClaimTypes.Name, user.FirstName + " " + user.LastName));
                 context.IssuedClaims = claims;
             }
         }
