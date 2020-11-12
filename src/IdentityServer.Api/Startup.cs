@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
+using OtsLogger;
 using System;
 using System.Linq;
 
@@ -40,6 +41,13 @@ namespace IdentityServer.Api
                     .AddDataServices(Configuration)
                     .AddOtsAuthentication(Environment, Configuration)
                     .AddIdentityServerConfigs(Environment, Configuration);
+
+            services.AddOtsLogger(opt =>
+            {
+                //The unique IAM ("Uid") or ADFS ("http://la.gov/ObjectGUID") identifier. This is NOT the UserId.
+                // The default value is "http://la.gov/ObjectGUID"
+                opt.ObjectGuid = "http://la.gov/CVT-ObjectGUID";
+            });
 
 
             //services.AddCors(o => o.AddPolicy("ComeOnIn", builder =>
@@ -75,6 +83,7 @@ namespace IdentityServer.Api
 
             app.UseIdentityServer();
             app.UseAuthentication();
+            app.UseOtsLogger();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

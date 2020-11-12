@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200922185935_AddedProfiles")]
-    partial class AddedProfiles
+    [Migration("20201112202107_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -39,7 +39,7 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("AspNetPermissions");
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("IdentityServer.Infrastructure.Entities.ApplicationProfile", b =>
@@ -63,7 +63,7 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("AspNetProfiles");
+                    b.ToTable("Profiles");
                 });
 
             modelBuilder.Entity("IdentityServer.Infrastructure.Entities.ApplicationProfileRole", b =>
@@ -154,6 +154,9 @@ namespace IdentityServer.Infrastructure.Data.Migrations.ApplicationDb
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")

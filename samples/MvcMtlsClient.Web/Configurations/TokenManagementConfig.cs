@@ -39,7 +39,6 @@ namespace MvcMtlsClient.Web.Configurations
 
             //Api services.
 
-
             //api1  - invoices
             //create an api1 service for the user to call the invoices api 
             //this will refresh the token if expired and 

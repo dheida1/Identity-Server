@@ -8,5 +8,6 @@ namespace IdentityServer.Infrastructure.Entities
         public ApplicationUser() : base() { }
         public ApplicationUser(string name) : base(name) { }
         public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }

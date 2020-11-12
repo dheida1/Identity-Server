@@ -8,7 +8,7 @@ using System;
 
 namespace MvcJwtClient.Web.Configurations
 {
-    public static class ServicesConfig
+    public static class TokenManagementServicesConfig
     {
         public static IServiceCollection AddDataServices(
             this IServiceCollection services,
@@ -41,6 +41,9 @@ namespace MvcJwtClient.Web.Configurations
             {
                 client.Timeout = TimeSpan.FromSeconds(30);
             });
+
+
+            //add all the api services 
 
             //create an api1 service to call the api (machine to machine)
             services.AddHttpClient<IApi1ServiceClient, Api1ServiceClient>(client =>

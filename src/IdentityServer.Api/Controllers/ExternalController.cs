@@ -137,11 +137,11 @@ namespace IdentityServer.Api.Controllers
             await ProcessRolesForUser(user, result);
 
             additionalLocalClaims.AddRange(principal.Claims);
-            var name = principal.FindFirst(JwtClaimTypes.Name)?.Value ?? user.Id.ToString();
+            var displayName = principal.FindFirst(JwtClaimTypes.Email)?.Value ?? user.Id.ToString();
 
             var isuser = new IdentityServerUser(user.Id.ToString())
             {
-                DisplayName = name,
+                DisplayName = displayName,
                 IdentityProvider = provider,
                 AdditionalClaims = additionalLocalClaims
             };
@@ -156,7 +156,7 @@ namespace IdentityServer.Api.Controllers
 
             // check if external login is in the context of an OIDC request
             var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
-            await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.Id.ToString(), name, true, context?.Client.ClientId));
+            await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.Id.ToString(), user.UserName, true, context?.Client.ClientId));
 
             if (context != null)
             {
@@ -205,44 +205,68 @@ namespace IdentityServer.Api.Controllers
             // user's display name
             var name = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value ??
                 claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
-            if (name != null)
-            {
-                filtered.Add(new Claim(JwtClaimTypes.Name, name));
-            }
-            else
-            {
-                var first = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.GivenName)?.Value ??
-                    claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
-                var last = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.FamilyName)?.Value ??
-                    claims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value;
-                if (first != null && last != null)
-                {
-                    filtered.Add(new Claim(JwtClaimTypes.Name, first + " " + last));
-                }
-                else if (first != null)
-                {
-                    filtered.Add(new Claim(JwtClaimTypes.Name, first));
-                }
-                else if (last != null)
-                {
-                    filtered.Add(new Claim(JwtClaimTypes.Name, last));
-                }
-            }
+            //if (name != null)
+            //{
+            //    filtered.Add(new Claim(JwtClaimTypes.Name, name));
+            //}
+            //else
+            //{
+            //    var first = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.GivenName)?.Value ??
+            //        claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
+            //    var last = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.FamilyName)?.Value ??
+            //        claims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value;
+            //    if (first != null && last != null)
+            //    {
+            //        filtered.Add(new Claim(JwtClaimTypes.Name, first + " " + last));
+            //    }
+            //    else if (first != null)
+            //    {
+            //        filtered.Add(new Claim(JwtClaimTypes.Name, first));
+            //    }
+            //    else if (last != null)
+            //    {
+            //        filtered.Add(new Claim(JwtClaimTypes.Name, last));
+            //    }
+            //}
 
             // email
             var email = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Email)?.Value ??
-               claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-            if (email != null)
-            {
-                filtered.Add(new Claim(JwtClaimTypes.Email, email));
-            }
+               claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value ??
+                claims.FirstOrDefault(x => x.Type == "http://la.gov/eMailAddress")?.Value; //specific to devadfs
+
+            //if (email != null)
+            //{
+            //    filtered.Add(new Claim(JwtClaimTypes.Email, email));
+            //}
+
+            //firstname
+            var firstName = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.GivenName)?.Value ??
+               claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value ??
+               claims.FirstOrDefault(x => x.Type == "http://la.gov/GivenName")?.Value;  //specific to devadfs
+
+            //if (firstName != null)
+            //{
+            //    filtered.Add(new Claim(JwtClaimTypes.GivenName, firstName));
+            //}
+
+            //lastname
+            var lastName = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.FamilyName)?.Value ??
+               claims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value ??
+               claims.FirstOrDefault(x => x.Type == "http://la.gov/SurName")?.Value;  //specific to devadfs
+
+            //if (lastName != null)
+            //{
+            //    filtered.Add(new Claim(JwtClaimTypes.FamilyName, lastName));
+            //}
 
             var user = new ApplicationUser
             {
                 UserName = claims.FirstOrDefault(x => x.Type == _configuration["AppConfiguration:IdentityProvider:ObjectGUID"])?.Value ??
                     Guid.NewGuid().ToString(),
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName
             };
-
 
             var identityResult = await _userManager.CreateAsync(user);
             if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
@@ -323,7 +347,6 @@ namespace IdentityServer.Api.Controllers
             //filter the ad groups by matching what is in appsettings
             var filteredList = externalUserRoles.Where(r => searchList.Any(f => r.StartsWith(f)));
 
-            // Boolean complex = Regex.IsMatch(test, WildCardToRegular("S*me*a*X"));
             foreach (var role in filteredList)
             {
                 if (!await _roleManager.RoleExistsAsync(role))
@@ -356,7 +379,6 @@ namespace IdentityServer.Api.Controllers
             {
                 await _userManager.AddToRolesAsync(user, toBeAdded);
             }
-
         }
     }
 }

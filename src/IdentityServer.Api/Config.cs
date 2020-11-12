@@ -50,7 +50,11 @@ namespace IdentityServer.Api
                     DisplayName = "EA CA IAM",
                     Description = "Enterprise Architecture CA IAM"
                 },
-                new IdentityResource("roles", new[] { JwtClaimTypes.Role, ClaimTypes.Role })
+                new IdentityResource("roles", new[] { JwtClaimTypes.Role, ClaimTypes.Role }),
+                new IdentityResource("permissions", new[] {
+                            configuration["AppConfiguration:AgencyConfiguration:OtsPermissionsClaimType"],
+                            JwtClaimTypes.PreferredUserName
+                        })
                 };
             }
 
@@ -178,7 +182,6 @@ namespace IdentityServer.Api
                             RequireConsent = false,
                             RequirePkce = true,
                             AllowedCorsOrigins = { "https://localhost:5001" },
-                            //AlwaysIncludeUserClaimsInIdToken= true,                            
                             AlwaysSendClientClaims= false,
                             UpdateAccessTokenClaimsOnRefresh = true,
                             Properties =  new Dictionary<string, string>
@@ -246,7 +249,7 @@ namespace IdentityServer.Api
                             IncludeJwtId = true,
                             RequirePkce = false,    //https://www.scottbrady91.com/OpenID-Connect/ASPNET-Core-using-Proof-Key-for-Code-Exchange-PKCE
                             AllowedCorsOrigins = { "https://localhost:5001" },
-                            AlwaysIncludeUserClaimsInIdToken= false,
+                            AlwaysIncludeUserClaimsInIdToken= true,
                             AlwaysSendClientClaims= false,
                             UpdateAccessTokenClaimsOnRefresh = true,                           
                             // where to redirect to after login
@@ -258,6 +261,7 @@ namespace IdentityServer.Api
                             AllowedScopes = new List<string>
                             {
                                 StandardScopes.OpenId,
+                                "permissions",
                                 "invoices",
                                 "inventory",
                                 "invoices.read",

@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,10 +15,10 @@ namespace MvcMtlsClient.Web.DelegatingHandlers
     public class MtlsHandler : DelegatingHandler
     {
         private readonly IConfiguration configuration;
-        private readonly IWebHostEnvironment environment;
+        private readonly IHostEnvironment environment;
 
         public MtlsHandler(IConfiguration configuration,
-            IWebHostEnvironment environment)
+            IHostEnvironment environment)
         {
             this.configuration = configuration;
             this.environment = environment;
@@ -25,7 +26,19 @@ namespace MvcMtlsClient.Web.DelegatingHandlers
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var certificate = X509.LocalMachine.My.Thumbprint.Find(configuration["Certificates:Personal"], false).Single();
+            X509Certificate2 certificate;
+            if (!environment.IsDevelopment())
+            {
+                certificate = new Cryptography.X509Certificates.Extension.X509Certificate2(
+                         configuration["Certificates:Personal"],
+                         StoreName.My,
+                         StoreLocation.LocalMachine,
+                         X509FindType.FindBySerialNumber);
+            }
+            else
+            {
+                certificate = X509.LocalMachine.My.Thumbprint.Find(configuration["Certificates:Personal"], false).Single();
+            }
             if (base.InnerHandler == null)
             {
                 base.InnerHandler = new HttpClientHandler()

@@ -1,4 +1,5 @@
-﻿using IdentityServer.Infrastructure.Entities;
+﻿using IdentityModel;
+using IdentityServer.Infrastructure.Entities;
 using IdentityServer.Infrastructure.Interfaces;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
@@ -53,6 +54,13 @@ namespace IdentityServer.Api.Services
                 }
             }
             context.AddRequestedClaims(claims);
+
+            if (context.Caller == "UserInfoEndpoint")
+            {
+                claims.Add(new Claim(JwtClaimTypes.GivenName, user.FirstName));
+                claims.Add(new Claim(JwtClaimTypes.FamilyName, user.LastName));
+                context.IssuedClaims = claims;
+            }
         }
 
         public async Task IsActiveAsync(IsActiveContext context)

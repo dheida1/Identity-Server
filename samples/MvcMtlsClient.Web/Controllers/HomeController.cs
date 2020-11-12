@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -76,9 +77,16 @@ namespace MvcMtlsClient.Web.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            return SignOut(CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
+            var result = await HttpContext.AuthenticateAsync();
+            var properties = result.Properties;
+            var provider = properties.Items[".AuthScheme"];
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            var url = Url.Action("Index", "Home");
+            return SignOut(new AuthenticationProperties { RedirectUri = url }, provider);
+
+            //return SignOut(CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

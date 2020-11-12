@@ -23,7 +23,7 @@ namespace IdentityServer.Infrastructure.Data
             builder.Entity<ApplicationPermission>(b =>
             {
                 b.HasKey(r => r.Id);
-                b.ToTable("AspNetPermissions");
+                b.ToTable("Permissions");
                 b.Property(u => u.Name).HasMaxLength(256);
             });
 
@@ -48,7 +48,7 @@ namespace IdentityServer.Infrastructure.Data
             builder.Entity<ApplicationProfile>(b =>
             {
                 b.HasKey(r => r.Id);
-                b.ToTable("AspNetProfiles");
+                b.ToTable("Profiles");
                 b.Property(u => u.Name).HasMaxLength(256);
             });
 

@@ -45,14 +45,16 @@ namespace MvcMtlsClient.Web.Configurations
                     options.Authority = configuration["IdentityServer:Authority"];
                     options.RequireHttpsMetadata = environment.IsDevelopment() ? false : true;
                     options.ClientId = configuration["Client:Id"];
-                    options.ResponseType = "code";
+                    options.ResponseType = OidcConstants.ResponseTypes.Code;
                     options.SaveTokens = true;
 
+                    options.GetClaimsFromUserInfoEndpoint = true;
                     options.BackchannelHttpHandler = new MtlsHandler(configuration, environment);
                     options.Scope.Clear();
                     options.Scope.Add("openid");
                     options.Scope.Add("invoices");
                     options.Scope.Add("inventory");
+                    options.Scope.Add("permissions");
                     options.Scope.Add("offline_access"); //need this to get back '.refreshToken' to use when calling api's   
 
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -66,6 +68,12 @@ namespace MvcMtlsClient.Web.Configurations
                         StoreName.My,
                         StoreLocation.LocalMachine,
                         X509FindType.FindBySerialNumber))
+                    };
+
+                    options.Events.OnUserInformationReceived = context =>
+                    {
+                        var t = context;
+                        return Task.FromResult(0);
                     };
 
                     options.Events.OnRedirectToIdentityProvider = async context =>
