@@ -33,15 +33,19 @@ namespace IdentityServer.Api
             //TODO: Add DistributedCache
             //TODO: switch this to api with no views or possibly ng views
 
-            //services.AddControllers();
-            services.AddControllersWithViews();
+            var mvcBuilder = services.AddControllersWithViews();
+
+            if (Environment.IsDevelopment())
+            {
+                mvcBuilder.AddRazorRuntimeCompilation();
+            }
 
             services.AddIISConfigs()
-                    //.AddDatabase(Configuration)
                     .AddDataServices(Configuration)
-                    .AddOtsAuthentication(Environment, Configuration)
-                    .AddIdentityServerConfigs(Environment, Configuration);
+                    .AddIdentityServerConfigs(Environment, Configuration)
+                    .AddOtsAuthentication(Environment, Configuration);
 
+            //custom ots logging tool
             services.AddOtsLogger(opt =>
             {
                 //The unique IAM ("Uid") or ADFS ("http://la.gov/ObjectGUID") identifier. This is NOT the UserId.
@@ -49,13 +53,35 @@ namespace IdentityServer.Api
                 opt.ObjectGuid = "http://la.gov/CVT-ObjectGUID";
             });
 
+            //hsts
+            if (!Environment.IsDevelopment())
+            {
+                services.AddHsts(options =>
+                {
+                    options.Preload = true;
+                    options.IncludeSubDomains = true;
+                    options.MaxAge = TimeSpan.FromDays(365);
+                    options.ExcludedHosts.Add("identityserver.la.gov");
+                });
+            }
 
-            //services.AddCors(o => o.AddPolicy("ComeOnIn", builder =>
+            //cors
+            //if (!Environment.IsDevelopment())
             //{
-            //    builder.AllowAnyOrigin()
-            //           .AllowAnyMethod()
-            //           .AllowAnyHeader();
-            //}));
+            //    services.AddCors(options =>
+            //    {
+            //        options.AddPolicy("AllowAll",
+            //            builder => builder
+            //                .WithOrigins(
+            //                    "https://localhost:5001",
+            //                    "http://localhost:5002"
+            //                    )
+            //                .AllowAnyHeader()
+            //                .AllowAnyMethod()
+            //                .AllowCredentials());
+            //    });
+
+            //}
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,9 +98,76 @@ namespace IdentityServer.Api
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+
+                //****IMPORTANT SECURITY HEADERS******
+                //test site status at https://securityheaders.com/
+                //https://damienbod.com/2018/02/08/adding-http-headers-to-improve-security-in-an-asp-net-mvc-core-application/
+                //https://www.c-sharpcorner.com/article/secure-web-application-using-http-security-headers-in-asp-net-core/
+                //Registered before static files to always set header
+
+                //Strict-Transport-Security Header
+                //enforce that all communication is done over HTTPS. 
+                //This will protect websites against SSL stripping, 
+                //man-in-the-middle attacks by indicating to the browser to access 
+                //the website using HTTPS instead of using HTTP and 
+                //refuse to connect in case of certificate errors and warnings
+                //it’s recommended to use HSTS on production only
                 app.UseHsts();
             }
+
+            //X-XSS-Protection Header
+            //prevent cross-site scripting attack
+            app.UseXXssProtection(options => options.EnabledWithBlockMode());
+
+            //Content-Security-Policy Header
+            //prevent code injection attacks like 
+            //cross-site scripting and clickjacking 
+            //or prevent mixed mode (HTTPS and HTTP)
+            //app.UseCsp(opts => opts
+            //    .BlockAllMixedContent()
+            //    .StyleSources(s => s.Self())
+            //    .StyleSources(s => s.UnsafeInline())
+            //    .FontSources(s => s.Self())
+            //    .FormActions(s => s.Self())
+            //    .FrameAncestors(s => s.Self())
+            //    .ImageSources(s => s.Self())
+            //    .ScriptSources(s => s.Self())
+            //);
+
+            //X-Frame-Options Header
+            //disallow hackers from embedding content in an iframe
+            //ensure that website content is not embedded into other 
+            //sites and to prevent click jacking attacks
+            app.UseXfo(options => options.Deny());
+
+            //X-Content-Type-Options Header
+            //used to disable the MIME-sniffing (where a hacker 
+            //tries to exploit missing metadata on served files 
+            //in browser) and can be set to no-sniff to prevent it
+            app.UseXContentTypeOptions();
+
+            //Referrer Policy Header
+            //This header contains a site from which the user has been transferred.
+            //But referrer URLs may contain sensitive data.If you don’t want to allow 
+            //browsers to display your website as last visited in “Referer” header, 
+            //we can use Referrer-Policy: no - referrer
+            app.UseReferrerPolicy(opts => opts.NoReferrer());
+
+            //Feature Policy Header
+            //used to enable and disable certain web platform features like microphone, 
+            //camera etc. on browser and those they embedded. 
+            //This header is completely optional and based on the explicit requirement
+            //app.Use(async (context, next) =>
+            //{
+            //    if (!context.Response.Headers.ContainsKey("Feature-Policy"))
+            //    {
+            //        context.Response.Headers.Add("Feature-Policy", "accelerometer 'none'; 
+            //              camera 'none'; microphone 'none';");
+            //    }
+            //    await next();
+            //});
+
+
             //for mtls
             app.UseCertificateForwarding();
             app.UseHttpsRedirection();

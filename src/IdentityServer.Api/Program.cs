@@ -53,6 +53,7 @@ namespace IdentityServer.Api
                     webBuilder.UseSerilog();
                     webBuilder.ConfigureKestrel(options =>
                     {
+                        options.AddServerHeader = false; //disable the Server header for Kestrel, https://www.c-sharpcorner.com/article/secure-web-application-using-http-security-headers-in-asp-net-core/
                         options.AllowSynchronousIO = true;
                         options.ConfigureHttpsDefaults(httpsOptions =>
                             {

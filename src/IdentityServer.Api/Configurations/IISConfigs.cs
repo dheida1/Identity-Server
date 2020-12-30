@@ -8,7 +8,8 @@ namespace IdentityServer.Api.Configurations
         public static IServiceCollection AddIISConfigs(
              this IServiceCollection services)
         {
-            // configures IIS out-of-proc settings (see https://github.com/aspnet/AspNetCore/issues/14882)
+            // configures IIS out-of-proc settings 
+            //(see https://github.com/aspnet/AspNetCore/issues/14882)
             services.Configure<IISOptions>(iis =>
                      {
                          iis.AuthenticationDisplayName = "Windows";

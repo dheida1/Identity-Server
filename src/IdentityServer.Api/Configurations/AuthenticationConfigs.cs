@@ -5,11 +5,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SAML2Core.Models;
+using SamlCore.AspNetCore.Authentication.Saml2;
 using SamlCore.AspNetCore.Authentication.Saml2.Metadata;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using static SamlCore.AspNetCore.Authentication.Saml2.Saml2Constants;
 
 namespace IdentityServer.Api.Configurations
 {
@@ -71,7 +75,7 @@ namespace IdentityServer.Api.Configurations
                          StoreLocation.LocalMachine,
                          X509FindType.FindBySerialNumber);
                  }
-                 options.ForceAuthn = true;
+                 //options.ForceAuthn = false;
                  options.WantAssertionsSigned = true;
                  options.RequireMessageSigned = false;
 
@@ -98,10 +102,22 @@ namespace IdentityServer.Api.Configurations
                       var claims = context.Principal.Claims;
                       var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
                       identity.AddClaim(new Claim(ClaimTypes.Email, name));
+
                       return Task.FromResult(0);
                   };
+                 options.RequestedAuthn = new RequestAuth(AuthnContextComparisonType.exact,
+                     AuthnContextClassRefTypes.PasswordProtectedTransport);
+
+                 options.NameIDType.Format = NameIDFormats.Unspecified;
+                 options.SamlCookieName = ".Identity.Saml";
              })
-           .AddCookie();
+           .AddCookie(options =>
+           {
+               // Configure the client application to use sliding sessions
+               options.SlidingExpiration = true;
+               // Expire the session of 15 minutes of inactivity
+               options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+           });
             return services;
         }
     }

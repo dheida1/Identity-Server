@@ -254,6 +254,10 @@ namespace IdentityServer.Api
                             UpdateAccessTokenClaimsOnRefresh = true,                           
                             // where to redirect to after login
                             RedirectUris = { "https://localhost:5001/signin-oidc" },
+
+                            //sso logout
+                            BackChannelLogoutSessionRequired = true,
+                            BackChannelLogoutUri = "https://localhost:5001/logout",                              
                           
                              // where to redirect to after logout
                             PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },

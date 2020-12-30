@@ -126,7 +126,8 @@ namespace IdentityServer.Api.Controllers
             //var localRoles = new List<Claim>();
             var localSignInProps = new AuthenticationProperties();
 
-            ProcessLoginCallback(result, additionalLocalClaims, localSignInProps);
+            ProcessLoginCallbackForOidc(result, additionalLocalClaims, localSignInProps);
+            ProcessLoginCallbackForWsFed(result, additionalLocalClaims, localSignInProps);
             ProcessLoginCallbackForSaml2(result, additionalLocalClaims, localSignInProps);
 
             // issue authentication cookie for user
@@ -205,59 +206,23 @@ namespace IdentityServer.Api.Controllers
             // user's display name
             var name = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value ??
                 claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
-            //if (name != null)
-            //{
-            //    filtered.Add(new Claim(JwtClaimTypes.Name, name));
-            //}
-            //else
-            //{
-            //    var first = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.GivenName)?.Value ??
-            //        claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
-            //    var last = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.FamilyName)?.Value ??
-            //        claims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value;
-            //    if (first != null && last != null)
-            //    {
-            //        filtered.Add(new Claim(JwtClaimTypes.Name, first + " " + last));
-            //    }
-            //    else if (first != null)
-            //    {
-            //        filtered.Add(new Claim(JwtClaimTypes.Name, first));
-            //    }
-            //    else if (last != null)
-            //    {
-            //        filtered.Add(new Claim(JwtClaimTypes.Name, last));
-            //    }
-            //}
 
             // email
             var email = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Email)?.Value ??
                claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value ??
-                claims.FirstOrDefault(x => x.Type == "http://la.gov/eMailAddress")?.Value; //specific to devadfs
+               claims.FirstOrDefault(x => x.Type == "http://la.gov/eMailAddress")?.Value; //specific to devadfs
 
-            //if (email != null)
-            //{
-            //    filtered.Add(new Claim(JwtClaimTypes.Email, email));
-            //}
 
             //firstname
             var firstName = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.GivenName)?.Value ??
                claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value ??
                claims.FirstOrDefault(x => x.Type == "http://la.gov/GivenName")?.Value;  //specific to devadfs
 
-            //if (firstName != null)
-            //{
-            //    filtered.Add(new Claim(JwtClaimTypes.GivenName, firstName));
-            //}
-
             //lastname
             var lastName = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.FamilyName)?.Value ??
                claims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value ??
                claims.FirstOrDefault(x => x.Type == "http://la.gov/SurName")?.Value;  //specific to devadfs
 
-            //if (lastName != null)
-            //{
-            //    filtered.Add(new Claim(JwtClaimTypes.FamilyName, lastName));
-            //}
 
             var user = new ApplicationUser
             {
@@ -285,7 +250,7 @@ namespace IdentityServer.Api.Controllers
 
         // if the external login is OIDC-based, there are certain things we need to preserve to make logout work
         // this will be different for WS-Fed, SAML2p or other protocols
-        private void ProcessLoginCallback(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
+        private void ProcessLoginCallbackForOidc(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
         {
             // if the external system sent a session id claim, copy it over
             // so we can use it for single sign-out            
@@ -301,23 +266,21 @@ namespace IdentityServer.Api.Controllers
             {
                 localSignInProps.StoreTokens(new[] { new AuthenticationToken { Name = "id_token", Value = idToken } });
             }
+            localSignInProps = externalResult.Properties;
         }
 
         private void ProcessLoginCallbackForSaml2(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
         {
-            var sid = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == _configuration["AppConfiguration:ServiceProvider:SessionIdClaimType"]);
-            if (sid != null)
-            {
-                localClaims.Add(new Claim(_configuration["AppConfiguration:ServiceProvider:SessionIdClaimType"], sid.Value));
-            }
-
-            //sessionId if using saml
+            //sessionId when using saml
             var sessionId = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == _configuration["AppConfiguration:ServiceProvider:SessionIdClaimType"]);
             if (sessionId != null)
             {
                 localClaims.Add(new Claim(_configuration["AppConfiguration:ServiceProvider:SessionIdClaimType"], sessionId.Value));
             }
+        }
 
+        private void ProcessLoginCallbackForWsFed(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
+        {
         }
         private async Task ProcessRolesForUser(ApplicationUser user, AuthenticateResult externalResult)
         {
