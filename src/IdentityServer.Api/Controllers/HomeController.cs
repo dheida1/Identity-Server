@@ -60,7 +60,6 @@ namespace IdentityServer.Api.Controllers
                     message.ErrorDescription = null;
                 }
             }
-
             return View("Error", vm);
         }
     }

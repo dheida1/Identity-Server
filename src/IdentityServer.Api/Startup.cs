@@ -123,16 +123,25 @@ namespace IdentityServer.Api
             //prevent code injection attacks like 
             //cross-site scripting and clickjacking 
             //or prevent mixed mode (HTTPS and HTTP)
-            //app.UseCsp(opts => opts
-            //    .BlockAllMixedContent()
-            //    .StyleSources(s => s.Self())
-            //    .StyleSources(s => s.UnsafeInline())
-            //    .FontSources(s => s.Self())
-            //    .FormActions(s => s.Self())
-            //    .FrameAncestors(s => s.Self())
-            //    .ImageSources(s => s.Self())
-            //    .ScriptSources(s => s.Self())
-            //);
+            app.UseCsp(opts => opts
+                .BlockAllMixedContent()
+                .StyleSources(s => s.Self())
+                .StyleSources(s => s.UnsafeInline())
+                .FontSources(s => s.Self())
+                .FormActions(s => s.Self())
+                .FormActions(s => s.CustomSources("https://localhost/**"))
+                .FormActions(s => s.CustomSources("*.la.gov"))
+                .FormActions(s => s.CustomSources("https://localhost:5001/signin-oidc"))
+                .FrameAncestors(s => s.Self())
+                .ImageSources(s => s.Self())
+                .ScriptSources(s => s.Self())
+                .ScriptSources(s => s.CustomSources(Configuration["AppConfiguration:SecurityHeaders:CSP:ScriptSources"])) //this will change anytime js is modified
+                .ReportUris(r => r.Uris("/home/report"))
+        );
+
+            app.UseCspReportOnly(options => options
+                .DefaultSources(s => s.Self())
+                .ImageSources(s => s.None()));
 
             //X-Frame-Options Header
             //disallow hackers from embedding content in an iframe
